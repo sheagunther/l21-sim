@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loop 2.1 — Handoff: Catalog Engine, Scripts Box &amp; Operators Club</title>
+<style>
+  :root{--bg:#e8eef4;--panel:#e8eef4;--panel2:#edf1f5;--panel3:#dce4ec;--border:#9ab0c4;--border2:#b0c4d4;--fg:#000;--fg-dim:#507090;--accent:#6030c0;--working:#1060b0;--alu:#b06000;--memory:#006830;--big:#006888;--font:'Courier New','Consolas',monospace;--max-w:820px;--callout-tip-bg:#e8f4ec;--callout-warn-bg:#fef8e0;--callout-key-bg:#eef0f8;--callout-note-bg:#f0f0f4;--code-bg:#dce4ec;}
+  body.skin-winamp{--bg:#1e1e1e;--panel:#252525;--panel2:#202020;--panel3:#1c1c1c;--border:#1e4c28;--border2:#163c20;--fg:#33ff44;--fg-dim:#33ff44;--accent:#33ff44;--working:#44aaff;--alu:#ffaa00;--memory:#33ff44;--big:#00ddff;--callout-tip-bg:#0c1e10;--callout-warn-bg:#1e1000;--callout-key-bg:#0a1020;--callout-note-bg:#1a1a1a;--code-bg:#0a1a0c;}
+  body.skin-sunrise{--bg:#fff8ec;--panel:#fff;--panel2:#fffcf5;--panel3:#fff4e0;--border:#e8b030;--border2:#d8a020;--fg:#000;--fg-dim:#705030;--accent:#5828b0;--working:#0060c0;--alu:#c06000;--memory:#007030;--big:#007898;--callout-tip-bg:#e8f8ec;--callout-warn-bg:#fff4dc;--callout-key-bg:#f0eeff;--callout-note-bg:#fef8f0;--code-bg:#fff0cc;}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:17px;line-height:1.7;}
+  .page-header{background:var(--panel);border-bottom:2px solid var(--border);padding:28px 48px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50;}.logo{font-family:var(--font);letter-spacing:6px;font-size:20px;font-weight:bold;}.logo-sub{font-family:var(--font);font-size:10px;letter-spacing:3px;color:var(--fg-dim);margin-top:4px;}.header-right{display:flex;align-items:center;gap:16px;}.doc-title{text-align:right;}.doc-title .title-main{font-family:var(--font);font-size:11px;letter-spacing:3px;color:var(--fg-dim);text-transform:uppercase;}.doc-title .build-tag{font-family:var(--font);font-size:10px;letter-spacing:1px;color:var(--fg-dim);margin-top:3px;}
+  .skin-group{display:flex;align-items:center;gap:5px;}.skin-btn{font-family:var(--font);font-size:10px;letter-spacing:1px;padding:3px 9px;background:transparent;border:1px solid var(--border2);color:var(--fg-dim);cursor:pointer;text-transform:uppercase;}.skin-btn:hover{border-color:var(--fg);color:var(--fg);}.skin-btn.active{border-color:var(--fg);color:var(--fg);background:var(--panel2);}
+  .body-wrap{display:flex;max-width:1200px;margin:0 auto;}.toc-sidebar{width:260px;flex-shrink:0;position:sticky;top:80px;height:calc(100vh - 80px);overflow-y:auto;padding:32px 0 32px 32px;border-right:1px solid var(--border2);font-family:var(--font);}.toc-title{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--fg-dim);margin-bottom:16px;}.toc-list{list-style:none;}.toc-list li{margin-bottom:2px;}.toc-list a{font-size:11px;letter-spacing:.5px;color:var(--fg-dim);text-decoration:none;display:block;padding:3px 6px;border-left:2px solid transparent;}.toc-list a:hover{color:var(--fg);border-left-color:var(--border);}.toc-list a.active{color:var(--fg);border-left-color:var(--accent);}.toc-list .toc-sub a{font-size:10px;padding-left:14px;opacity:.75;}.toc-list .toc-sub a:hover{opacity:1;}.toc-sep{border:none;border-top:1px solid var(--border2);margin:8px 6px;}
+  .content{flex:1;min-width:0;padding:48px 64px 96px 48px;max-width:var(--max-w);}.chapter{margin-bottom:64px;scroll-margin-top:100px;}.chapter-number{font-family:var(--font);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--fg-dim);margin-bottom:6px;}.chapter-title{font-family:var(--font);font-size:22px;font-weight:bold;letter-spacing:2px;border-bottom:2px solid var(--border);padding-bottom:10px;margin-bottom:6px;}.section{margin:32px 0;scroll-margin-top:100px;}.section-title{font-family:var(--font);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--fg-dim);border-bottom:1px solid var(--border2);padding-bottom:6px;margin-bottom:16px;}h4{font-size:16px;font-weight:600;margin:20px 0 8px;}
+  p{margin-bottom:14px;}strong{font-weight:600;}em{font-style:italic;}a{color:inherit;}ul,ol{margin:0 0 14px 24px;}li{margin-bottom:6px;}
+  .callout{border-left:4px solid var(--border);padding:12px 16px;background:var(--panel);margin:20px 0;font-size:16px;line-height:1.6;}.callout.tip{background:var(--callout-tip-bg);border-left-color:var(--memory);}.callout.warn{background:var(--callout-warn-bg);border-left-color:var(--alu);}.callout.key{background:var(--callout-key-bg);border-left-color:var(--working);}.callout.note{background:var(--callout-note-bg);border-left-color:var(--border);}.callout-label{font-family:var(--font);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--fg-dim);margin-bottom:6px;}.callout.tip .callout-label{color:var(--memory);}.callout.warn .callout-label{color:var(--alu);}.callout.key .callout-label{color:var(--working);}
+  code{background:var(--code-bg);padding:1px 5px;font-family:var(--font);font-size:14px;color:var(--alu);border-radius:2px;}pre{background:var(--code-bg);padding:14px 16px;font-family:var(--font);font-size:13px;line-height:1.6;overflow-x:auto;margin:16px 0;border-left:3px solid var(--border2);}
+  .ref-table{width:100%;border-collapse:collapse;font-size:15px;margin:16px 0;line-height:1.5;}.ref-table th{font-family:var(--font);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--fg-dim);text-align:left;padding:7px 10px;border-bottom:2px solid var(--border);background:var(--panel);}.ref-table td{padding:7px 10px;border-bottom:1px solid var(--border2);vertical-align:top;}.ref-table tr:last-child td{border-bottom:none;}.ref-table td:first-child{font-family:var(--font);font-size:13px;color:var(--fg-dim);white-space:nowrap;}
+  hr{border:none;border-top:1px solid var(--border2);margin:40px 0;}
+  .page-footer{max-width:1200px;margin:0 auto;padding:20px 64px 48px 320px;font-family:var(--font);font-size:10px;letter-spacing:1px;color:var(--fg-dim);border-top:1px solid var(--border2);display:flex;justify-content:space-between;}
+  .decided{color:var(--memory);}.pending{color:var(--alu);}.open{color:var(--accent);}
+  .status-tag{display:inline-block;font-family:var(--font);font-size:10px;letter-spacing:1px;padding:1px 6px;border-radius:2px;margin-right:4px;}
+  .status-decided{background:var(--callout-tip-bg);color:var(--memory);border:1px solid var(--memory);}
+  .status-pending{background:var(--callout-warn-bg);color:var(--alu);border:1px solid var(--alu);}
+  .status-open{background:var(--callout-key-bg);color:var(--working);border:1px solid var(--working);}
+</style>
+</head>
+<body class="skin-og">
+<div class="page-header"><div><div class="logo">LOOP 2.1</div><div class="logo-sub">Manual Flow Computer</div></div><div class="header-right"><div class="skin-group"><span style="font-family:var(--font);font-size:9px;letter-spacing:2px;color:var(--fg-dim);text-transform:uppercase;margin-right:4px;">Skin</span><button class="skin-btn active" onclick="setSkin('og')">OG</button><button class="skin-btn" onclick="setSkin('winamp')">Winamp</button><button class="skin-btn" onclick="setSkin('sunrise')">Sunrise</button></div><div class="doc-title"><div class="title-main">Handoff Document</div><div class="build-tag">March 28, 2026</div></div></div></div>
+<div class="body-wrap">
+<nav class="toc-sidebar" id="toc"><div class="toc-title">Contents</div>
+<ul class="toc-list">
+<li><a href="#ch-read-this">Read This First</a></li>
+<hr class="toc-sep">
+<li><a href="#ch-situation">1 · The Situation</a></li>
+<li><a href="#ch-docs">2 · Reference Documents</a></li>
+<li><a href="#ch-decided">3 · What's Been Decided</a><ul class="toc-sub"><li><a href="#s-dec-arch">Architecture</a></li><li><a href="#s-dec-scripts">Scripts Box</a></li><li><a href="#s-dec-club">Operators Club</a></li><li><a href="#s-dec-stats">Stats</a></li></ul></li>
+<li><a href="#ch-pending">4 · What Shea Needs to Decide</a></li>
+<li><a href="#ch-open">5 · Open Design Questions</a></li>
+<li><a href="#ch-next">6 · What to Build Next</a></li>
+<li><a href="#ch-codebase">7 · Codebase Orientation</a></li>
+<li><a href="#ch-traps">8 · Traps and Gotchas</a></li>
+</ul></nav>
+
+<main class="content">
+
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter" id="ch-read-this"><div class="chapter-title">Read This First</div>
+<p>This document hands off the design work done in a single session on March 28, 2026. Three interconnected features were designed: a <strong>Shared Catalog Engine</strong> (refactoring Files and Scripts to share storage/UI code), the <strong>Scripts Box</strong> (a new sidebar section for managing skins and challenge scripts), and the <strong>Operators Club</strong> (a physical membership club with a cryptographic completion code challenge).</p>
+<p>No code has been written. The current build is v.308. The output of this session is four documents (including this one) and a set of decisions. Your job is to read the reference docs, confirm with Shea which decisions still hold, resolve the pending questions, and start building Phase 0.</p>
+<div class="callout key"><div class="callout-label">Before You Write Any Code</div>Read the Coding Standards document and the Dev Playbook — they are Project files. Then read the Unified Implementation Plan. Then read this document's Section 7 (Codebase Orientation) and Section 8 (Traps and Gotchas). Then talk to Shea about the pending decisions in Section 4. Only then should you start on Phase 0.</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter" id="ch-situation"><div class="chapter-number">Section 1</div><div class="chapter-title">The Situation</div>
+<p>Shea designed the Scripts Box feature and wrote a detailed technical spec (<code>scripts-box-spec.html</code>). During this session, we worked through several design issues that the spec raised:</p>
+<ol>
+<li><strong>The skin refactor problem.</strong> The Scripts Box needs to display readable skin source text in an editor, but the current skin system has no source text — skins are hardcoded JS objects. Each foundational skin must be rewritten as an authored source string that gets parsed into the runtime object at init. Same treatment as CBX challenge definitions.</li>
+<li><strong>The Files/Scripts overlap.</strong> Shea noticed that Files and Scripts are the same pattern — named items in a localStorage catalog with a 16-item limit, naming rules, sort controls, and list UI. Rather than duplicate 250 lines of catalog management code, we designed a shared catalog engine that all four catalogs (Files, Skins, CBX Local, CBX Net) use. This also future-proofs FTP-for-scripts.</li>
+<li><strong>The Operators Club.</strong> Shea wants a physical membership club. Operators solve a challenge, get a completion code, mail in an application with $16 in two-dollar bills, and receive a member number and postcard. We designed the code format (8 groups of 4 characters, 143-bit encoding), the stats philosophy (operator actions is the only published stat), and ten candidate challenges.</li>
+</ol>
+<p>The work is phased into six steps (P0–P5), each independently testable. No code exists yet. Phase 0 (shared catalog engine) is the starting point.</p>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter" id="ch-docs"><div class="chapter-number">Section 2</div><div class="chapter-title">Reference Documents</div>
+<p>Four documents were produced in this session. They should be uploaded as Project files. Here's what each one is for:</p>
+
+<table class="ref-table">
+<tr><th>Document</th><th>Purpose</th><th>When to Read</th></tr>
+<tr><td><strong>Unified Implementation Plan</strong></td><td>The master plan. Six phases (P0–P5) with detailed scope, delivery criteria, dependency chain, risk assessment, code-touched-per-phase matrix, and unresolved questions.</td><td>Before starting any phase. Re-read the relevant chapter at the start of each phase.</td></tr>
+<tr><td><strong>Operators Club Design Document</strong></td><td>Everything about the club: application process, member numbers, auctions, newsletter, challenge candidates (10 with comparison matrix), stats philosophy (why operator actions), completion code design, threat model, physical operations, and 25 unresolved questions.</td><td>Before Phase 5. Also useful context for understanding why the Scripts Box exists (the club challenge lives there).</td></tr>
+<tr><td><strong>Scripts Box Spec</strong> (<code>scripts-box-spec.html</code>)</td><td>Shea's original technical spec. Detailed UI/UX reference for the sidebar section: layout, nesting, file list, editor view, verification, integration points, file format, CSS additions, and migration checklist.</td><td>During Phases 2–4. This is the authoritative UI specification. The implementation plan references it but does not duplicate every detail.</td></tr>
+<tr><td><strong>This Handoff Document</strong></td><td>What you're reading now. Summary of decisions, pending questions, codebase orientation, and traps.</td><td>First. Before anything else.</td></tr>
+</table>
+
+<p>Additionally, the following existing Project files are essential reading:</p>
+<table class="ref-table">
+<tr><th>Document</th><th>Why</th></tr>
+<tr><td><strong>Coding Standards &amp; Architecture Guide</strong></td><td>Mandatory before writing code. Defines naming, L21 namespace, tick engine rules, event handling, rendering, and anti-patterns.</td></tr>
+<tr><td><strong>Dev Playbook</strong></td><td>Defines design standards, document templates, and development workflow.</td></tr>
+</table>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter" id="ch-decided"><div class="chapter-number">Section 3</div><div class="chapter-title">What's Been Decided</div>
+<p>These decisions were made during the session and Shea has signed off on them. They should be treated as settled unless Shea explicitly changes his mind.</p>
+
+<div class="section" id="s-dec-arch"><div class="section-title">Architecture Decisions</div>
+<p><span class="status-tag status-decided">Decided</span> <strong>Shared catalog engine.</strong> Files and Scripts share one set of storage, naming, sorting, and list-rendering code. The engine is parameterized by config objects. All four catalogs (Files, Skins, CBX Local, CBX Net) use it.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Skin source string architecture.</strong> Each foundational skin is rewritten as an authored source string constant. The runtime <code>SKINS</code> object is populated by parsing these strings at init. The source string is the authoritative representation. Same pattern as CBX challenge definitions.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Six-phase implementation.</strong> P0 (catalog engine) → P1 (skin refactor + Scripts shell) → P2 (Skins sub-section) → P3 (CBX Local + Networked) → P4 (.l21s format + upload) → P5 (Operators Club Challenge). Strictly linear dependencies.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Phase 0 before Phase 1.</strong> The Files refactor onto the shared engine is a separate deliverable that ships and gets tested before the skin refactor starts. Risk isolation: if the catalog refactor breaks Files, catch it before adding the skin variable.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Challenge source strings.</strong> Built-in challenge definitions (9 local + 1 networked) must also be converted to source string constants so they can be displayed in the read-only editor. This happens in Phase 3, parallel to what Phase 1 does for skins.</p>
+</div>
+
+<div class="section" id="s-dec-scripts"><div class="section-title">Scripts Box Decisions</div>
+<p><span class="status-tag status-decided">Decided</span> <strong>Three sub-sections:</strong> Skins, CBX Local, CBX Networked. Positioned between Challenge and Buses in the sidebar.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Collapse behavior.</strong> Scripts group starts collapsed. All three sub-sections start collapsed. Wired into Expand All / Collapse All buttons.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Foundational scripts.</strong> Read-only, lock icon, always at top of file list, do not count against 16-slot limit. Operator can read and copy the source text but cannot modify it.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Foundational skin count:</strong> 3 (OG, Winamp, Sunrise). <strong>Foundational CBX Local count:</strong> 9. <strong>Foundational CBX Networked count:</strong> 1 (Chain Sum). These will increase by 1 when the Operators Club Challenge is added in Phase 5.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Old challenge custom section removed.</strong> The textarea, REGISTER button, and custom challenge list in the Challenge sidebar section are removed in Phase 3. Replaced by a wayfinding hint.</p>
+</div>
+
+<div class="section" id="s-dec-club"><div class="section-title">Operators Club Decisions</div>
+<p><span class="status-tag status-decided">Decided</span> <strong>Physical mail application.</strong> Printed form, $16 in two-dollar bills (8 bills), pre-addressed stamped postcard. Mailed to North Windham, Maine.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Member numbers are random.</strong> Not sequential, not encoded. Same principle as variant numbers.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Cool number auctions.</strong> Reserved numbers auctioned in dribs and drabs over time. Not all at once.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Newsletter.</strong> Monthly email. Content at Shea's sole discretion. Not a product update list.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Variant registry.</strong> Separate program, same mail infrastructure. $32 in two-dollar bills (16 bills). Does not require club membership.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>No leaderboards.</strong> Shea explicitly does not want to maintain leaderboards.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Duplicate rule.</strong> If a completion code has already been used, the application is rejected and Shea spends the $16 on ice cream. The math guarantees duplicates are fraud, not coincidence.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Challenge is re-rollable.</strong> Operators can start the challenge as many times as they want. Each start generates a new seed. No penalty for restarting.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Knowing the solution doesn't help.</strong> The challenge is a recipe, not a puzzle. The procedure is printed in the description. You still have to do it by hand.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Five-minute sizing.</strong> The challenge is sized so a skilled operator finishes in about five minutes. This is a design constraint on scope, not a time limit. No timer, no enforcement.</p>
+</div>
+
+<div class="section" id="s-dec-stats"><div class="section-title">Stats Decisions</div>
+<p><span class="status-tag status-decided">Decided</span> <strong>Operator actions is the only published stat.</strong> Published alongside member number and date. No wall time, no tick count in the public record.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>All stats encoded in the code privately.</strong> The completion code encodes tick count, operator actions, wall time, and a hash. Shea sees all stats when verifying. Only operator actions gets published.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Public record per member: three fields.</strong> Member number, date, operator actions. That's it.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Completion code format:</strong> 8 groups of 4 characters, 22-character unambiguous alphabet, 143 bits total. 48-bit seed, 16-bit ticks, 12-bit actions, 12-bit wall seconds, 55-bit hash.</p>
+<p><span class="status-tag status-decided">Decided</span> <strong>Verification tool is a standalone HTML file.</strong> No server. No database. Paste code, get result.</p>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter" id="ch-pending"><div class="chapter-number">Section 4</div><div class="chapter-title">What Shea Needs to Decide</div>
+<p>These questions came up during the session but were not resolved. They need Shea's input before the relevant phase starts. None of them block Phase 0.</p>
+
+<h4>Before Phase 2</h4>
+<p><span class="status-tag status-pending">Pending</span> <strong>Textarea height.</strong> The spec says 120–160px. Should we pick a specific value or set a reasonable default and adjust after seeing it?</p>
+<p><span class="status-tag status-pending">Pending</span> <strong>Naming dialog style.</strong> Inline input (like Files) or modal overlay?</p>
+
+<h4>Before Phase 3</h4>
+<p><span class="status-tag status-pending">Pending</span> <strong>Challenge source string formatting.</strong> The built-in challenge <code>generate()</code> and <code>par()</code> functions have non-trivial logic. Should the source strings be formatted for readability (indentation, comments), or kept minimal?</p>
+<p><span class="status-tag status-pending">Pending</span> <strong>Active challenge edit warning.</strong> If an operator is running a custom challenge and edits its script, should SAVE DRAFT immediately abort the challenge, or show a warning first?</p>
+
+<h4>Before Phase 5</h4>
+<p><span class="status-tag status-pending">Pending</span> <strong>Which challenge?</strong> The shortlist is Proving Ground (1), Bit Surgery (4), and Bridge Crossing (10). A combination of two is also possible. This is the single most consequential open decision. It can only be made once. See the Operators Club Design Document, Section 4 for full candidate descriptions and comparison matrix.</p>
+<p><span class="status-tag status-pending">Pending</span> <strong>Challenge procedure style.</strong> Step-by-step instructions or high-level algorithm?</p>
+<p><span class="status-tag status-pending">Pending</span> <strong>Challenge scoring participation.</strong> Does the club challenge participate in the normal scoring system (par, history), or is it a separate system that only produces a completion code?</p>
+<p><span class="status-tag status-pending">Pending</span> <strong>Visual distinction.</strong> Should the club challenge be visually distinct from other foundational challenges in the file list?</p>
+<p><span class="status-tag status-pending">Pending</span> <strong>Copy-to-clipboard.</strong> Should the completion code have a copy button, or be display-only to reinforce the analog nature?</p>
+<p><span class="status-tag status-pending">Pending</span> <strong>Code backup.</strong> Should the simulator store the most recent completion code in localStorage?</p>
+
+<h4>Non-code decisions (no phase dependency)</h4>
+<p><span class="status-tag status-pending">Pending</span> <strong>Member number format.</strong> 5-digit, 6-digit, prefixed?</p>
+<p><span class="status-tag status-pending">Pending</span> <strong>Launch timing.</strong> Club at launch or post-launch?</p>
+<p><span class="status-tag status-pending">Pending</span> <strong>P.O. box or home address?</strong></p>
+<p><span class="status-tag status-pending">Pending</span> <strong>Email platform for newsletter.</strong></p>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter" id="ch-open"><div class="chapter-number">Section 5</div><div class="chapter-title">Open Design Questions</div>
+<p>These are implementation-level questions that can be resolved by the implementing Claude instance, ideally in consultation with Shea. They're listed here so you know they exist.</p>
+
+<p><span class="status-tag status-open">Design</span> <strong>Shared vs per-catalog dialog elements.</strong> Should naming and delete dialogs be one shared DOM element repointed per catalog, or separate elements per catalog?</p>
+<p><span class="status-tag status-open">Design</span> <strong>Per-catalog UI state storage.</strong> Module-level variables won't scale to four catalogs. State object per config, parallel state Map, or properties on the config?</p>
+<p><span class="status-tag status-open">Design</span> <strong>Post-name-confirmation callback.</strong> Files arms a save pipeline; Scripts navigates to editor. Cleanest hook pattern for type-specific behavior after naming?</p>
+<p><span class="status-tag status-open">Design</span> <strong>SKINS declaration.</strong> <code>const SKINS = {}</code> with properties set at init, or <code>let SKINS</code>? Coding standards favor <code>const</code> aliases.</p>
+<p><span class="status-tag status-open">Design</span> <strong>CSS variables: single source of truth.</strong> The <code>:root</code> CSS and the skin source strings both define section colors. Recommendation from the session: source strings are authoritative, CSS is a pre-JS-execution cache. Both must stay in sync manually.</p>
+<p><span class="status-tag status-open">Design</span> <strong>Winamp/Sunrise overrides for new section colors.</strong> Hand-pick to match palette or derive by formula?</p>
+<p><span class="status-tag status-open">Design</span> <strong>VALID_CSS_VARS set.</strong> Auto-generated from :root at runtime, or hardcoded?</p>
+<p><span class="status-tag status-open">Design</span> <strong>Custom skin body class namespace.</strong> <code>skin-my-theme</code> or <code>skin-custom-my-theme</code>?</p>
+<p><span class="status-tag status-open">Design</span> <strong>CBX dry run event loop yielding.</strong> 250ms synchronous block acceptable, or yield between dry runs?</p>
+<p><span class="status-tag status-open">Design</span> <strong>Hash salt obscurity.</strong> Buried or clearly named?</p>
+<p><span class="status-tag status-open">Design</span> <strong>22 vs 24 character alphabet.</strong> Current design excludes 5/S. Including them gives more hash bits. Excluding reduces transcription errors.</p>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter" id="ch-next"><div class="chapter-number">Section 6</div><div class="chapter-title">What to Build Next</div>
+
+<p>Phase 0: Shared Catalog Engine. This is a pure refactor. Zero functional change to the operator.</p>
+
+<h4>Step 1: Read</h4>
+<p>Read the Coding Standards doc. Read the current Files implementation in v.308 (lines ~6146–6860). Understand every function, every state variable, every DOM element ID. The catalog engine must be a precise extraction — not an approximation, not a reimagining. The existing Files behavior is the contract.</p>
+
+<h4>Step 2: Design the config object shape</h4>
+<p>Resolve the three open design questions for Phase 0 (shared vs per-catalog dialogs, UI state storage, post-confirmation callback). Propose the config object shape to Shea before writing code. The config shape is the API contract for all four catalogs.</p>
+
+<h4>Step 3: Extract and refactor</h4>
+<p>Write the shared catalog engine functions. Refactor Files functions to be thin wrappers that call the engine with <code>CATALOG_CONFIGS.files</code>. Leave all Files-specific behavior (File Save pipeline, FTP, encode/decode) untouched.</p>
+
+<h4>Step 4: Test</h4>
+<p>Verify that every Files operation works identically to v.308: create, name, save (armed + batch write), load, delete, sort by name, sort by time, overwrite dialog, partial save, cancel save, FTP send, FTP receive, FTP accept/reject. Verify localStorage format is unchanged — existing saved files must survive the upgrade.</p>
+
+<h4>Step 5: Deliver</h4>
+<p><code>node --check</code>. Update <code>APP_VERSION</code> (both filename and JS constant — see Traps section). Deliver as v.309 (or whatever the current next version is at the time).</p>
+
+<div class="callout warn"><div class="callout-label">Do Not Combine Phases</div>Phase 0 must ship alone. Do not combine it with Phase 1. The Files refactor and the skin refactor are two independent risks and must be tested independently. If P0 breaks something, you need to know before P1 adds noise.</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter" id="ch-codebase"><div class="chapter-number">Section 7</div><div class="chapter-title">Codebase Orientation</div>
+<p>Key locations in v.308 that this work touches:</p>
+
+<table class="ref-table">
+<tr><th>What</th><th>Where</th><th>Notes</th></tr>
+<tr><td>CSS section color vars</td><td><code>:root</code> block, near top</td><td>New vars added in P1.</td></tr>
+<tr><td><code>.sb-bus-group</code> CSS</td><td>Lines ~454–458</td><td>Pattern to follow for <code>.sb-scripts-group</code>.</td></tr>
+<tr><td><code>.file-entry</code> CSS</td><td>Lines ~1319–1336</td><td>Pattern to follow for <code>.script-entry</code>.</td></tr>
+<tr><td>Sidebar HTML — Files section</td><td>Lines ~2939–3050</td><td>The section being refactored onto shared engine.</td></tr>
+<tr><td>Sidebar HTML — Challenge section</td><td>Lines ~2380–2515</td><td><code>#chall-custom-section</code> removed in P3.</td></tr>
+<tr><td>Sidebar HTML — Buses group</td><td>Lines ~2516+</td><td>Scripts group goes between Challenge and this.</td></tr>
+<tr><td><code>SKINS</code> object</td><td>Lines 3397–3727</td><td>Replaced with source string parsing in P1.</td></tr>
+<tr><td><code>applySkin()</code></td><td>Line 3733</td><td>Unchanged but must be verified after P1.</td></tr>
+<tr><td><code>APP_VERSION</code></td><td>Line 6150</td><td>Must be updated in every build.</td></tr>
+<tr><td>Files system</td><td>Lines ~6146–6860</td><td>Refactored onto shared engine in P0.</td></tr>
+<tr><td><code>customChallengeRegistry</code></td><td>Line 5776</td><td>Driven from Scripts in P3.</td></tr>
+<tr><td><code>registerCustomChallenge()</code></td><td>Line 5778</td><td>UI removed in P3, logic preserved.</td></tr>
+<tr><td><code>validateCustomChallengeDefinition()</code></td><td>Line 5821</td><td>Relocated to Scripts verification in P3.</td></tr>
+<tr><td><code>expandAllSidebarSections()</code></td><td>Line 15148</td><td>Scripts group added in P1.</td></tr>
+<tr><td><code>collapseAllSidebarSections()</code></td><td>Line 15157</td><td>Scripts group added in P1.</td></tr>
+<tr><td><code>toggleBusGroup()</code></td><td>Line 15173</td><td>Pattern to follow for <code>toggleScriptsGroup()</code>.</td></tr>
+</table>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter" id="ch-traps"><div class="chapter-number">Section 8</div><div class="chapter-title">Traps and Gotchas</div>
+
+<h4>APP_VERSION drift</h4>
+<p>The #1 process failure on this project. Every build must update BOTH the filename (<code>loop2-stage2 (NNN).html</code>) AND <code>const APP_VERSION</code> in the JS (line ~6150). These must always match. The version has drifted three times in the project's history because the filename was updated but APP_VERSION wasn't. Search for <code>APP_VERSION</code> — there is exactly one instance.</p>
+
+<h4>Bus capability parity</h4>
+<p>Buses A, B, C, and D are identical in capability. Never describe them as different or lesser. This applies to documentation and to code comments.</p>
+
+<h4>Operators, not "Loopers" or "flowheads"</h4>
+<p>L21 users are called operators. This is the machine's functional term. Applies permanently across all documents, code comments, UI text, and conversation.</p>
+
+<h4>L21 is not anti-anything</h4>
+<p>Never frame L21 as a critique of or response to modern computing. The correct framing is curiosity, craft, joy, and a different vantage point on computation.</p>
+
+<h4>No unrequested features</h4>
+<p>Build exactly what is specified. Do not add UI elements, keyboard shortcuts, helper functions, or "nice to have" features that were not explicitly requested. This is listed as an anti-pattern in the Coding Standards.</p>
+
+<h4>node --check before every delivery</h4>
+<p>Syntax check with <code>node --check</code> is required before every delivery. Never deliver without a passing check.</p>
+
+<h4>Never deliver two files when one is needed</h4>
+<p>The simulator is a single HTML file. Always deliver one file.</p>
+
+<h4>Never stop mid-build to ask "continue"</h4>
+<p>Keep going automatically. Complete the build.</p>
+
+<h4>Finding bugs is Claude's job</h4>
+<p>In this vibe coding arrangement, finding bugs in code is the implementing Claude's responsibility. Do not frame bug discovery as something Shea "couldn't find."</p>
+
+<h4>The easter egg</h4>
+<p>There is a deliberately obfuscated easter egg in the codebase (identifiers like <code>_v0</code>, <code>_c0</code>, <code>_k0</code>, <code>_p0</code>, <code>_ee0</code>). Never reference what it does or how to trigger it unless Shea raises it first.</p>
+
+<h4>Scoring tension</h4>
+<p>Time-weighting in the scoring system penalizes exploratory learning. This is a known tension — worth tracking but not something to "fix" without Shea's direction.</p>
+
+<h4>Skin source strings and CSS :root must stay in sync</h4>
+<p>After Phase 1, the new section color variables (<code>--sec-skins</code>, etc.) will exist in two places: the CSS <code>:root</code> block and the Winamp/Sunrise skin source strings. If you change one, change the other. There is no automated sync.</p>
+</div>
+
+<hr>
+<p style="font-size:14px;color:var(--fg-dim);margin-bottom:48px;">Handoff document written March 28, 2026. Start with Phase 0. Good luck.</p>
+</main></div>
+<div class="page-footer"><span>Loop 2.1 · loop2.computer</span><span>Handoff Document</span><span>March 2026</span></div>
+<script>
+function setSkin(id){document.body.className=id==='og'?'':'skin-'+id;try{localStorage.setItem('loop2-handoff-skin',id);}catch(e){}document.querySelectorAll('.skin-btn').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')==="setSkin('"+id+"')"));}
+document.addEventListener('DOMContentLoaded',()=>{let s='og';try{s=localStorage.getItem('loop2-handoff-skin')||'og';}catch(e){}setSkin(s);const ch=document.querySelectorAll('.chapter,.section[id]');const tl=document.querySelectorAll('.toc-list a');const ob=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){const id=e.target.id;tl.forEach(l=>l.classList.remove('active'));const a=document.querySelector('.toc-list a[href="#'+id+'"]');if(a)a.classList.add('active');}});},{threshold:0.1,rootMargin:'-80px 0px -60% 0px'});ch.forEach(c=>ob.observe(c));});
+</script>
+</body></html>

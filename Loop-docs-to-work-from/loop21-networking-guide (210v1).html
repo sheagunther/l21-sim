@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loop 2.1 — Networking</title>
+<style>
+  :root {
+    --bg:        #e8eef4;
+    --panel:     #e8eef4;
+    --panel2:    #edf1f5;
+    --panel3:    #dce4ec;
+    --border:    #9ab0c4;
+    --border2:   #b0c4d4;
+    --fg:        #000000;
+    --fg-dim:    #507090;
+    --accent:    #6030c0;
+    --working:   #1060b0;
+    --alu:       #b06000;
+    --memory:    #006830;
+    --big:       #006888;
+    --bus-a:     #6030c0;
+    --bus-b:     #c838c8;
+    --bus-c:     #20c8a0;
+    --bus-d:     #e07020;
+    --bus-e:     #e02040;
+    --net:       #6888c0;
+    --font:      'Courier New', 'Consolas', monospace;
+    --max-w:     820px;
+    --callout-tip-bg:   #e8f4ec;
+    --callout-warn-bg:  #fef8e0;
+    --callout-key-bg:   #eef0f8;
+    --callout-net-bg:   #eef2f8;
+    --code-bg:          #dce4ec;
+  }
+
+  body.skin-winamp {
+    --bg: #1e1e1e; --panel: #252525; --panel2: #202020; --panel3: #1c1c1c;
+    --border: #1e4c28; --border2: #163c20;
+    --fg: #33ff44; --fg-dim: #33ff44;
+    --accent: #33ff44; --working: #44aaff; --alu: #ffaa00; --memory: #33ff44; --big: #00ddff;
+    --net: #88aaff;
+    --callout-tip-bg: #0c1e10; --callout-warn-bg: #1e1000; --callout-key-bg: #0a1020;
+    --callout-net-bg: #0a1020; --code-bg: #0a1a0c;
+  }
+  body.skin-sunrise {
+    --bg: #fff8ec; --panel: #ffffff; --panel2: #fffcf5; --panel3: #fff4e0;
+    --border: #e8b030; --border2: #d8a020;
+    --fg: #000000; --fg-dim: #705030;
+    --accent: #5828b0; --working: #0060c0; --alu: #c06000; --memory: #007030; --big: #007898;
+    --net: #4466aa;
+    --callout-tip-bg: #e8f8ec; --callout-warn-bg: #fff4dc; --callout-key-bg: #f0eeff;
+    --callout-net-bg: #eef2ff; --code-bg: #fff0cc;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page-header {
+    background: var(--panel);
+    border-bottom: 2px solid var(--border);
+    padding: 28px 48px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .logo { font-family: var(--font); letter-spacing: 6px; font-size: 20px; font-weight: bold; color: var(--fg); }
+  .logo-sub { font-family: var(--font); font-size: 10px; letter-spacing: 3px; color: var(--fg-dim); margin-top: 4px; }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .doc-title { text-align: right; }
+  .doc-title .title-main { font-family: var(--font); font-size: 11px; letter-spacing: 3px; color: var(--fg-dim); text-transform: uppercase; }
+  .doc-title .build-tag  { font-family: var(--font); font-size: 10px; letter-spacing: 1px; color: var(--fg-dim); margin-top: 3px; }
+
+  .skin-group { display: flex; align-items: center; gap: 5px; }
+  .skin-btn {
+    font-family: var(--font); font-size: 10px; letter-spacing: 1px;
+    padding: 3px 9px; background: transparent; border: 1px solid var(--border2);
+    color: var(--fg-dim); cursor: pointer; text-transform: uppercase;
+    transition: border-color 0.1s, color 0.1s, background 0.1s;
+  }
+  .skin-btn:hover  { border-color: var(--fg); color: var(--fg); }
+  .skin-btn.active { border-color: var(--fg); color: var(--fg); background: var(--panel2); }
+
+  .body-wrap {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .toc-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 80px;
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+    padding: 32px 0 32px 32px;
+    border-right: 1px solid var(--border2);
+    font-family: var(--font);
+  }
+  .toc-title { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--fg-dim); margin-bottom: 16px; }
+  .toc-list { list-style: none; }
+  .toc-list li { margin-bottom: 2px; }
+  .toc-list a {
+    font-size: 11px; letter-spacing: 0.5px; color: var(--fg-dim); text-decoration: none;
+    display: block; padding: 3px 6px; border-left: 2px solid transparent;
+    transition: color 0.1s, border-color 0.1s;
+  }
+  .toc-list a:hover { color: var(--fg); border-left-color: var(--border); }
+  .toc-list .toc-sub a { font-size: 10px; padding-left: 14px; color: var(--fg-dim); opacity: 0.75; }
+  .toc-list .toc-sub a:hover { opacity: 1; }
+
+  .toc-back {
+    font-family: var(--font); font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--net); margin-bottom: 20px; display: block;
+    padding: 4px 6px; border: 1px solid var(--net); text-decoration: none;
+    opacity: 0.7;
+  }
+  .toc-back:hover { opacity: 1; }
+
+  .content {
+    flex: 1;
+    min-width: 0;
+    padding: 48px 64px 96px 48px;
+    max-width: var(--max-w);
+  }
+
+  .chapter { margin-bottom: 64px; scroll-margin-top: 100px; }
+  .chapter-number {
+    font-family: var(--font); font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--fg-dim); margin-bottom: 6px;
+  }
+  .chapter-title {
+    font-family: var(--font); font-size: 22px; font-weight: bold; letter-spacing: 2px;
+    color: var(--fg); margin-bottom: 6px; border-bottom: 2px solid var(--border);
+    padding-bottom: 10px;
+  }
+  .section { margin: 32px 0; scroll-margin-top: 100px; }
+  .section-title {
+    font-family: var(--font); font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--fg-dim); border-bottom: 1px solid var(--border2);
+    padding-bottom: 6px; margin-bottom: 16px;
+  }
+  h4 { font-size: 16px; font-weight: 600; margin: 20px 0 8px; }
+
+  p { margin-bottom: 14px; }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  ul, ol { margin: 0 0 14px 24px; }
+  li { margin-bottom: 6px; }
+
+  .callout {
+    border-left: 4px solid var(--border);
+    padding: 12px 16px;
+    background: var(--panel);
+    margin: 20px 0;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .callout.tip  { background: var(--callout-tip-bg);  border-left-color: var(--memory); }
+  .callout.warn { background: var(--callout-warn-bg); border-left-color: var(--alu); }
+  .callout.key  { background: var(--callout-key-bg);  border-left-color: var(--working); }
+  .callout.net  { background: var(--callout-net-bg);  border-left-color: var(--net); }
+  .callout.phi  { background: var(--panel); border-left-color: var(--accent); font-style: italic; }
+  .callout-label {
+    font-family: var(--font); font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--fg-dim); margin-bottom: 6px;
+  }
+  .callout.tip  .callout-label { color: var(--memory); }
+  .callout.warn .callout-label { color: var(--alu); }
+  .callout.key  .callout-label { color: var(--working); }
+  .callout.net  .callout-label { color: var(--net); }
+  .callout.phi  .callout-label { color: var(--accent); }
+
+  kbd {
+    display: inline-block; background: var(--panel2); border: 1px solid var(--border);
+    border-bottom-width: 2px; padding: 1px 6px; font-family: var(--font);
+    font-size: 13px; border-radius: 2px; white-space: nowrap;
+  }
+  code {
+    background: var(--code-bg); padding: 1px 5px; font-family: var(--font);
+    font-size: 14px; color: var(--alu); border-radius: 2px;
+  }
+
+  .ref-table {
+    width: 100%; border-collapse: collapse; font-size: 15px;
+    margin: 16px 0; line-height: 1.5;
+  }
+  .ref-table th {
+    font-family: var(--font); font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--fg-dim); text-align: left; padding: 7px 10px;
+    border-bottom: 2px solid var(--border); background: var(--panel);
+  }
+  .ref-table td {
+    padding: 7px 10px; border-bottom: 1px solid var(--border2); vertical-align: top;
+  }
+  .ref-table tr:last-child td { border-bottom: none; }
+  .ref-table td:first-child { font-family: var(--font); font-size: 13px; color: var(--fg-dim); white-space: nowrap; }
+
+  .steps { counter-reset: step; list-style: none; margin: 0 0 14px; }
+  .steps li {
+    counter-increment: step; display: flex; gap: 16px;
+    margin-bottom: 14px; align-items: flex-start;
+  }
+  .steps li::before {
+    content: counter(step); display: flex; align-items: center; justify-content: center;
+    min-width: 26px; height: 26px; background: var(--fg); color: var(--bg);
+    font-family: var(--font); font-size: 11px; font-weight: bold;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .steps li .step-body { flex: 1; min-width: 0; font-size: 16px; line-height: 1.65; overflow-wrap: break-word; }
+
+  hr { border: none; border-top: 1px solid var(--border2); margin: 40px 0; }
+
+  /* Network-specific: topology diagram */
+  .topology-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin: 20px 0;
+    padding: 20px;
+    background: var(--panel);
+    border: 1px solid var(--border2);
+    flex-wrap: wrap;
+    row-gap: 12px;
+  }
+  .topo-node {
+    font-family: var(--font); font-size: 11px; letter-spacing: 1px;
+    padding: 8px 14px; border: 2px solid var(--net); color: var(--net);
+    background: var(--panel2); text-align: center; min-width: 80px;
+  }
+  .topo-node.hub { border-color: var(--accent); color: var(--accent); background: var(--callout-key-bg); }
+  .topo-node.you { border-color: var(--fg); color: var(--fg); background: var(--panel3); }
+  .topo-wire {
+    font-family: var(--font); font-size: 13px; color: var(--border);
+    padding: 0 4px; user-select: none;
+  }
+  .topo-label {
+    font-family: var(--font); font-size: 9px; letter-spacing: 2px;
+    color: var(--fg-dim); text-align: center; display: block; margin-top: 4px;
+  }
+
+  /* Badge-style role indicator */
+  .role-badge {
+    display: inline-block;
+    font-family: var(--font); font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 2px 6px; border: 1px solid;
+    vertical-align: middle; margin-left: 6px;
+  }
+  .role-badge.hub    { border-color: var(--accent);  color: var(--accent); }
+  .role-badge.member { border-color: var(--net);     color: var(--net); }
+
+  /* sub-section box */
+  .subsection-box {
+    border: 1px solid var(--border2);
+    border-left: 4px solid var(--net);
+    padding: 14px 18px;
+    margin: 12px 0 20px;
+    background: var(--panel2);
+  }
+  .subsection-box-title {
+    font-family: var(--font); font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--net); margin-bottom: 8px;
+  }
+
+  .page-footer {
+    max-width: 1200px; margin: 0 auto; padding: 20px 64px 48px 320px;
+    font-family: var(--font); font-size: 10px; letter-spacing: 1px; color: var(--fg-dim);
+    border-top: 1px solid var(--border2); display: flex; justify-content: space-between;
+  }
+
+  @media (max-width: 800px) {
+    .toc-sidebar { display: none; }
+    .content { padding: 32px 24px 64px; }
+    .page-header { padding: 20px 24px; }
+    .page-footer { padding: 20px 24px; }
+    .topology-diagram { justify-content: flex-start; }
+  }
+</style>
+</head>
+<body class="skin-og">
+
+<div class="page-header">
+  <div>
+    <div class="logo">LOOP 2.1</div>
+    <div class="logo-sub">Manual Flow Computer</div>
+  </div>
+  <div class="header-right">
+    <div class="skin-group">
+      <span style="font-family:var(--font);font-size:9px;letter-spacing:2px;color:var(--fg-dim);text-transform:uppercase;margin-right:4px;">Skin</span>
+      <button class="skin-btn active" onclick="setSkin('og')">OG</button>
+      <button class="skin-btn" onclick="setSkin('winamp')">Winamp</button>
+      <button class="skin-btn" onclick="setSkin('sunrise')">Sunrise</button>
+    </div>
+    <div class="doc-title">
+      <div class="title-main">Networking — Standalone Guide</div>
+      <div class="build-tag">Current as of v.215 · March 2026</div>
+    </div>
+  </div>
+</div>
+
+<div class="body-wrap">
+
+<nav class="toc-sidebar">
+  <a class="toc-back" href="#">← Manual Ch. 13–14</a>
+  <div class="toc-title">This Chapter</div>
+  <ul class="toc-list">
+    <li><a href="#s-net-overview">Overview</a></li>
+    <li><a href="#s-net-scan">Scanning the Chain</a></li>
+    <li><a href="#s-net-create">Creating a Network</a></li>
+    <li><a href="#s-net-join">Joining a Network</a></li>
+    <li><a href="#s-net-hub">Hub Responsibilities</a></li>
+    <li><a href="#s-net-members">Members &amp; Roles</a></li>
+    <li><a href="#s-net-election">Hub Election</a></li>
+    <li><a href="#s-net-chat">Chat</a></li>
+    <li><a href="#s-net-multi">Multiple Networks</a></li>
+    <li><a href="#s-net-refresh">Refresh &amp; Reset</a></li>
+  </ul>
+</nav>
+
+<main class="content">
+
+<div class="chapter" id="ch-networking">
+  <div class="chapter-number">Chapter 15 — Networking (Standalone Guide)</div>
+  <div class="chapter-title">Networking</div>
+
+  <p>The Networking panel lets groups of connected machines form named virtual networks. Where P2P connections give you raw data pipes between neighbors, a network gives those machines a shared identity, a membership list, coordinated routing, and a unified chat system. You can belong to more than one network simultaneously, and you can belong to a network while also being a plain relay on the chain for machines not in any network.</p>
+
+  <p>The Networking section is in the right sidebar, directly above P2P Connection. It starts collapsed. Open it to begin.</p>
+
+  <div class="callout net">
+    <div class="callout-label">Prerequisite</div>
+    Networking requires at least one active P2P connection. Connect to your left neighbor, your right neighbor, or both using the P2P Connection panel before working with Networking. Everything in the Networking panel depends on the underlying P2P chain being established first.
+  </div>
+
+
+  <!-- OVERVIEW -->
+  <div class="section" id="s-net-overview">
+    <div class="section-title">Overview</div>
+
+    <p>A network is a named group of machines layered on top of the physical P2P chain. Machines in a network do not need to be direct neighbors — a machine at position +3 and a machine at position −2 can be in the same network, with the machines between them acting as transparent relays.</p>
+
+    <p>Every network has exactly one <strong>hub</strong> — the machine that created the network and manages membership. All other participating machines are <strong>members</strong>. The hub maintains the routing table and distributes it to all members so that any member can address any other member by ID.</p>
+
+    <div class="topology-diagram">
+      <div>
+        <div class="topo-node">Machine A</div>
+        <span class="topo-label">position −2</span>
+      </div>
+      <div class="topo-wire">———</div>
+      <div>
+        <div class="topo-node you">You</div>
+        <span class="topo-label">position 0 · hub</span>
+      </div>
+      <div class="topo-wire">———</div>
+      <div>
+        <div class="topo-node">Machine B</div>
+        <span class="topo-label">position +1</span>
+      </div>
+      <div class="topo-wire">———</div>
+      <div>
+        <div class="topo-node">Machine C</div>
+        <span class="topo-label">position +2 · relay only</span>
+      </div>
+      <div class="topo-wire">———</div>
+      <div>
+        <div class="topo-node">Machine D</div>
+        <span class="topo-label">position +3 · member</span>
+      </div>
+    </div>
+
+    <p>In the diagram above, Machine C is a relay — it is not a member of the network, but messages to Machine D travel through it transparently. Machine C does not need to be aware of or interact with the network. Relay behavior is automatic.</p>
+
+    <p>Networks are session-only. They do not persist after a page refresh. If you refresh, you leave all networks and must reconnect your P2P connections before reforming. Your machine ID (the short identifier shown in the P2P Connection panel) is the only thing that persists across sessions.</p>
+  </div>
+
+
+  <!-- SCANNING -->
+  <div class="section" id="s-net-scan">
+    <div class="section-title">Scanning the Chain</div>
+
+    <p>Before creating or joining a network, run a scan. The scan propagates a probe in both directions along the P2P chain, collecting machine IDs and handles as it goes, and returns a count of detected machines in each direction.</p>
+
+    <p>Click <kbd>⬡ SCAN NETWORK</kbd> at the top of the Networking panel. After a few seconds the topology summary updates:</p>
+
+    <div class="subsection-box">
+      <div class="subsection-box-title">Topology Summary Examples</div>
+      <code>1 left · 1 right · 3 total</code> — three machines in a chain, you in the middle<br><br>
+      <code>2 left · 2 right · 5 total</code> — five machines, you in the middle of a longer chain<br><br>
+      <code>1 left · 1 right · 3 total</code> — same display for a looped ring of three
+    </div>
+
+    <p>The scan also discovers any named networks that already exist on the chain. Discovered networks appear in the <strong>Available Networks</strong> sub-section, where you can request to join them.</p>
+
+    <p>A scan runs automatically when a new P2P connection opens. You can re-run it manually at any time with the <kbd>⬡ SCAN NETWORK</kbd> button — useful after the chain topology changes or new machines join.</p>
+
+    <div class="callout tip">
+      <div class="callout-label">After a Scan</div>
+      Once a scan completes, the <strong>Create Network</strong> sub-section populates with a checkbox list of all detected machines. Each entry shows the machine's handle (or ID if no handle is set) and its signed position relative to you — positive numbers to the right, negative to the left. These checkboxes are your invite list.
+    </div>
+  </div>
+
+
+  <!-- CREATING A NETWORK -->
+  <div class="section" id="s-net-create">
+    <div class="section-title">Creating a Network</div>
+
+    <p>Open the <strong>Create Network</strong> sub-section. You will see a name field and a list of detected machines.</p>
+
+    <ol class="steps">
+      <li><div class="step-body">Type a name in the network name field. Names can be up to 24 characters — letters, numbers, spaces, and hyphens.</div></li>
+      <li><div class="step-body">Check the boxes next to the machines you want to invite. Each entry shows the machine's handle and position. You can invite any subset of detected machines — you do not have to invite everyone on the chain.</div></li>
+      <li><div class="step-body">Click <kbd>⬡ CREATE NETWORK</kbd>. Invitations are sent to each selected machine. The status line confirms how many invitations were dispatched.</div></li>
+      <li><div class="step-body">Wait for responses. Each invited machine will see an invitation panel appear in their Networking section. As they accept or decline, the status updates. Once all responses are received, the network is live and the routing table is distributed to all members.</div></li>
+    </ol>
+
+    <p>After creation, the network appears in your <strong>My Networks</strong> sub-section with a <span class="role-badge hub">HUB</span> badge. The member list shows handles, positions, and roles. As hub, you are also responsible for approving any join requests that arrive later from machines that were not in the original invite.</p>
+
+    <div class="callout key">
+      <div class="callout-label">You Can Only Create One Network</div>
+      Each machine can be the hub of at most one named network at a time. You can be a <em>member</em> of additional networks simultaneously, but you can only manage one network as hub. If you want to form a second network, a different machine on the chain needs to be its hub.
+    </div>
+  </div>
+
+
+  <!-- JOINING A NETWORK -->
+  <div class="section" id="s-net-join">
+    <div class="section-title">Joining a Network</div>
+
+    <p>There are two ways to join a network: accept an invitation, or request to join a network you discovered during a scan.</p>
+
+    <h4>Accepting an Invitation</h4>
+    <p>When another machine invites you, an invitation panel appears near the bottom of the Networking section. The panel shows the network name and the hub's handle. Click <kbd>ACCEPT</kbd> to join or <kbd>DECLINE</kbd> to refuse. Only one pending invitation is shown at a time.</p>
+
+    <h4>Requesting to Join</h4>
+    <p>If a scan discovers an existing network you are not in, it appears in the <strong>Available Networks</strong> sub-section with a <kbd>REQUEST TO JOIN</kbd> button. Clicking it sends a join request to the network's hub. The hub sees the request in their <strong>Join Requests</strong> sub-section and can approve or deny it. You will hear back when the hub responds — either a welcome into the network or a quiet denial.</p>
+
+    <div class="callout tip">
+      <div class="callout-label">After Joining</div>
+      Once you join a network, it appears in <strong>My Networks</strong> with a <span class="role-badge member">MEMBER</span> badge. The member list shows everyone in the network, including their handles and positions. The routing table is distributed by the hub, so messages can reach any member regardless of how many machines they are away from you on the chain.
+    </div>
+  </div>
+
+
+  <!-- HUB RESPONSIBILITIES -->
+  <div class="section" id="s-net-hub">
+    <div class="section-title">Hub Responsibilities</div>
+
+    <p>The hub is the network's administrative center. It maintains the membership list, distributes the routing table, sends heartbeat signals to keep the network alive, and handles join requests. These functions happen automatically in the background — the hub operator does not need to do anything manually once the network is formed.</p>
+
+    <h4>Join Requests</h4>
+    <p>When a machine outside the network requests to join, the <strong>Join Requests</strong> sub-section appears in the hub's Networking panel (it is hidden when empty). Each request shows the machine's handle and its chain position. Click <kbd>APPROVE</kbd> to admit the machine or <kbd>DENY</kbd> to refuse. Approved machines are added to the membership list and immediately receive the routing table.</p>
+
+    <h4>Dissolving the Network</h4>
+    <p>To end a network you created, open <strong>My Networks</strong>, find the network, and click <kbd>DISSOLVE NETWORK</kbd>. All members are notified and the network ceases to exist. Members are not disconnected from the P2P chain — only the named network layer is removed.</p>
+
+    <div class="callout warn">
+      <div class="callout-label">Hub Departure</div>
+      If the hub machine refreshes, loses its P2P connections, or otherwise becomes unreachable, members will detect the absence after approximately 15 seconds (three missed heartbeats). An automatic hub election then begins. See <a href="#s-net-election">Hub Election</a> below.
+    </div>
+  </div>
+
+
+  <!-- MEMBERS AND ROLES -->
+  <div class="section" id="s-net-members">
+    <div class="section-title">Members &amp; Roles</div>
+
+    <p>The <strong>My Networks</strong> sub-section shows every network you are involved in, each with its full member list. For each member you can see:</p>
+
+    <table class="ref-table">
+      <tr><th>Field</th><th>Meaning</th></tr>
+      <tr><td>Handle</td><td>The machine's operator handle, or its raw machine ID if no handle has been set. A ★ marks your own entry.</td></tr>
+      <tr><td>Position</td><td>The machine's signed chain position relative to you at the time it joined. Positive = right, negative = left. This is informational — routing does not depend on it.</td></tr>
+      <tr><td>Role</td><td><span class="role-badge hub">HUB</span> for the network manager. <span class="role-badge member">MEMBER</span> for everyone else.</td></tr>
+    </table>
+
+    <p>To leave a network you are a member of, find it in <strong>My Networks</strong> and click <kbd>LEAVE NETWORK</kbd>. The hub and remaining members are notified. If you are the hub, the button reads <kbd>DISSOLVE NETWORK</kbd> and the entire network ends.</p>
+  </div>
+
+
+  <!-- HUB ELECTION -->
+  <div class="section" id="s-net-election">
+    <div class="section-title">Hub Election</div>
+
+    <p>Networks are designed to survive the loss of their hub. If the hub stops sending heartbeats for approximately 15 seconds — roughly three missed intervals — the remaining members start an election to choose a new hub automatically.</p>
+
+    <p>The election uses a simple rule: the machine with the lowest machine ID among the remaining members wins. Machine IDs are assigned randomly when a session starts, so there is no meaningful way to predict or engineer the outcome. The winner broadcasts a claim, all other machines acknowledge it, and the new hub begins sending heartbeats and distributing an updated routing table.</p>
+
+    <p>From a member's perspective, an election is mostly invisible. There may be a brief period of a few seconds where network messages do not route correctly. Once the new hub is established, normal operation resumes. The new hub's badge updates in every member's <strong>My Networks</strong> display.</p>
+
+    <div class="callout net">
+      <div class="callout-label">If the Original Hub Returns</div>
+      If the original hub machine reconnects after an election has completed, it rejoins as a plain member. It does not automatically reclaim the hub role. A new network with that machine as hub requires creating a fresh network.
+    </div>
+  </div>
+
+
+  <!-- CHAT -->
+  <div class="section" id="s-net-chat">
+    <div class="section-title">Chat</div>
+
+    <p>The <strong>Chat</strong> section (below P2P Chat in the sidebar, now renamed from P2P Chat) is a unified messaging panel that shows every machine you can communicate with — direct P2P neighbors and network members — in a single dropdown. Each person appears once regardless of how many ways you are connected to them.</p>
+
+    <p>Select a machine from the dropdown to load your conversation history with them. The history persists for the current session; each conversation is separate. Type a message and press <kbd>SEND</kbd> or hit Enter.</p>
+
+    <p>The chat system routes messages automatically by the best available path. If the recipient is a direct P2P neighbor, the message travels directly. If they are only reachable through a network, it routes through the network's relay chain. You do not need to think about which path is used.</p>
+
+    <h4>Handles in Chat</h4>
+    <p>Machine names in the chat dropdown and in message history reflect the handle the operator has set for that session. If a neighbor connects before setting their handle, their machine ID appears as a placeholder. Once they type a handle, the dropdown and all existing messages update to show the new name immediately — no refresh needed.</p>
+
+    <div class="callout tip">
+      <div class="callout-label">Setting Your Handle</div>
+      Your handle is set in the text field at the top left of the simulator, below the Loop 2.1 logo. It is shared automatically when you connect to a neighbor. If you update it mid-session, your new handle propagates to all connected machines the next time they refresh their peer list — which happens automatically when network state changes.
+    </div>
+  </div>
+
+
+  <!-- MULTIPLE NETWORKS -->
+  <div class="section" id="s-net-multi">
+    <div class="section-title">Multiple Networks</div>
+
+    <p>A single machine can be a member of more than one named network simultaneously, but can only be the hub of one. This allows a machine at a junction in a long chain to bridge two different groups without those groups needing to know about each other.</p>
+
+    <p>Each network appears as a separate entry in <strong>My Networks</strong>. Routing tables are maintained independently per network. A message addressed to a machine in Network A does not interact with Network B's routing, even if some machines are members of both.</p>
+
+    <p>In the Chat dropdown, each reachable machine appears once. If a machine is reachable through two networks, the system picks the more direct path automatically. The conversation history with that machine is unified regardless of which network the messages actually traveled through.</p>
+
+    <div class="callout warn">
+      <div class="callout-label">Overlapping Membership</div>
+      When two of your networks share a member, that machine appears once in your Chat dropdown with a label showing the first network that knows about them. This is correct behavior. The routing system handles the deduplication; you just see one entry and one conversation thread.
+    </div>
+  </div>
+
+
+  <!-- REFRESH AND RESET -->
+  <div class="section" id="s-net-refresh">
+    <div class="section-title">Refresh &amp; Reset</div>
+
+    <p>A page refresh is a full reset. After refreshing:</p>
+
+    <ul>
+      <li>All P2P connections are closed and must be re-established</li>
+      <li>All network memberships are ended — you are no longer in any network</li>
+      <li>All chat history is cleared</li>
+      <li>All SDP handshake blobs in the P2P Connection panel are cleared</li>
+      <li>Your machine ID is preserved (stored in your browser's local storage)</li>
+      <li>Your operator handle is preserved if set before the refresh</li>
+    </ul>
+
+    <p>The SDP textarea fields are explicitly cleared on load and set to <code>autocomplete="off"</code>, so browser form restore does not repopulate stale handshake data. If a P2P connection attempt fails for any reason, a refresh gives you a clean slate with no risk of a previous failed attempt interfering.</p>
+
+    <div class="callout key">
+      <div class="callout-label">Reforming After a Refresh</div>
+      After refreshing, re-run the P2P handshake with your neighbors (P2P Connection panel), then click <kbd>⬡ SCAN NETWORK</kbd> in Networking to rediscover the chain topology. If the network you were in still has other machines running, request to rejoin via Available Networks or ask the hub to re-invite you.
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- QUICK REFERENCE -->
+  <div class="section" id="s-net-reference">
+    <div class="section-title">Quick Reference</div>
+
+    <table class="ref-table">
+      <tr><th>Action</th><th>Where</th><th>Notes</th></tr>
+      <tr><td>Scan the chain</td><td>Networking → <kbd>⬡ SCAN NETWORK</kbd></td><td>Auto-runs on new P2P connection. Re-run manually after topology changes.</td></tr>
+      <tr><td>Create a network</td><td>Networking → Create Network</td><td>One hub per machine. Requires a scan first to populate the invite list.</td></tr>
+      <tr><td>Accept an invitation</td><td>Networking → invitation panel</td><td>Appears automatically when an invitation arrives.</td></tr>
+      <tr><td>Request to join</td><td>Networking → Available Networks</td><td>Hub receives the request and approves or denies manually.</td></tr>
+      <tr><td>Approve join requests</td><td>Networking → Join Requests</td><td>Only visible to the hub. Auto-expands when requests arrive.</td></tr>
+      <tr><td>Leave a network</td><td>Networking → My Networks → <kbd>LEAVE NETWORK</kbd></td><td>Hub and members are notified.</td></tr>
+      <tr><td>Dissolve a network</td><td>Networking → My Networks → <kbd>DISSOLVE NETWORK</kbd></td><td>Hub only. All members are notified and the network ends.</td></tr>
+      <tr><td>Chat with a peer</td><td>Chat section → dropdown → type → Send</td><td>Shows P2P neighbors and network members, deduped. History per contact.</td></tr>
+      <tr><td>Set your handle</td><td>Top-left handle field in the main simulator</td><td>Shared on connect. Updates chat display when changed.</td></tr>
+      <tr><td>Full reset</td><td>Browser refresh</td><td>Clears all connections, networks, and chat. Machine ID persists.</td></tr>
+    </table>
+  </div>
+
+</div><!-- /chapter -->
+</main>
+</div><!-- /body-wrap -->
+
+<div class="page-footer">
+  <span>Loop 2.1 · loop2.computer</span>
+  <span>"The Operator Is the Program"</span>
+  <span>Networking Guide · v.215 · March 2026</span>
+</div>
+
+<script>
+function setSkin(id) {
+  document.body.className = 'skin-' + id;
+  document.querySelectorAll('.skin-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.toLowerCase() === id ||
+      (id === 'og' && b.textContent === 'OG'));
+  });
+  try { localStorage.setItem('loop2-manual-skin', id); } catch(e) {}
+}
+(function() {
+  try {
+    const s = localStorage.getItem('loop2-manual-skin');
+    if (s) setSkin(s);
+  } catch(e) {}
+})();
+</script>
+</body>
+</html>

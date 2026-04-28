@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loop 2.1 — Technical Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── Reset & Tokens ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:      #e8eef4; --panel:  #e8eef4; --panel2: #edf1f5; --panel3: #dce4ec;
+    --border:  #9ab0c4; --border2:#b0c4d4; --border3:#8aaac0;
+    --fg:      #000000; --fg-dim: #507090; --fg-faint:#90a8b8;
+    --accent:  #6030c0; --working:#1060b0; --alu:#b06000;
+    --memory:  #006830; --big:    #006888;
+    --bus-a:   #6030c0; --bus-b:  #c838c8; --bus-c:#20c8a0; --bus-d:#e07020;
+    --bus-e:   #e02040; --bus-f:  #2060d0; --bus-g:#9040e0; --bus-h:#808080;
+    --red:     #a01820; --gold:   #805000;
+    --code-bg: #dce4ec;
+    --callout-note-bg:  #eef0f8;
+    --callout-warn-bg:  #fef8e0;
+    --callout-key-bg:   #e8f4ec;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans:  'DM Sans', system-ui, sans-serif;
+    --mono:  'DM Mono', 'Courier New', monospace;
+    --max:   1200px; --gutter: clamp(20px, 4vw, 56px);
+  }
+  body.skin-winamp {
+    --bg:#1e1e1e; --panel:#252525; --panel2:#202020; --panel3:#1c1c1c;
+    --border:#1e4c28; --border2:#163c20; --border3:#286a38;
+    --fg:#33ff44; --fg-dim:#33ff44; --fg-faint:#1a7a20;
+    --accent:#33ff44; --working:#44aaff; --alu:#ffaa00; --memory:#33ff44; --big:#00ddff;
+    --code-bg:#0a1a0c; --callout-note-bg:#0a1020; --callout-warn-bg:#1e1000; --callout-key-bg:#0c1e10;
+  }
+  body.skin-sunrise {
+    --bg:#fff8ec; --panel:#ffffff; --panel2:#fffcf5; --panel3:#fff4e0;
+    --border:#e8b030; --border2:#d8a020; --border3:#c89010;
+    --fg:#000000; --fg-dim:#705030; --fg-faint:#a08060;
+    --accent:#5828b0; --working:#0060c0; --alu:#c06000; --memory:#007030; --big:#007898;
+    --code-bg:#fff0cc; --callout-note-bg:#f0eeff; --callout-warn-bg:#fff4dc; --callout-key-bg:#e8f8ec;
+  }
+
+  html { scroll-behavior: smooth; }
+  body { background:var(--bg); color:var(--fg); font-family:var(--sans); font-size:16px; line-height:1.65; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+
+  /* ── Nav ── */
+  .nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:0 var(--gutter); height:60px; background:var(--panel); border-bottom:2px solid var(--border); }
+  .nav-logo { font-family:var(--mono); font-size:13px; letter-spacing:4px; color:var(--fg); text-decoration:none; text-transform:uppercase; }
+  .nav-logo span { color:var(--working); }
+  .skin-group { display:flex; align-items:center; gap:5px; }
+  .skin-btn { font-family:var(--mono); font-size:10px; letter-spacing:1px; padding:3px 9px; background:transparent; border:1px solid var(--border2); color:var(--fg-dim); cursor:pointer; text-transform:uppercase; }
+  .skin-btn:hover { border-color:var(--fg); color:var(--fg); }
+  .skin-btn.active { border-color:var(--fg); color:var(--fg); background:var(--panel2); }
+  .nav-title { font-family:var(--mono); font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--fg-dim); }
+
+  /* ── Layout ── */
+  .body-wrap { display:flex; max-width:var(--max); margin:0 auto; padding-top:60px; }
+  .sidebar { width:220px; flex-shrink:0; position:sticky; top:60px; height:calc(100vh - 60px); overflow-y:auto; padding:20px 0 20px 18px; border-right:1px solid var(--border2); font-family:var(--mono); }
+  .toc-title { font-size:8px; letter-spacing:3px; text-transform:uppercase; color:var(--fg-faint); margin-bottom:10px; }
+  .toc-list { list-style:none; }
+  .toc-list li { margin-bottom:1px; }
+  .toc-list a { font-size:10px; color:var(--fg-dim); text-decoration:none; display:block; padding:2px 5px; border-left:2px solid transparent; transition:color .1s, border-color .1s; }
+  .toc-list a:hover { color:var(--fg); border-left-color:var(--border); }
+  .toc-sub { list-style:none; padding-left:12px; }
+  .toc-sub a { font-size:9px; opacity:.75; }
+  .toc-sub a:hover { opacity:1; }
+  .toc-section-label { font-size:8px; letter-spacing:2px; text-transform:uppercase; color:var(--fg-faint); padding:10px 5px 3px; display:block; }
+
+  .content { flex:1; padding:32px 40px 80px 32px; min-width:0; }
+
+  /* ── Chapter / Section ── */
+  .chapter { margin-bottom:56px; scroll-margin-top:72px; }
+  .chapter-eyebrow { font-family:var(--mono); font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--fg-faint); display:block; margin-bottom:4px; }
+  .chapter-title { font-family:var(--serif); font-size:clamp(24px,3vw,34px); font-weight:700; color:var(--fg); border-bottom:2px solid var(--border); padding-bottom:8px; margin-bottom:16px; line-height:1.1; }
+  .chapter-title em { font-style:italic; color:var(--fg-dim); }
+  .chapter-intro { font-size:15px; line-height:1.7; color:var(--fg-dim); max-width:680px; margin-bottom:24px; font-weight:300; }
+
+  .section { margin-bottom:40px; scroll-margin-top:72px; }
+  .section-title { font-family:var(--mono); font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--fg-dim); border-bottom:1px solid var(--border2); padding-bottom:5px; margin-bottom:14px; }
+
+  /* ── Prose ── */
+  p { font-size:15px; line-height:1.7; color:var(--fg-dim); margin-bottom:12px; font-weight:300; }
+  p strong { color:var(--fg); font-weight:500; }
+
+  /* ── Code ── */
+  code { font-family:var(--mono); font-size:12px; background:var(--code-bg); padding:1px 5px; color:var(--alu); border-radius:1px; }
+  pre { font-family:var(--mono); font-size:12px; background:var(--panel); border:1px solid var(--border2); border-left:3px solid var(--border); padding:16px 18px; overflow-x:auto; line-height:1.85; margin:12px 0 18px; color:var(--fg-dim); }
+  pre .kw  { color:#b06000; }      /* keywords */
+  pre .cmp { color:#1060b0; }      /* components */
+  pre .op  { color:#a01820; }      /* operators / symbols */
+  pre .val { color:#006830; }      /* values / numbers */
+  pre .com { color:var(--fg-faint); font-style:italic; }
+  pre .sec { color:#6030c0; font-weight:700; }
+  pre .lbl { color:#006888; }
+  pre .hd  { color:#c838c8; }      /* header fields */
+  body.skin-winamp pre .kw  { color:#ffaa00; }
+  body.skin-winamp pre .cmp { color:#44aaff; }
+  body.skin-winamp pre .op  { color:#ff6666; }
+  body.skin-winamp pre .val { color:#33ff44; }
+  body.skin-winamp pre .sec { color:#cc88ff; }
+  body.skin-winamp pre .lbl { color:#00ddff; }
+  body.skin-winamp pre .hd  { color:#ff88ff; }
+
+  /* ── Tables ── */
+  .ref-table { width:100%; border-collapse:collapse; font-size:13px; margin:10px 0 18px; }
+  .ref-table th { font-family:var(--mono); font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--fg-dim); text-align:left; padding:6px 10px; border-bottom:2px solid var(--border); background:var(--panel); }
+  .ref-table td { padding:6px 10px; border-bottom:1px solid var(--border2); vertical-align:top; line-height:1.5; }
+  .ref-table tr:last-child td { border-bottom:none; }
+  .ref-table td:first-child { font-family:var(--mono); font-size:12px; color:var(--alu); white-space:nowrap; }
+  .ref-table td code { background:none; padding:0; }
+  .ref-table .type-col { color:var(--accent); }
+  .ref-table .note-col { font-size:12px; color:var(--fg-faint); }
+
+  /* ── Two-col table variant ── */
+  .two-col td:first-child { color:var(--working); min-width:160px; }
+
+  /* ── Constant block ── */
+  .const-block { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1px; background:var(--border2); border:1px solid var(--border2); margin:12px 0 20px; }
+  .const-item { background:var(--panel); padding:12px 14px; }
+  .const-name { font-family:var(--mono); font-size:13px; color:var(--working); font-weight:500; display:block; margin-bottom:3px; }
+  .const-val  { font-family:var(--mono); font-size:18px; color:var(--fg); font-weight:700; display:block; margin-bottom:4px; }
+  .const-desc { font-size:12px; color:var(--fg-dim); line-height:1.4; }
+
+  /* ── Callouts ── */
+  .callout { border-left:3px solid var(--border); padding:10px 14px; margin:14px 0; font-size:14px; line-height:1.6; }
+  .callout.note { background:var(--callout-note-bg); border-left-color:var(--accent); }
+  .callout.warn { background:var(--callout-warn-bg); border-left-color:var(--alu); }
+  .callout.key  { background:var(--callout-key-bg);  border-left-color:var(--memory); }
+  .callout-label { font-family:var(--mono); font-size:8px; letter-spacing:2px; text-transform:uppercase; color:var(--fg-faint); display:block; margin-bottom:5px; }
+  .callout.note .callout-label { color:var(--accent); }
+  .callout.warn .callout-label { color:var(--alu); }
+  .callout.key  .callout-label { color:var(--memory); }
+
+  /* ── Phase chain ── */
+  .phase-chain { display:flex; align-items:center; flex-wrap:wrap; gap:4px; margin:12px 0; font-family:var(--mono); font-size:11px; }
+  .phase { background:var(--panel2); border:1px solid var(--border2); padding:3px 10px; color:var(--fg-dim); }
+  .phase-arrow { color:var(--fg-faint); }
+
+  /* ── Bus color chips ── */
+  .bus-chip { display:inline-block; font-family:var(--mono); font-size:10px; padding:1px 7px; border:1px solid; margin:1px; }
+  .bus-a { border-color:var(--bus-a); color:var(--bus-a); }
+  .bus-b { border-color:var(--bus-b); color:var(--bus-b); }
+  .bus-c { border-color:var(--bus-c); color:var(--bus-c); }
+  .bus-d { border-color:var(--bus-d); color:var(--bus-d); }
+  .bus-e { border-color:var(--bus-e); color:var(--bus-e); }
+  .bus-f { border-color:var(--bus-f); color:var(--bus-f); }
+  .bus-g { border-color:var(--bus-g); color:var(--bus-g); }
+  .bus-h { border-color:var(--bus-h); color:var(--bus-h); }
+
+  /* ── Rule / HR ── */
+  hr { border:none; border-top:1px solid var(--border2); margin:32px 0; }
+
+  /* ── Footer ── */
+  .page-footer { max-width:var(--max); margin:0 auto; padding:16px var(--gutter); border-top:1px solid var(--border2); display:flex; justify-content:space-between; font-family:var(--mono); font-size:9px; letter-spacing:1px; color:var(--fg-faint); }
+
+  @media (max-width:800px) { .sidebar{display:none;} .content{padding:24px 20px 60px;} }
+</style>
+</head>
+<body class="skin-og">
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/" class="nav-logo">Loop<span> 2.1</span></a>
+  <span class="nav-title">Technical Reference</span>
+  <div class="skin-group">
+    <span style="font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--fg-faint);margin-right:4px;">Skin</span>
+    <button class="skin-btn active" onclick="setSkin('og')">OG</button>
+    <button class="skin-btn" onclick="setSkin('winamp')">Winamp</button>
+    <button class="skin-btn" onclick="setSkin('sunrise')">Sunrise</button>
+  </div>
+</nav>
+
+<div class="body-wrap">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="toc-title">Contents</div>
+  <ul class="toc-list">
+    <span class="toc-section-label">Architecture</span>
+    <li><a href="#ch-constants">1 · Constants</a></li>
+    <li><a href="#ch-tick">2 · Tick Model</a></li>
+    <li><a href="#ch-loops">3 · Loops & Buses</a></li>
+    <span class="toc-section-label">Code</span>
+    <li><a href="#ch-naming">4 · Naming Conventions</a>
+      <ul class="toc-sub">
+        <li><a href="#s-clean-code">Clean Code Principles</a></li>
+        <li><a href="#s-prefixes">Function Prefixes</a></li>
+        <li><a href="#s-state-objects">State Objects</a></li>
+      </ul>
+    </li>
+    <span class="toc-section-label">File Formats</span>
+    <li><a href="#ch-loop-format">5 · .loop Session Log</a>
+      <ul class="toc-sub">
+        <li><a href="#s-prefixes-log">Line Prefixes</a></li>
+        <li><a href="#s-sections">File Sections</a></li>
+        <li><a href="#s-final-stats">FINAL.STATS Keys</a></li>
+      </ul>
+    </li>
+    <li><a href="#ch-loopscript">6 · Loopscript (.lps)</a>
+      <ul class="toc-sub">
+        <li><a href="#s-lps-structure">Document Structure</a></li>
+        <li><a href="#s-lps-components">Components</a></li>
+        <li><a href="#s-lps-symbols">Symbols</a></li>
+        <li><a href="#s-lps-setup">SETUP Syntax</a></li>
+        <li><a href="#s-lps-exec">EXEC Syntax</a></li>
+        <li><a href="#s-lps-alu">ALU Ops & Flags</a></li>
+      </ul>
+    </li>
+    <span class="toc-section-label">Protocols</span>
+    <li><a href="#ch-p2p">7 · P2P Wire Protocol</a></li>
+    <li><a href="#ch-cbx">8 · CBX Protocol</a>
+      <ul class="toc-sub">
+        <li><a href="#s-cbx-messages">Message Types</a></li>
+        <li><a href="#s-cbx-availability">Availability States</a></li>
+        <li><a href="#s-cbx-chainsum">Chain Sum Phases</a></li>
+        <li><a href="#s-cbx-marker">Sum Marker</a></li>
+      </ul>
+    </li>
+    <li><a href="#ch-net">9 · Named Networking</a>
+      <ul class="toc-sub">
+        <li><a href="#s-net-messages">Message Types</a></li>
+        <li><a href="#s-net-constants">Constants</a></li>
+        <li><a href="#s-net-state">netState Object</a></li>
+        <li><a href="#s-net-election">Hub Election</a></li>
+      </ul>
+    </li>
+    <span class="toc-section-label">Registry</span>
+    <li><a href="#ch-variants">10 · Variant Numbers</a></li>
+  </ul>
+</nav>
+
+<!-- CONTENT -->
+<main class="content">
+
+<!-- ════════════════════════════════════════════
+     CHAPTER 1 — CONSTANTS
+═════════════════════════════════════════════ -->
+<div class="chapter" id="ch-constants">
+  <span class="chapter-eyebrow">Chapter 1</span>
+  <div class="chapter-title">Architecture Constants</div>
+  <p class="chapter-intro">These values are fixed at the architecture level. They are baked into every timing calculation, buffer size, and protocol design in the system. They cannot be changed at runtime.</p>
+
+  <div class="section">
+    <div class="section-title">Core Constants</div>
+    <div class="const-block">
+      <div class="const-item"><span class="const-name">BPW</span><span class="const-val">17</span><span class="const-desc">Bits per word. 1 marker bit + 16 data bits. The marker bit is always the leading bit.</span></div>
+      <div class="const-item"><span class="const-name">BUS_N</span><span class="const-val">24</span><span class="const-desc">Bus pipeline length in slots. One bit per slot per tick.</span></div>
+      <div class="const-item"><span class="const-name">INJ_N</span><span class="const-val">17</span><span class="const-desc">Inject channel length. Equals BPW — holds exactly one word in flight at a time.</span></div>
+      <div class="const-item"><span class="const-name">Transfer latency</span><span class="const-val">41 ticks</span><span class="const-desc">BUS_N + BPW = 24 + 17. Ticks from marker bit entering a bus to last data bit landing in destination loop.</span></div>
+      <div class="const-item"><span class="const-name">Data range</span><span class="const-val">0–65535</span><span class="const-desc">16-bit unsigned integers throughout. Arithmetic wraps at 65535.</span></div>
+      <div class="const-item"><span class="const-name">Cooldown</span><span class="const-val">16 ticks</span><span class="const-desc">BPW − 1. Ticks a PM or TG waits after a match before checking again.</span></div>
+      <div class="const-item"><span class="const-name">P2P_BUFFER_MAX</span><span class="const-val">512 words</span><span class="const-desc">Max words buffered per P2P side. Safety cap — normal operation stays in single digits.</span></div>
+      <div class="const-item"><span class="const-name">Default clock</span><span class="const-val">24 Hz</span><span class="const-desc">Recommended operating speed. Range: 1–144 Hz. CatchUpLimit = 8 ticks/frame.</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Loop Dimensions</div>
+    <table class="ref-table">
+      <tr><th>Loop</th><th>ID</th><th>wordCap</th><th>Bit array length</th><th>Usable words</th><th>Useful bits</th></tr>
+      <tr><td>Working</td><td><code>working</code></td><td>18</td><td>306</td><td>12</td><td>204 (12 × 16+1 − overhead)</td></tr>
+      <tr><td>ALU</td><td><code>alu</code></td><td>24</td><td>408</td><td>16</td><td>272</td></tr>
+      <tr><td>Memory</td><td><code>memory</code></td><td>24</td><td>408</td><td>16</td><td>272</td></tr>
+      <tr><td>Big</td><td><code>big</code></td><td>48</td><td>816</td><td>32</td><td>544</td></tr>
+    </table>
+    <p>Bit array index 0 = write head, index 1 = gate, index 2 = read head (<code>rIdx() = 2</code>). A bit written at index 0 takes N−2 ticks to reach index 2, where N is the total bit array length.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Big Loop Inspection Pipeline — Eject Positions</div>
+    <p>Words pass through inspection components in this order on every Big Loop rotation. Each component is exactly 17 bits (one word) downstream of the previous.</p>
+    <table class="ref-table">
+      <tr><th>Constant</th><th>Value</th><th>Component</th></tr>
+      <tr><td>PM1_EJECT_IDX</td><td>444</td><td>Pattern Matcher 1 — first inspection point</td></tr>
+      <tr><td>PM2_EJECT_IDX</td><td>427</td><td>Pattern Matcher 2 — 17 bits after PM1</td></tr>
+      <tr><td>TG1_EJECT_IDX</td><td>410</td><td>Threshold Gate 1 — 17 bits after PM2</td></tr>
+      <tr><td>TG2_EJECT_IDX</td><td>393</td><td>Threshold Gate 2 — 17 bits after TG1</td></tr>
+    </table>
+    <div class="callout note"><div class="callout-label">Pipeline order</div>A word destroyed by PM1 in destructive mode never reaches PM2, TG1, or TG2. Inspection is sequential and irreversible within a single rotation.</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     CHAPTER 2 — TICK MODEL
+═════════════════════════════════════════════ -->
+<div class="chapter" id="ch-tick">
+  <span class="chapter-eyebrow">Chapter 2</span>
+  <div class="chapter-title">The Tick Model</div>
+  <p class="chapter-intro">Every tick executes exactly four steps, always in this order, without exception. Understanding the order resolves most timing-sensitive behaviors that would otherwise seem counterintuitive.</p>
+
+  <div class="section">
+    <table class="ref-table">
+      <tr><th>Step</th><th>Name</th><th>What happens</th></tr>
+      <tr><td>1</td><td>READ</td><td>All bus sources sample <code>bits[2]</code> (read head) of their source loop. ALU capture samples <code>bits[2]</code> of the ALU loop. Memory capture samples <code>bits[2]</code> of the Memory loop. PM and TG inspection fires. This happens <em>before</em> the gate and <em>before</em> rotation.</td></tr>
+      <tr><td>2</td><td>GATE</td><td>If a loop's gate is closed (<code>gateOpen = false</code>), <code>bits[1]</code> is zeroed before rotation.</td></tr>
+      <tr><td>3</td><td>ROTATE</td><td>Each non-paused loop shifts its bit array rightward by one position. The bit at <code>bits[N-1]</code> wraps to <code>bits[0]</code>.</td></tr>
+      <tr><td>4</td><td>WRITE</td><td>Injected bits, bus deliveries, and register writebacks are placed at <code>bits[0]</code> of their destination loops. Bus arrays shift, delivering bits toward their destinations. ALU result updates if any input register changed.</td></tr>
+    </table>
+    <div class="callout warn"><div class="callout-label">Critical subtlety</div>ALU capture (Step 1) is suppressed while any writeback pipeline is active (<code>alu.wbPos >= 0</code>). This prevents an outgoing register word from being immediately re-captured back into a register.</div>
+    <div class="callout note"><div class="callout-label">Bus trailing delivery</div>Turning a bus OFF does not immediately stop delivery. Up to BUS_N=24 bits already in the pipeline continue to deliver over the next 24 ticks. The live-bit counter (<code>busXLiveBitCount</code>) ensures in-flight bits complete delivery.</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     CHAPTER 3 — LOOPS AND BUSES
+═════════════════════════════════════════════ -->
+<div class="chapter" id="ch-loops">
+  <span class="chapter-eyebrow">Chapter 3</span>
+  <div class="chapter-title">Loops &amp; Buses — Quick Reference</div>
+
+  <div class="section">
+    <div class="section-title">Bus Inventory</div>
+    <table class="ref-table">
+      <tr><th>Bus</th><th>Color</th><th>Role</th><th>Notes</th></tr>
+      <tr><td><span class="bus-chip bus-a">A</span></td><td>Purple</td><td>Internal. Operator-controlled.</td><td>Can source from PM1 output bridge. Can write to TG threshold registers.</td></tr>
+      <tr><td><span class="bus-chip bus-b">B</span></td><td>Magenta</td><td>Internal. Operator-controlled.</td><td>Documented convention: dedicated counter bus. Mechanically identical to A.</td></tr>
+      <tr><td><span class="bus-chip bus-c">C</span></td><td>Teal</td><td>Internal. Operator-controlled.</td><td>Identical capability to A and B. Sources from loops and counters only (not PM bridge).</td></tr>
+      <tr><td><span class="bus-chip bus-d">D</span></td><td>Orange</td><td>Internal. Operator-controlled.</td><td>Identical to Bus C.</td></tr>
+      <tr><td><span class="bus-chip bus-e">E</span></td><td>Red</td><td>Challenge interface.</td><td>Bidirectional. Two independent pipelines (in/out). Auto-activates when a challenge starts.</td></tr>
+      <tr><td><span class="bus-chip bus-f">F</span></td><td>Blue</td><td>P2P Left (PL).</td><td>WebRTC. Left neighbor data. Requires established connection.</td></tr>
+      <tr><td><span class="bus-chip bus-g">G</span></td><td>Violet</td><td>P2P Right (PR).</td><td>WebRTC. Right neighbor data. Requires established connection.</td></tr>
+      <tr><td><span class="bus-chip bus-h">H</span></td><td>Gray</td><td>Challenge Bus (CBX).</td><td>Protocol coordination layer. Readable by routing into a loop. Never delivers to loops automatically.</td></tr>
+    </table>
+    <div class="callout key"><div class="callout-label">Equivalence</div>Buses C and D are identical in capability to A and B. No bus is lesser. The documentation never describes C or D as different or limited versions of A or B.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Memory — 16 Slots, 4-bit Addressing</div>
+    <p>The 4-bit address register (<code>mem.addrBits</code>) selects the active slot. Address evaluates to <code>(b3&lt;&lt;3)|(b2&lt;&lt;2)|(b1&lt;&lt;1)|b0</code>. Slots 0–15. In address-read mode (<code>mem.addrRead</code>), destination slot is decoded from the incoming word's top 4 bits (b15–b12).</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     CHAPTER 4 — NAMING CONVENTIONS
+═════════════════════════════════════════════ -->
+<div class="chapter" id="ch-naming">
+  <span class="chapter-eyebrow">Chapter 4</span>
+  <div class="chapter-title">Code Naming Conventions</div>
+  <p class="chapter-intro">Loop 2.1 follows Clean Code principles enforced through a 116-identifier naming audit. These conventions must be preserved in all future work on the codebase.</p>
+
+  <div class="section" id="s-clean-code">
+    <div class="section-title">Clean Code Principles</div>
+    <table class="ref-table two-col">
+      <tr><th>Rule</th><th>Detail</th></tr>
+      <tr><td>Whole words only</td><td>No abbreviations in identifiers unless they are universally understood acronyms (ALU, PM, TG, CBX, P2P). <code>readHeadBitIndex</code> not <code>rIdx</code> in new code.</td></tr>
+      <tr><td>Descriptive function names</td><td>Function names must describe what the function does. <code>toggleWorkingScratchCapture()</code> not <code>toggleWSC()</code>. Code that reads like prose.</td></tr>
+      <tr><td>No magic numbers</td><td>All architecture constants are named: BPW, BUS_N, INJ_N, PM1_EJECT_IDX, etc. Never write 17 or 41 or 444 directly.</td></tr>
+      <tr><td>One responsibility per function</td><td>Functions do one thing. If a function name requires "and", split it.</td></tr>
+      <tr><td>State objects are explicit</td><td>All component state lives in a named object (<code>alu</code>, <code>mem</code>, <code>CBX</code>, <code>netState</code>). No scattered globals.</td></tr>
+      <tr><td>Comments explain why, not what</td><td>The code describes what happens. Comments explain why the design choice was made.</td></tr>
+    </table>
+  </div>
+
+  <div class="section" id="s-prefixes">
+    <div class="section-title">Function Naming Prefixes</div>
+    <p>Functions are grouped by the component or system they belong to. The prefix is always the component identifier, camelCased, with no separator.</p>
+    <table class="ref-table">
+      <tr><th>Prefix</th><th>Component / System</th><th>Examples</th></tr>
+      <tr><td><code>net</code></td><td>Named Networking layer</td><td><code>netCreateNetwork</code>, <code>netHandleInvite</code>, <code>netStartHeartbeat</code>, <code>netHandleScanReply</code></td></tr>
+      <tr><td><code>cbx</code></td><td>Challenge Bus protocol</td><td><code>cbxSendMessage</code>, <code>cbxHandleChainInvite</code>, <code>cbxSubmitLocalChainSum</code></td></tr>
+      <tr><td><code>p2p</code></td><td>P2P connection layer</td><td><code>p2pCreateOffer</code>, <code>p2pSendWord</code>, <code>p2pUpdateBufferDisplay</code></td></tr>
+      <tr><td><code>chat</code></td><td>Unified chat system</td><td><code>chatGetOrCreatePeer</code>, <code>chatRefreshPeerList</code>, <code>chatRenderMessage</code></td></tr>
+      <tr><td><code>chall</code></td><td>Challenge module</td><td><code>challStart</code>, <code>challAbort</code>, <code>challEvaluate</code>, <code>challSetScoringMode</code></td></tr>
+      <tr><td><code>notif</code></td><td>Notification system</td><td><code>notifFireChat</code>, <code>notifToggleChat</code>, <code>buildNotifPanel</code></td></tr>
+      <tr><td><code>toggle</code></td><td>Boolean UI toggles</td><td><code>toggleBusC</code>, <code>toggleTG1Enabled</code>, <code>toggleWriteToSlots</code></td></tr>
+      <tr><td><code>refresh</code></td><td>Display sync functions</td><td><code>refreshMemoryDisplay</code>, <code>refreshPatternMatcherDisplay</code></td></tr>
+      <tr><td><code>build</code></td><td>DOM construction</td><td><code>buildMemorySlotElements</code>, <code>buildCounterTriggersPanel</code></td></tr>
+      <tr><td><code>render</code></td><td>Canvas rendering</td><td><code>renderLoop</code>, <code>renderBusA</code>, <code>renderAllComponents</code></td></tr>
+      <tr><td><code>log</code> / <code>logSetup</code></td><td>Session log writing</td><td><code>log(text, cls)</code>, <code>logSetup(machineCode, humanDesc)</code></td></tr>
+    </table>
+  </div>
+
+  <div class="section" id="s-state-objects">
+    <div class="section-title">Primary State Objects</div>
+    <table class="ref-table">
+      <tr><th>Object</th><th>Type</th><th>Contains</th></tr>
+      <tr><td><code>alu</code></td><td>plain object</td><td>ALU registers (a,b,c,d,cmp), flags, capture state, writeback pipelines, mode</td></tr>
+      <tr><td><code>mem</code></td><td>plain object</td><td>16 slots, address bits, write/read/autoInc/addrRead modes, capture and writeback state</td></tr>
+      <tr><td><code>wscr</code></td><td>plain object</td><td>Working scratch slots (0–3), capture state, writeback pipelines</td></tr>
+      <tr><td><code>pm</code> / <code>pm2</code></td><td>plain object</td><td>Mask, pattern, change mask/val bits, match count, eject mode, output bridge, cascade state</td></tr>
+      <tr><td><code>tg</code> / <code>tg2</code></td><td>plain object</td><td>Threshold, mode (GTE/LTE/EQ), enabled, destructive, clamp, cascade, trigger flag</td></tr>
+      <tr><td><code>CBX</code></td><td>plain object</td><td>Availability state, topology, active probe, invitation state, origin challenge state, participation state</td></tr>
+      <tr><td><code>netState</code></td><td>plain object</td><td>Topology, networks Map, pending invitation, pending requests, scan state, election state</td></tr>
+      <tr><td><code>_p2p</code></td><td>object with l/r keys</td><td>Per-side: RTCPeerConnection, dataChannel, isInitiator, latencyInterval, peerName</td></tr>
+      <tr><td><code>CHALL</code></td><td>plain object</td><td>Challenge type, values, expected answer, par targets, scoring mode, timing</td></tr>
+      <tr><td><code>logger</code></td><td>plain object</td><td>Active flag, tick counter, op counter, session start time, pause tracking</td></tr>
+      <tr><td><code>loops</code></td><td>object keyed by id</td><td>Per-loop: bits array (length wordCap×BPW), gateOpen, paused, wordCap, headPos, color, letter</td></tr>
+      <tr><td><code>DEFS</code></td><td>array of loop defs</td><td>Ordered array: working, alu, memory, big. Used for iteration and lookup.</td></tr>
+    </table>
+    <div class="callout note"><div class="callout-label">Machine ID</div>The machine ID is a 4-character string from the charset <code>ABCDEFGHJKLMNPQRSTUVWXYZ23456789</code> (no I, O, 0, 1 to avoid ambiguity). Generated once and persisted in <code>localStorage</code> under key <code>loop21_machine_id</code>. Session-scoped — resets on page load if localStorage is unavailable.</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     CHAPTER 5 — .loop FILE FORMAT
+═════════════════════════════════════════════ -->
+<div class="chapter" id="ch-loop-format">
+  <span class="chapter-eyebrow">Chapter 5</span>
+  <div class="chapter-title">The .loop Session Log Format</div>
+  <p class="chapter-intro">Session logs record every event that occurs while logging is active. Every line is dual-format: machine-parseable code on the left of <code>||</code> and a human-readable description on the right.</p>
+
+  <div class="section" id="s-prefixes-log">
+    <div class="section-title">Line Prefixes</div>
+    <table class="ref-table">
+      <tr><th>Prefix</th><th>Meaning</th><th>Counter</th></tr>
+      <tr><td><code>T#####.</code></td><td>Machine tick event. Fires every tick while logging is active.</td><td>Logger's internal tick counter. Starts at T00001. Not the global machine tickCount.</td></tr>
+      <tr><td><code>S#####.</code></td><td>Operator setup action outside the tick cycle. Button press, selector change, parameter set.</td><td>Operator action counter. Increments on each distinct operator interaction.</td></tr>
+      <tr><td><code>CBX.*</code></td><td>Challenge Bus protocol event.</td><td>No counter — prefixed by event type.</td></tr>
+      <tr><td><code>OP.*</code></td><td>Operator action descriptor within an S line. Describes what the operator did.</td><td>Part of the S-line payload.</td></tr>
+    </table>
+
+    <pre>T00041. BUS.A ON SRC=WORKING DST=ALU   || Bus A opened: Working → ALU
+S00007. OP.BUS_A ON SRC=WORKING DST=ALU || Operator opens Bus A: Working → ALU</pre>
+  </div>
+
+  <div class="section" id="s-sections">
+    <div class="section-title">File Sections</div>
+    <p>A complete <code>.loop</code> file has five sections, each delimited by <code>===SECTION_NAME===</code> markers.</p>
+    <table class="ref-table">
+      <tr><th>Section</th><th>Written</th><th>Contains</th></tr>
+      <tr><td><code>===SPEC===</code></td><td>Session start</td><td>Architecture constants (BPW, BUS_N, loop sizes), clock speed, operator handle, session name. Written once.</td></tr>
+      <tr><td><code>===INIT===</code></td><td>Session start</td><td>Full machine state snapshot: every loop's complete bit array (INIT.LOOP.*.BITS), all register values, counter states, PM/TG config, memory slot contents. Sufficient to reconstruct exact machine state at logging start.</td></tr>
+      <tr><td><code>===OPS===</code></td><td>Continuously</td><td>Live event log — all T and S lines in chronological order as they occurred. Read-head word values logged per tick.</td></tr>
+      <tr><td><code>===NOTES===</code></td><td>Session end</td><td>Free-text operator notes entered before ending the session.</td></tr>
+      <tr><td><code>===FINAL===</code></td><td>Session end</td><td>Complete machine state snapshot (FINAL.LOOP.*.BITS) plus statistics block. FORMAT_REF subsection embedded for future readers.</td></tr>
+    </table>
+  </div>
+
+  <div class="section" id="s-final-stats">
+    <div class="section-title">FINAL.STATS Keys</div>
+    <table class="ref-table">
+      <tr><th>Key</th><th>Measures</th></tr>
+      <tr><td><code>FINAL.STATS.OPERATOR_ACTIONS</code></td><td>Total operator clicks/decisions during session</td></tr>
+      <tr><td><code>FINAL.STATS.WORDS_TRANSFERRED</code></td><td>Words delivered across buses</td></tr>
+      <tr><td><code>FINAL.STATS.ALU_OPS</code></td><td>ALU operations executed</td></tr>
+      <tr><td><code>FINAL.STATS.INJECTS</code></td><td>Values injected into Working loop</td></tr>
+      <tr><td><code>FINAL.STATS.BUS_ACTIVATIONS</code></td><td>Bus activations (any bus turned ON)</td></tr>
+      <tr><td><code>FINAL.STATS.GATE_TOGGLES</code></td><td>Gate open/close actions</td></tr>
+      <tr><td><code>FINAL.STATS.MEM_SLOT_WRITES</code></td><td>Memory slots written</td></tr>
+      <tr><td><code>FINAL.STATS.MEM_SLOT_READS</code></td><td>Memory slots read back to loop</td></tr>
+      <tr><td><code>FINAL.STATS.CLOCK_CHANGES</code></td><td>Clock speed adjustments</td></tr>
+      <tr><td><code>FINAL.STATS.ALU_WRITEBACKS</code></td><td>ALU → loop writebacks (SEND TO LOOP presses)</td></tr>
+      <tr><td><code>FINAL.STATS.PM_REWRITES</code></td><td>PM in-place rewrites</td></tr>
+      <tr><td><code>FINAL.STATS.CTR_EJECTS</code></td><td>Counter eject actions</td></tr>
+      <tr><td><code>FINAL.STATS.BATCH_WRITES</code></td><td>Batch memory write operations</td></tr>
+      <tr><td><code>FINAL.STATS.PM1_MATCHES</code></td><td>Pattern Matcher 1 matches</td></tr>
+      <tr><td><code>FINAL.STATS.PM_REWRITE_RATE</code></td><td>PM rewrites / PM matches (percentage)</td></tr>
+      <tr><td><code>FINAL.STATS.PAUSE_TIME_MS</code></td><td>Milliseconds with clock stopped</td></tr>
+      <tr><td><code>FINAL.STATS.RUN_TIME_MS</code></td><td>Milliseconds with clock active</td></tr>
+      <tr><td><code>FINAL.STATS.SESSION_TIME_MS</code></td><td>Total session wall time</td></tr>
+      <tr><td><code>FINAL.STATS.PAUSE_FRACTION</code></td><td>Fraction of session paused (%)</td></tr>
+    </table>
+
+    <p>INIT and FINAL loop bit arrays are written as:</p>
+    <pre>INIT.LOOP.WORKING.BITS 000100000...  || Working loop bit array at session start (306 bits)
+FINAL.LOOP.BIG.BITS 000000000...      || Big loop bit array at session end (816 bits)</pre>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     CHAPTER 6 — LOOPSCRIPT
+═════════════════════════════════════════════ -->
+<div class="chapter" id="ch-loopscript">
+  <span class="chapter-eyebrow">Chapter 6</span>
+  <div class="chapter-title">Loopscript 1.0 — .lps</div>
+  <p class="chapter-intro">Loopscript is a compact notation for describing Loop 2.1 algorithms at the level a trained operator thinks about them — not tick by tick, but the meaningful moves. File extension <code>.lps</code>. Version 1.0.</p>
+
+  <div class="section" id="s-lps-structure">
+    <div class="section-title">Document Structure</div>
+    <p>Every <code>.lps</code> file has three sections in order, separated by <code>---</code> (three or more dashes).</p>
+    <pre><span class="hd">TITLE:</span>   <span class="val">Name of the algorithm</span>
+<span class="hd">AUTHOR:</span>  <span class="val">operator-handle</span>
+<span class="hd">DATE:</span>    <span class="val">yyyy-mm-dd</span>
+<span class="hd">VARIANT:</span> <span class="val">2.1</span>          <span class="com">// or a variant number e.g. 00003</span>
+<span class="hd">IN:</span>      <span class="val">description of inputs</span>
+<span class="hd">OUT:</span>     <span class="val">description of outputs</span>
+<span class="hd">NOTES:</span>   <span class="val">optional free text</span>
+---
+<span class="sec">SETUP</span>
+<span class="com">// component configuration lines (only what differs from default)</span>
+---
+<span class="sec">EXEC</span>
+<span class="com">// algorithm steps, one per line</span></pre>
+    <p><strong>Comments</strong> begin with <code>//</code> and run to end of line. They may appear anywhere. A comment always goes on the line immediately <em>below</em> the step it explains — never at the end of the same line as an action.</p>
+    <p><strong>Silence means default.</strong> If SETUP does not mention TG2, TG2 is at its default state. Readers do not need to wonder.</p>
+  </div>
+
+  <div class="section" id="s-lps-components">
+    <div class="section-title">Component Abbreviations</div>
+    <table class="ref-table">
+      <tr><th>Abbrev</th><th>Full Name</th><th>Notes</th></tr>
+      <tr><td><code>W</code></td><td>Working Loop</td><td>Primary workspace. Inject target, result collection point.</td></tr>
+      <tr><td><code>A</code></td><td>ALU Loop</td><td>Arithmetic/logic unit loop. Operands and results circulate here.</td></tr>
+      <tr><td><code>M</code></td><td>Memory Loop</td><td>16-slot addressed storage loop.</td></tr>
+      <tr><td><code>B</code></td><td>Big Loop</td><td>Large-capacity circulation loop. Primary data reservoir.</td></tr>
+      <tr><td><code>PM1</code>, <code>PM2</code></td><td>Pattern Matcher 1, 2</td><td>PM2 may operate in cascade from PM1.</td></tr>
+      <tr><td><code>TG1</code>, <code>TG2</code></td><td>Threshold Gate 1, 2</td><td>TG2 may cascade from TG1.</td></tr>
+      <tr><td><code>INJ</code></td><td>Inject Channel</td><td>Non-interruptible value injection into Working.</td></tr>
+      <tr><td><code>SCR</code></td><td>Working Scratch</td><td>Capture-next registers (slots 0–3).</td></tr>
+      <tr><td><code>CTR</code></td><td>Counter</td><td>Global counter. <code>CTR.L</code> / <code>CTR.G</code> for loop-specific / global.</td></tr>
+      <tr><td><code>BUS.A</code>–<code>BUS.D</code></td><td>Buses A through D</td><td>Standard internal transfer buses.</td></tr>
+      <tr><td><code>BUS.F</code></td><td>Bus F (Left P2P)</td><td>Left neighbor data bus.</td></tr>
+      <tr><td><code>BUS.G</code></td><td>Bus G (Right P2P)</td><td>Right neighbor data bus.</td></tr>
+      <tr><td><code>BUS.H</code></td><td>Bus H (CBX)</td><td>Challenge network protocol bus.</td></tr>
+    </table>
+  </div>
+
+  <div class="section" id="s-lps-symbols">
+    <div class="section-title">Symbol Reference — Action Symbols</div>
+    <table class="ref-table">
+      <tr><th>Symbol</th><th>Name</th><th>Meaning</th></tr>
+      <tr><td><code>→</code></td><td>Route</td><td>Transfer or route data from left component to right. <code>W→A</code> = open bus from Working to ALU, let transfer complete, close bus. Abstracts over which physical bus is used.</td></tr>
+      <tr><td><code>←</code></td><td>Inject</td><td>Inject a value into a component. <code>INJ←42</code> = inject value 42 into Working via inject channel.</td></tr>
+      <tr><td><code>↺</code></td><td>Circulate</td><td>Let a loop run freely. <code>B↺</code> = one Big pass. <code>B↺N</code> = N full passes.</td></tr>
+      <tr><td><code>⊗</code></td><td>Close Gate</td><td>Close the gate of the named loop. <code>⊗A</code> = close ALU gate.</td></tr>
+      <tr><td><code>⊙</code></td><td>Open Gate</td><td>Open the gate of the named loop.</td></tr>
+      <tr><td><code>∅</code></td><td>Clear / Reset</td><td>Clear a component, register, or flag. <code>∅A</code> = clear ALU loop. <code>∅.M</code> = clear PM match flag.</td></tr>
+      <tr><td><code>!</code></td><td>Trigger</td><td>Fire a triggered action. <code>!PM1</code> = trigger PM1 eject manually.</td></tr>
+      <tr><td><code>@</code></td><td>Address</td><td>Reference a specific memory slot. <code>M@3</code> = Memory slot 3.</td></tr>
+      <tr><td><code>|</code></td><td>Parallel</td><td>Two actions simultaneously. The only exception to one-action-per-line. <code>W→A | B→M</code></td></tr>
+      <tr><td><code>:</code></td><td>Apply / Set</td><td>Apply an operation or set a property. <code>A:+</code> = fire ALU add. <code>TG1:50</code> = set TG1 threshold to 50.</td></tr>
+    </table>
+
+    <div class="section-title" style="margin-top:20px;">Symbol Reference — Control Symbols</div>
+    <table class="ref-table">
+      <tr><th>Symbol</th><th>Name</th><th>Meaning</th></tr>
+      <tr><td><code>?→</code></td><td>Branch True</td><td>If condition is true, execute what follows. <code>PM1.M?→ W→A</code></td></tr>
+      <tr><td><code>:→</code></td><td>Branch False</td><td>Else branch. Follows a <code>?→</code>.</td></tr>
+      <tr><td><code>UNTIL(){ }</code></td><td>Loop Until</td><td>Repeat the following block until condition becomes true.</td></tr>
+      <tr><td><code>#N{ }</code></td><td>Repeat N</td><td>Repeat the following block exactly N times. N may be a literal, a component ref, or <code>CTR</code>.</td></tr>
+      <tr><td><code>{ }</code></td><td>Block</td><td>Groups steps for a UNTIL or #N repeat. Opening brace on same line as control word.</td></tr>
+      <tr><td><code>::LABEL</code></td><td>Label</td><td>Named step for reference. Labels are uppercase. <code>::LOAD_NEXT</code></td></tr>
+      <tr><td><code>PASS</code></td><td>No-op</td><td>Explicit do-nothing. Useful in false branch of a conditional to show intent.</td></tr>
+    </table>
+  </div>
+
+  <div class="section" id="s-lps-setup">
+    <div class="section-title">SETUP Syntax</div>
+    <p>Each SETUP line sets one property of one component. Syntax: <code>COMPONENT.PROPERTY = VALUE</code>. Values that are words are uppercase; numeric values are bare integers or hex with <code>0x</code> prefix. Only non-default configuration is declared.</p>
+    <table class="ref-table">
+      <tr><th>Line</th><th>Meaning</th></tr>
+      <tr><td><code>PM1.MASK = 0xFF</code></td><td>Set PM1 mask to 0xFF (check all 8 lower data bits).</td></tr>
+      <tr><td><code>PM1.PAT = 0x00</code></td><td>Set PM1 pattern to match against.</td></tr>
+      <tr><td><code>PM1.EJECT = DESTR</code></td><td>PM1 eject mode: <code>COPY</code> (default) or <code>DESTR</code> (destructive).</td></tr>
+      <tr><td><code>PM2.MODE = CASCADE</code></td><td>PM2 cascade from PM1. Default <code>STANDALONE</code>.</td></tr>
+      <tr><td><code>TG1.ON</code></td><td>Enable TG1. Default is OFF.</td></tr>
+      <tr><td><code>TG1.VAL = 1000</code></td><td>TG1 threshold value.</td></tr>
+      <tr><td><code>TG1.MODE = GTE</code></td><td>TG1 comparison: <code>GTE</code> (≥), <code>LTE</code> (≤), <code>EQ</code> (=). Default GTE.</td></tr>
+      <tr><td><code>TG1.EJECT = DESTR</code></td><td>TG1 eject mode.</td></tr>
+      <tr><td><code>TG1.CLAMP = ON</code></td><td>TG1 clamp mode. Default OFF.</td></tr>
+      <tr><td><code>TG2.MODE = CASCADE</code></td><td>TG2 cascade from TG1.</td></tr>
+      <tr><td><code>ALU.MODE = 12</code></td><td>ALU bit mode: <code>16</code> (default) or <code>12</code>.</td></tr>
+      <tr><td><code>MEM.MODE = WRITE</code></td><td>Memory mode: <code>WRITE</code>, <code>READ</code>, <code>ADDR</code>.</td></tr>
+      <tr><td><code>MEM.SLOTS = 0,1,2,3</code></td><td>Memory slots in use (for reader orientation).</td></tr>
+      <tr><td><code>CTR.START = 0</code></td><td>Initialize counter to value.</td></tr>
+      <tr><td><code>BUS.A = W→A</code></td><td>Pre-configure Bus A routing.</td></tr>
+    </table>
+    <p><strong>Default states:</strong> Gates open. PM and TG off. All buses closed. ALU 16-bit. Memory in WRITE mode. Counters at zero. Eject modes COPY.</p>
+  </div>
+
+  <div class="section" id="s-lps-exec">
+    <div class="section-title">EXEC Syntax — Examples</div>
+    <pre><span class="com">// Sequential — one action per line</span>
+<span class="cmp">INJ</span><span class="op">←</span><span class="val">14</span>
+<span class="cmp">INJ</span><span class="op">←</span>27
+<span class="cmp">W</span><span class="op">→</span><span class="cmp">A</span>          <span class="com">// route Working to ALU</span>
+<span class="cmp">A</span><span class="op">:+</span>           <span class="com">// fire ALU add</span>
+<span class="cmp">A</span><span class="op">→</span><span class="cmp">W</span>          <span class="com">// route result back to Working</span>
+
+<span class="com">// Branching</span>
+<span class="cmp">PM1</span>.<span class="flag">M</span><span class="op">?→</span> <span class="op">!</span><span class="cmp">PM1</span> <span class="op">:→</span> <span class="kw">PASS</span>
+<span class="com">// if PM1 matched, eject; else do nothing</span>
+
+<span class="com">// Multi-line branch</span>
+.<span class="flag">Z</span><span class="op">?→</span> {
+  <span class="op">∅</span><span class="cmp">A</span>
+  <span class="cmp">INJ</span><span class="op">←</span><span class="val">0</span>
+} <span class="op">:→</span> {
+  <span class="cmp">A</span><span class="op">→</span><span class="cmp">W</span>
+  <span class="cmp">A</span><span class="op">→</span><span class="cmp">M</span><span class="op">@</span><span class="val">0</span>
+}
+
+<span class="com">// UNTIL loop</span>
+<span class="kw">UNTIL</span>(.<span class="flag">Z</span>) {
+  <span class="cmp">B</span><span class="op">↺</span>
+  <span class="cmp">A</span><span class="op">:+</span>
+}
+
+<span class="com">// #N repeat (N can be a literal or CTR)</span>
+<span class="kw">#</span><span class="val">8</span> {
+  <span class="cmp">B</span><span class="op">↺</span>
+  <span class="cmp">PM1</span>.<span class="flag">M</span><span class="op">?→</span> <span class="cmp">PM1</span><span class="op">→</span><span class="cmp">W</span>
+}
+
+<span class="com">// Parallel actions (simultaneous)</span>
+<span class="cmp">W</span><span class="op">→</span><span class="cmp">A</span> <span class="op">|</span> <span class="cmp">B</span><span class="op">→</span><span class="cmp">M</span></pre>
+  </div>
+
+  <div class="section" id="s-lps-alu">
+    <div class="section-title">ALU Operations</div>
+    <table class="ref-table">
+      <tr><th>Symbol</th><th>Operation</th><th>Symbol</th><th>Operation</th></tr>
+      <tr><td><code>+</code></td><td>Add</td><td><code>&amp;</code></td><td>Bitwise AND</td></tr>
+      <tr><td><code>-</code></td><td>Subtract</td><td><code>|</code></td><td>Bitwise OR</td></tr>
+      <tr><td><code>*</code></td><td>Multiply</td><td><code>^</code></td><td>Bitwise XOR</td></tr>
+      <tr><td><code>/</code></td><td>Divide</td><td><code>~</code></td><td>Bitwise NOT (unary)</td></tr>
+      <tr><td><code>%</code></td><td>Modulo</td><td><code>&lt;&lt;</code></td><td>Shift left (×2, wrapping)</td></tr>
+      <tr><td><code>CMP</code></td><td>Compare — flags only, no result</td><td><code>&gt;&gt;</code></td><td>Shift right (÷2, floor)</td></tr>
+      <tr><td><code>CLR</code></td><td>Clear all registers</td><td><code>ABS</code></td><td>Absolute value</td></tr>
+      <tr><td><code>NEG</code></td><td>Two's complement negate</td><td><code>INC</code> / <code>DEC</code></td><td>Increment / Decrement</td></tr>
+    </table>
+
+    <div class="section-title" style="margin-top:20px;">ALU Flags</div>
+    <table class="ref-table">
+      <tr><th>Symbol</th><th>Flag</th><th>Set when</th></tr>
+      <tr><td><code>.Z</code></td><td>Zero</td><td>Result is zero.</td></tr>
+      <tr><td><code>.C</code></td><td>Carry</td><td>Arithmetic carry out of high bit (ADD/INC), borrow (SUB/DEC), or shifted-out bit (SHL/SHR).</td></tr>
+      <tr><td><code>.V</code></td><td>Overflow</td><td>Signed overflow: both operands same sign, result different sign.</td></tr>
+      <tr><td><code>.S</code></td><td>Sign</td><td>Result is negative (high bit set in 16-bit mode, bit 11 in 12-bit mode).</td></tr>
+      <tr><td><code>.P</code></td><td>Parity</td><td>Number of set bits in result is even.</td></tr>
+      <tr><td><code>.M</code></td><td>PM Match</td><td>Pattern Matcher has matched. Specify <code>PM1.M</code> or <code>PM2.M</code> when ambiguous.</td></tr>
+      <tr><td><code>.T</code></td><td>TG Triggered</td><td>Threshold Gate has fired. Specify <code>TG1.T</code> or <code>TG2.T</code> when ambiguous.</td></tr>
+    </table>
+    <div class="callout note"><div class="callout-label">Flags are informational</div>No automatic action occurs based on flag state. The operator reads flags and decides what to do next. Loopscript's <code>?→</code> operator is how flag-based branching is expressed.</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     CHAPTER 7 — P2P WIRE PROTOCOL
+═════════════════════════════════════════════ -->
+<div class="chapter" id="ch-p2p">
+  <span class="chapter-eyebrow">Chapter 7</span>
+  <div class="chapter-title">P2P Wire Protocol</div>
+  <p class="chapter-intro">All traffic on the WebRTC data channels (Buses F and G) is JSON. Every message is dispatched by its <code>type</code> field — unless it contains a <code>cbxType</code> field, in which case it is a CBX protocol message and is intercepted before any loop delivery.</p>
+
+  <div class="section">
+    <div class="section-title">Message Types — Raw P2P Channel</div>
+    <table class="ref-table">
+      <tr><th>type</th><th>Direction</th><th>Payload fields</th><th>Purpose</th></tr>
+      <tr><td><code>word</code></td><td>Either direction</td><td><code>value</code>: 0–65535</td><td>Deliver a 16-bit data word. Queued into word buffer, serialized to bit queue, delivered to destination loop at one bit per tick.</td></tr>
+      <tr><td><code>identity</code></td><td>Either direction</td><td><code>handle</code>: string, <code>machineId</code>: 4-char string</td><td>Sent immediately on channel open. Establishes peer name and machine ID for display and routing.</td></tr>
+      <tr><td><code>ping</code></td><td>Initiator → Peer</td><td><code>t</code>: timestamp (ms)</td><td>Latency measurement request. Sent on 1-second interval.</td></tr>
+      <tr><td><code>pong</code></td><td>Peer → Initiator</td><td><code>t</code>: original timestamp echoed</td><td>Latency measurement response. Round-trip = now − t.</td></tr>
+    </table>
+
+    <div class="callout warn"><div class="callout-label">Interception order</div>Every incoming message is checked for a <code>cbxType</code> field first. If present, it is routed to <code>cbxReceiveMessage()</code> and the word-delivery path is skipped entirely. If not present, the <code>type</code> field dispatches to the appropriate handler. CBX messages are processed asynchronously on receipt — they are not queued for the next tick.</div>
+
+    <div class="callout warn"><div class="callout-label">Networking messages</div>Named Networking messages also travel on the P2P data channel alongside word and CBX messages. They are identified by a <code>netType</code> field and dispatched to <code>netReceiveMessage()</code>.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Two-Stage Word Delivery</div>
+    <p>Words arriving from P2P are not placed directly into a loop. They go through two stages:</p>
+    <p><strong>Stage 1 — Word buffer:</strong> Received words are pushed into <code>_p2pWordBufL</code> or <code>_p2pWordBufR</code> (FIFO queue). Decouples asynchronous WebRTC delivery from the synchronous tick model.</p>
+    <p><strong>Stage 2 — Bit queue → pipeline:</strong> On each tick, if the inbound bit queue is empty, the oldest word from the word buffer is serialized into the bit queue as a 17-bit sequence. The bit queue drains one bit per tick into the inbound bus pipeline, delivering the word to the destination loop exactly as if it had been sent from another loop via an internal bus.</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     CHAPTER 8 — CBX PROTOCOL
+═════════════════════════════════════════════ -->
+<div class="chapter" id="ch-cbx">
+  <span class="chapter-eyebrow">Chapter 8</span>
+  <div class="chapter-title">Challenge Bus (CBX) Protocol</div>
+  <p class="chapter-intro">CBX is the coordination protocol for multi-machine challenges. It runs over the P2P data channels. CBX messages never touch any loop or register unless the operator explicitly routes Bus H into a loop to inspect them.</p>
+
+  <div class="section" id="s-cbx-messages">
+    <div class="section-title">Message Types — CBX_MSG</div>
+    <p>All CBX messages are JSON objects with a <code>cbxType</code> field. The value of <code>cbxType</code> is one of:</p>
+    <table class="ref-table">
+      <tr><th>cbxType value</th><th>Constant</th><th>Purpose</th></tr>
+      <tr><td><code>cbx_discovery</code></td><td><code>CBX_MSG.DISCOVERY</code></td><td>Chain probe — are you there and free?</td></tr>
+      <tr><td><code>cbx_discovery_ack</code></td><td><code>CBX_MSG.DISCOVERY_ACK</code></td><td>I'm here and free, forwarding on.</td></tr>
+      <tr><td><code>cbx_terminal</code></td><td><code>CBX_MSG.TERMINAL</code></td><td>Chain ends here — no further connection or busy.</td></tr>
+      <tr><td><code>cbx_probe</code></td><td><code>CBX_MSG.PROBE</code></td><td>Topology probe — traverses the full chain.</td></tr>
+      <tr><td><code>cbx_probe_return</code></td><td><code>CBX_MSG.PROBE_RETURN</code></td><td>Probe returning to origin with hop count.</td></tr>
+      <tr><td><code>cbx_status</code></td><td><code>CBX_MSG.STATUS</code></td><td>Availability state report.</td></tr>
+      <tr><td><code>cbx_chain_invite</code></td><td><code>CBX_MSG.CHAIN_INVITE</code></td><td>Origin → neighbors: want to start a challenge?</td></tr>
+      <tr><td><code>cbx_chain_invite_ack</code></td><td><code>CBX_MSG.CHAIN_INVITE_ACK</code></td><td>Neighbor → origin: I accept / I decline.</td></tr>
+      <tr><td><code>cbx_chain_assign</code></td><td><code>CBX_MSG.CHAIN_ASSIGN</code></td><td>Origin assigns each machine its position, value, and role.</td></tr>
+      <tr><td><code>cbx_chain_assign_ack</code></td><td><code>CBX_MSG.CHAIN_ASSIGN_ACK</code></td><td>Machine acknowledges its assignment.</td></tr>
+      <tr><td><code>cbx_chain_go</code></td><td><code>CBX_MSG.CHAIN_GO</code></td><td>Challenge starts. All machines begin simultaneously.</td></tr>
+      <tr><td><code>cbx_chain_sum_submit</code></td><td><code>CBX_MSG.CHAIN_SUM_SUBMIT</code></td><td>Participating machine → origin: here is my local running sum.</td></tr>
+      <tr><td><code>cbx_chain_sum_ok</code></td><td><code>CBX_MSG.CHAIN_SUM_OK</code></td><td>Origin → machine: your sum is verified.</td></tr>
+      <tr><td><code>cbx_chain_sum_fail</code></td><td><code>CBX_MSG.CHAIN_SUM_FAIL</code></td><td>Origin → all: sum failed at this position.</td></tr>
+      <tr><td><code>cbx_chain_abort</code></td><td><code>CBX_MSG.CHAIN_ABORT</code></td><td>Challenge cancelled. All machines reset.</td></tr>
+      <tr><td><code>cbx_chain_complete</code></td><td><code>CBX_MSG.CHAIN_COMPLETE</code></td><td>All sums verified. Challenge complete.</td></tr>
+    </table>
+  </div>
+
+  <div class="section" id="s-cbx-availability">
+    <div class="section-title">Availability States — CBX_AVAILABILITY</div>
+    <table class="ref-table">
+      <tr><th>State</th><th>Value</th><th>Behavior</th></tr>
+      <tr><td><code>RELAY</code></td><td><code>'relay'</code></td><td><strong>Default.</strong> Discovery probes pass through transparently. Machine does not participate in challenges but does not block the chain. Busy operators are invisible to the network.</td></tr>
+      <tr><td><code>OPEN</code></td><td><code>'open'</code></td><td>Willing to join challenges. Discovery probes pass through. Machine is included in topology counts and invitation flow.</td></tr>
+      <tr><td><code>SOFT_DECLINE</code></td><td><code>'soft_decline'</code></td><td>Always returns TERMINAL response to all discovery probes and invitation messages. Chain terminates here. Machine is invisible to any challenge network. Does not forward probes.</td></tr>
+    </table>
+    <div class="callout note"><div class="callout-label">State transitions</div>SOFT_DECLINE overrides OPEN. Toggling soft decline OFF reverts to RELAY, not OPEN. OPEN must be explicitly re-enabled.</div>
+  </div>
+
+  <div class="section" id="s-cbx-chainsum">
+    <div class="section-title">Chain Sum — Phase Sequence</div>
+    <p>The participation state machine moves through these phases in order:</p>
+    <div class="phase-chain">
+      <span class="phase">idle</span><span class="phase-arrow">→</span>
+      <span class="phase">invited</span><span class="phase-arrow">→</span>
+      <span class="phase">assigned</span><span class="phase-arrow">→</span>
+      <span class="phase">waiting_for_sum</span><span class="phase-arrow">→</span>
+      <span class="phase">staged</span><span class="phase-arrow">→</span>
+      <span class="phase">released</span><span class="phase-arrow">→</span>
+      <span class="phase">submitted</span><span class="phase-arrow">→</span>
+      <span class="phase">done</span>
+    </div>
+    <table class="ref-table">
+      <tr><th>Phase</th><th>Entered when</th><th>Operator action</th></tr>
+      <tr><td><code>idle</code></td><td>Default / after reset</td><td>Nothing. Machine may relay probes.</td></tr>
+      <tr><td><code>invited</code></td><td>CHAIN_INVITE received and machine is OPEN</td><td>Accept or decline in CBX panel.</td></tr>
+      <tr><td><code>assigned</code></td><td>CHAIN_ASSIGN received with role and value</td><td>Wait for GO.</td></tr>
+      <tr><td><code>waiting_for_sum</code></td><td>CHAIN_GO received; machine is not the starter</td><td>Wait for chain sum marker from neighbor.</td></tr>
+      <tr><td><code>staged</code></td><td>Starter: on GO. Others: chain sum marker detected.</td><td>RELEASE button becomes available.</td></tr>
+      <tr><td><code>released</code></td><td>Operator presses RELEASE (no lockout active)</td><td>Machine injects assigned value, operator adds to running sum via ALU, routes result to Bus E outbound.</td></tr>
+      <tr><td><code>submitted</code></td><td>Running sum exits Bus E outbound</td><td>Wait for verification from origin.</td></tr>
+      <tr><td><code>done</code></td><td>CHAIN_SUM_OK or CHAIN_COMPLETE received</td><td>Challenge complete. Score displayed.</td></tr>
+    </table>
+    <div class="callout warn"><div class="callout-label">Jeopardy lockout</div>If the operator presses RELEASE before the chain sum marker has arrived and been staged, a 3-second lockout fires. The RELEASE button is disabled for 3 seconds as a penalty. After lockout the button re-enables — the operator must wait for the marker.</div>
+  </div>
+
+  <div class="section" id="s-cbx-marker">
+    <div class="section-title">The Chain Sum Marker</div>
+    <p>Running sum forwarding between machines uses a two-word raw P2P transmission rather than a JSON CBX message — because the sum is real data the operator receives and works with.</p>
+    <table class="ref-table">
+      <tr><th>Constant</th><th>Value</th><th>Meaning</th></tr>
+      <tr><td><code>CBX_CHAIN_SUM_MARKER</code></td><td><code>0xCB00</code> (51968)</td><td>Reserved marker word. "Challenge Bus, sum follows." Sent immediately before the running sum value.</td></tr>
+    </table>
+    <p>When a machine forwards the running sum: it sends <code>{ type: 'word', value: 0xCB00 }</code> followed immediately by <code>{ type: 'word', value: runningSum }</code>.</p>
+    <p>The receiving machine's <code>p2pQueueInboundWord</code> calls <code>cbxCheckIncomingChainWord()</code> before queuing any word. When <code>0xCB00</code> arrives, the function sets <code>CBX._incomingMarkerSide</code> and consumes the word (not queued). The next word from the same side is treated as the incoming sum and also consumed.</p>
+    <div class="callout warn"><div class="callout-label">Reserved value</div><code>0xCB00</code> (51968 decimal) is the one value in the 0–65535 range treated specially by the P2P channel. It will be silently consumed by the CBX interception layer. Challenges and operators sending data over P2P connections should avoid generating this specific value.</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     CHAPTER 9 — NAMED NETWORKING
+═════════════════════════════════════════════ -->
+<div class="chapter" id="ch-net">
+  <span class="chapter-eyebrow">Chapter 9</span>
+  <div class="chapter-title">Named Networking Protocol</div>
+  <p class="chapter-intro">The Named Networking layer allows operators to form persistent named networks over their P2P connections. Networks persist across sessions via localStorage; topology state is session-only. All networking messages travel on the P2P data channel alongside CBX and word messages, identified by a <code>netType</code> field.</p>
+
+  <div class="section" id="s-net-messages">
+    <div class="section-title">Message Types — NET_MSG</div>
+    <table class="ref-table">
+      <tr><th>netType value</th><th>Constant</th><th>Purpose</th></tr>
+      <tr><td><code>net_scan</code></td><td><code>NET_MSG.SCAN</code></td><td>Topology probe sent in both directions on SCAN NETWORK. Carries probeId, originId, hopCount, machines list, networks list.</td></tr>
+      <tr><td><code>net_scan_reply</code></td><td><code>NET_MSG.SCAN_REPLY</code></td><td>Probe return carrying hop count, detected machines, and detected networks back toward origin.</td></tr>
+      <tr><td><code>net_announce</code></td><td><code>NET_MSG.ANNOUNCE</code></td><td>Hub announces network existence to newly connected neighbors.</td></tr>
+      <tr><td><code>net_invite</code></td><td><code>NET_MSG.INVITE</code></td><td>Hub invites a specific machine by ID to join its network.</td></tr>
+      <tr><td><code>net_invite_ack</code></td><td><code>NET_MSG.INVITE_ACK</code></td><td>Machine accepts or declines a network invitation.</td></tr>
+      <tr><td><code>net_join_req</code></td><td><code>NET_MSG.JOIN_REQ</code></td><td>Machine requests to join an existing network it discovered via scan.</td></tr>
+      <tr><td><code>net_join_approve</code></td><td><code>NET_MSG.JOIN_APPROVE</code></td><td>Hub approves a join request and sends routing table.</td></tr>
+      <tr><td><code>net_join_deny</code></td><td><code>NET_MSG.JOIN_DENY</code></td><td>Hub denies a join request.</td></tr>
+      <tr><td><code>net_heartbeat</code></td><td><code>NET_MSG.HEARTBEAT</code></td><td>Hub → all members. Keepalive. Resets watchdog timer on receipt.</td></tr>
+      <tr><td><code>net_hub_elect</code></td><td><code>NET_MSG.HUB_ELECT</code></td><td>Election candidate broadcast. Bully algorithm — lowest machine ID wins.</td></tr>
+      <tr><td><code>net_hub_claim</code></td><td><code>NET_MSG.HUB_CLAIM</code></td><td>Election winner claims hub role and distributes member list.</td></tr>
+      <tr><td><code>net_route_table</code></td><td><code>NET_MSG.ROUTE_TABLE</code></td><td>Hub distributes routing table to all members after topology changes.</td></tr>
+      <tr><td><code>net_member_list</code></td><td><code>NET_MSG.MEMBER_LIST</code></td><td>Hub distributes full member list (IDs, handles, positions).</td></tr>
+      <tr><td><code>net_drop_notify</code></td><td><code>NET_MSG.DROP_NOTIFY</code></td><td>Hub notifies members that a machine has dropped from the network.</td></tr>
+      <tr><td><code>net_chat</code></td><td><code>NET_MSG.CHAT</code></td><td>Routed chat message. Carries destId, text, networkId, TTL.</td></tr>
+      <tr><td><code>net_forward</code></td><td><code>NET_MSG.FORWARD</code></td><td>Generic packet forward wrapper for multi-hop delivery.</td></tr>
+    </table>
+  </div>
+
+  <div class="section" id="s-net-constants">
+    <div class="section-title">Networking Constants</div>
+    <div class="const-block">
+      <div class="const-item"><span class="const-name">NET_HEARTBEAT_MS</span><span class="const-val">5000 ms</span><span class="const-desc">Hub sends heartbeat to all members every 5 seconds.</span></div>
+      <div class="const-item"><span class="const-name">NET_WATCHDOG_MISSES</span><span class="const-val">3</span><span class="const-desc">Missed heartbeats before watchdog fires hub election. Detection time ≈ 15 seconds.</span></div>
+      <div class="const-item"><span class="const-name">NET_SCAN_TIMEOUT_MS</span><span class="const-val">8000 ms</span><span class="const-desc">Scan waits 8 seconds for probe returns before finalizing topology.</span></div>
+      <div class="const-item"><span class="const-name">NET_TTL_MAX</span><span class="const-val">32</span><span class="const-desc">Maximum hops for a forwarded packet. Packets are dropped if TTL reaches 0.</span></div>
+      <div class="const-item"><span class="const-name">NET_MAX_MEMBERS</span><span class="const-val">16</span><span class="const-desc">Maximum members per named network including the hub.</span></div>
+      <div class="const-item"><span class="const-name">Auto-scan delay</span><span class="const-val">800 ms</span><span class="const-desc">Scan fires automatically 800 ms after a new P2P connection opens.</span></div>
+    </div>
+  </div>
+
+  <div class="section" id="s-net-state">
+    <div class="section-title">netState Object Structure</div>
+    <pre><span class="kw">netState</span> = {
+  topology: {
+    scanned:            <span class="val">false</span>,
+    leftHops:           <span class="val">0</span>,
+    rightHops:          <span class="val">0</span>,
+    totalNodes:         <span class="val">1</span>,
+    isRing:             <span class="val">false</span>,
+    lastScanTimestamp:  <span class="val">0</span>,
+    detectedMachines:   <span class="com">// [{id, handle, position, side}]</span>
+    detectedNetworks:   <span class="com">// [{id, name, hubId, memberCount}]</span>
+  },
+
+  <span class="com">// Map: networkId → network object</span>
+  networks: <span class="kw">new Map</span>(),
+  <span class="com">// Each network object: { name, hubId, isHub, isHub,</span>
+  <span class="com">//   members: Map&lt;id, {handle, position}&gt;,</span>
+  <span class="com">//   routeTable: Map&lt;id, 'l'|'r'&gt;,</span>
+  <span class="com">//   heartbeatTimer, watchdogTimer, electionTimer }</span>
+
+  pendingInvitation:  <span class="com">// {networkId, networkName, hubId, hubHandle} | null</span>
+  pendingRequests:    <span class="com">// [{networkId, fromId, fromHandle, fromPosition}]</span>
+
+  scanInFlight:       <span class="val">false</span>,
+  scanProbeId:        <span class="val">null</span>,
+  scanLeftResolved:   <span class="val">false</span>,
+  scanRightResolved:  <span class="val">false</span>,
+  scanLeftHops:       <span class="val">0</span>,
+  scanRightHops:      <span class="val">0</span>,
+  scanTimeout:        <span class="val">null</span>,
+
+  electionInProgress: <span class="val">false</span>,
+  electionCandidateId:<span class="val">null</span>,
+};</pre>
+    <p><strong>Persistence:</strong> All <code>netState</code> is session-only (not persisted). Machine ID persists in <code>localStorage</code> under key <code>loop21_machine_id</code>. Network membership does not persist across page loads.</p>
+  </div>
+
+  <div class="section" id="s-net-election">
+    <div class="section-title">Hub Election Algorithm</div>
+    <p>When the watchdog fires (3 missed heartbeats), remaining members start a Bully election:</p>
+    <table class="ref-table two-col">
+      <tr><th>Step</th><th>Action</th></tr>
+      <tr><td>1. Watchdog fires</td><td>Member sets <code>electionInProgress = true</code>, broadcasts <code>net_hub_elect</code> with its own machine ID as candidate.</td></tr>
+      <tr><td>2. Receive candidate</td><td>If incoming candidate ID &lt; own ID (lower wins), adopt that candidate and forward it. If own ID is lower, broadcast own ID.</td></tr>
+      <tr><td>3. Claim timeout</td><td>After 2 seconds without a better candidate, the lowest-ID machine broadcasts <code>net_hub_claim</code> and assumes hub role.</td></tr>
+      <tr><td>4. On claim received</td><td>All members update their <code>net.hubId</code>, clear election state, reset watchdog timer.</td></tr>
+    </table>
+    <div class="callout key"><div class="callout-label">Bully variant</div>Lowest machine ID wins (not highest). Machine IDs are 4-character strings from the charset <code>ABCDEFGHJKLMNPQRSTUVWXYZ23456789</code>. String comparison is used — <code>'AAAA' &lt; 'BBBB'</code>.</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     CHAPTER 10 — VARIANT NUMBERS
+═════════════════════════════════════════════ -->
+<div class="chapter" id="ch-variants">
+  <span class="chapter-eyebrow">Chapter 10</span>
+  <div class="chapter-title">Variant Number System</div>
+  <p class="chapter-intro">Every approved variant receives an eight-digit identifier. Numbers are randomly assigned by Shea Gunther. The number is an identity — it does not encode the variant's properties. Variant documentation describes tenet departures; the number does not.</p>
+
+  <div class="section">
+    <div class="section-title">Number Spaces</div>
+    <table class="ref-table">
+      <tr><th>Range</th><th>Type</th><th>Notes</th></tr>
+      <tr><td><code>00000000</code>–<code>89999999</code></td><td>Standard variants</td><td>Randomly assigned from this space. No encoding.</td></tr>
+      <tr><td><code>A-001</code>–<code>A-999</code></td><td>Application domain variants</td><td>Separate namespace. No tenet departure — a different problem domain entirely (e.g., Music, Signal Processing).</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Current Registry</div>
+    <table class="ref-table">
+      <tr><th>Number</th><th>Name</th><th>Creator</th><th>Tenet departure</th></tr>
+      <tr><td><code>00000000</code></td><td>Headless-Light</td><td>Variants Board</td><td>None (constraint). Bit stream display hidden.</td></tr>
+      <tr><td><code>00010000</code></td><td>Headless-Full</td><td>Variants Board</td><td>None (constraint). All display hidden. Machine runs in complete visual silence.</td></tr>
+      <tr><td><code>00020000</code></td><td>Assisted Mode</td><td>Variants Board</td><td>None (constraint). Training mode, non-scoring. Word-at-head indicator added.</td></tr>
+      <tr><td><code>00030000</code></td><td>No-ALU</td><td>ejectstate</td><td>None (constraint). Operator pledges not to use the ALU. Honor system enforced by community.</td></tr>
+      <tr><td><code>01000000</code></td><td>Cooperative</td><td>wrongframe</td><td>Tenet 1. Two operators, one machine. Left panel / right panel split.</td></tr>
+      <tr><td><code>03000002</code></td><td>Long Loop</td><td>nullroute</td><td>Tenet 3. All four loop sizes doubled. Timing calibration operators have internalized is wrong by design.</td></tr>
+      <tr><td><code>09000000</code></td><td>Mirror</td><td>wrongframe</td><td>Tenets 1+2+5. Two synchronized instances. Operator must converge them.</td></tr>
+      <tr><td><code>09000001</code></td><td>Temporal</td><td>TBD</td><td>Complex. Details pending formal submission.</td></tr>
+      <tr><td><code>A-001</code></td><td>Music</td><td>wrongframe</td><td>Domain. No tenet departure. Data values treated as audio samples.</td></tr>
+    </table>
+    <div class="callout note"><div class="callout-label">Operator is a precondition</div>Any variant that makes the operator optional — removes the requirement for a human in the loop — is not approvable. The operator is a precondition of the paradigm, not a parameter. If all eight tenets are departed from, the result is a spreadsheet.</div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<div class="page-footer">
+  <span>Loop 2.1 · loop2.computer</span>
+  <span>Technical Reference · v.215 · March 2026</span>
+  <span>"The Operator Is the Program"</span>
+</div>
+
+<script>
+function setSkin(id) {
+  document.body.className = 'skin-' + id;
+  document.querySelectorAll('.skin-btn').forEach(b => {
+    b.classList.toggle('active',
+      b.textContent.toLowerCase() === id || (id === 'og' && b.textContent === 'OG'));
+  });
+  try { localStorage.setItem('loop2-techref-skin', id); } catch(e) {}
+}
+(function() {
+  try { const s = localStorage.getItem('loop2-techref-skin'); if (s) setSkin(s); } catch(e) {}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loop 2.1 — Technical Quick Start</title>
+<style>
+  :root {
+    --bg:        #e8eef4;
+    --panel:     #e8eef4;
+    --panel2:    #edf1f5;
+    --panel3:    #dce4ec;
+    --border:    #9ab0c4;
+    --border2:   #b0c4d4;
+    --fg:        #000000;
+    --fg-dim:    #507090;
+    --accent:    #6030c0;
+    --working:   #1060b0;
+    --alu:       #b06000;
+    --memory:    #006830;
+    --big:       #006888;
+    --bus-a:     #6030c0;
+    --bus-b:     #c838c8;
+    --bus-c:     #20c8a0;
+    --bus-d:     #e07020;
+    --bus-e:     #e02040;
+    --bus-h:     #8080e0;
+    --font:      'Courier New', 'Consolas', monospace;
+    --max-w:     820px;
+    --callout-tip-bg:   #e8f4ec;
+    --callout-warn-bg:  #fef8e0;
+    --callout-key-bg:   #eef0f8;
+    --code-bg:          #dce4ec;
+  }
+
+  body.skin-winamp {
+    --bg: #1e1e1e; --panel: #252525; --panel2: #202020; --panel3: #1c1c1c;
+    --border: #1e4c28; --border2: #163c20;
+    --fg: #33ff44; --fg-dim: #33ff44;
+    --accent: #33ff44; --working: #44aaff; --alu: #ffaa00; --memory: #33ff44; --big: #00ddff;
+    --bus-a: #a060ff; --bus-b: #d050f0; --bus-c: #20c8a0; --bus-d: #e07020; --bus-e: #e02040;
+    --callout-tip-bg: #0c1e10; --callout-warn-bg: #1e1000; --callout-key-bg: #0a1020;
+    --code-bg: #0a1a0c;
+  }
+  body.skin-sunrise {
+    --bg: #fff8ec; --panel: #ffffff; --panel2: #fffcf5; --panel3: #fff4e0;
+    --border: #e8b030; --border2: #d8a020;
+    --fg: #000000; --fg-dim: #705030;
+    --accent: #5828b0; --working: #0060c0; --alu: #c06000; --memory: #007030; --big: #007898;
+    --bus-a: #5828b0; --bus-b: #c838b8; --bus-c: #0c8868; --bus-d: #c86010; --bus-e: #c01828;
+    --callout-tip-bg: #e8f8ec; --callout-warn-bg: #fff4dc; --callout-key-bg: #f0eeff;
+    --code-bg: #fff0cc;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-size: 17px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page-header {
+    background: var(--panel);
+    border-bottom: 2px solid var(--border);
+    padding: 28px 48px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .logo { font-family: var(--font); letter-spacing: 6px; font-size: 20px; font-weight: bold; color: var(--fg); }
+  .logo-sub { font-family: var(--font); font-size: 10px; letter-spacing: 3px; color: var(--fg-dim); margin-top: 4px; }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .doc-title { text-align: right; }
+  .doc-title .title-main { font-family: var(--font); font-size: 11px; letter-spacing: 3px; color: var(--fg-dim); text-transform: uppercase; }
+  .doc-title .build-tag  { font-family: var(--font); font-size: 10px; color: var(--fg-dim); margin-top: 3px; }
+
+  .skin-group { display: flex; align-items: center; gap: 5px; }
+  .skin-btn {
+    font-family: var(--font); font-size: 10px; letter-spacing: 1px;
+    padding: 3px 9px; background: transparent; border: 1px solid var(--border2);
+    color: var(--fg-dim); cursor: pointer; text-transform: uppercase;
+  }
+  .skin-btn:hover  { border-color: var(--fg); color: var(--fg); }
+  .skin-btn.active { border-color: var(--fg); color: var(--fg); background: var(--panel2); }
+
+  .body-wrap { display: flex; max-width: 1200px; margin: 0 auto; }
+
+  .toc-sidebar {
+    width: 240px; flex-shrink: 0; position: sticky; top: 80px;
+    height: calc(100vh - 80px); overflow-y: auto;
+    padding: 32px 0 32px 32px; border-right: 1px solid var(--border2);
+    font-family: var(--font);
+  }
+  .toc-title { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--fg-dim); margin-bottom: 16px; }
+  .toc-list { list-style: none; }
+  .toc-list li { margin-bottom: 2px; }
+  .toc-list a {
+    font-size: 11px; color: var(--fg-dim); text-decoration: none;
+    display: block; padding: 3px 6px; border-left: 2px solid transparent;
+  }
+  .toc-list a:hover { color: var(--fg); border-left-color: var(--border); }
+  .toc-list a.active { color: var(--fg); border-left-color: var(--accent); }
+  .toc-list .toc-sub a { font-size: 10px; padding-left: 14px; opacity: 0.75; }
+  .toc-sep { border: none; border-top: 1px solid var(--border2); margin: 8px 6px; }
+
+  .content { flex: 1; min-width: 0; padding: 48px 64px 96px 48px; max-width: var(--max-w); }
+
+  .chapter { margin-bottom: 72px; scroll-margin-top: 100px; }
+  .chapter-number { font-family: var(--font); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--fg-dim); margin-bottom: 6px; }
+  .chapter-title { font-family: var(--font); font-size: 22px; font-weight: bold; letter-spacing: 2px; color: var(--fg); border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-bottom: 20px; }
+
+  .section { margin: 32px 0; scroll-margin-top: 100px; }
+  .section-title { font-family: var(--font); font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--fg-dim); border-bottom: 1px solid var(--border2); padding-bottom: 6px; margin-bottom: 16px; }
+
+  /* Tutorial card */
+  .tutorial {
+    border: 1px solid var(--border2);
+    border-left: 4px solid var(--accent);
+    background: var(--panel);
+    margin: 28px 0;
+    scroll-margin-top: 100px;
+  }
+  .tutorial-header {
+    padding: 14px 20px 10px;
+    border-bottom: 1px solid var(--border2);
+    display: flex; align-items: baseline; gap: 14px;
+  }
+  .tutorial-num { font-family: var(--font); font-size: 10px; letter-spacing: 2px; color: var(--fg-dim); text-transform: uppercase; }
+  .tutorial-title { font-family: var(--font); font-size: 15px; font-weight: bold; letter-spacing: 1px; color: var(--fg); }
+  .tutorial-body { padding: 16px 20px 20px; }
+
+  .tutorial.working { border-left-color: var(--working); }
+  .tutorial.alu     { border-left-color: var(--alu); }
+  .tutorial.memory  { border-left-color: var(--memory); }
+  .tutorial.big     { border-left-color: var(--big); }
+  .tutorial.bus     { border-left-color: var(--bus-a); }
+  .tutorial.network { border-left-color: var(--bus-h); }
+  .tutorial.challenge { border-left-color: var(--bus-e); }
+
+  p { margin-bottom: 14px; }
+  strong { font-weight: 600; }
+
+  .steps { counter-reset: step; list-style: none; margin: 0 0 16px; }
+  .steps li {
+    counter-increment: step; display: flex; gap: 16px;
+    margin-bottom: 14px; align-items: flex-start;
+  }
+  .steps li::before {
+    content: counter(step); display: flex; align-items: center; justify-content: center;
+    min-width: 26px; height: 26px; background: var(--fg); color: var(--bg);
+    font-family: var(--font); font-size: 11px; font-weight: bold;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .steps li .step-body { flex: 1; min-width: 0; font-size: 16px; line-height: 1.65; overflow-wrap: break-word; }
+  .steps li .step-note { flex: 1; min-width: 0; font-size: 14px; color: var(--fg-dim); margin-top: 4px; line-height: 1.5; overflow-wrap: break-word; }
+
+  .callout { border-left: 4px solid var(--border); padding: 12px 16px; background: var(--panel); margin: 20px 0; font-size: 15px; line-height: 1.6; }
+  .callout.tip  { background: var(--callout-tip-bg);  border-left-color: var(--memory); }
+  .callout.warn { background: var(--callout-warn-bg); border-left-color: var(--alu); }
+  .callout.key  { background: var(--callout-key-bg);  border-left-color: var(--working); }
+  .callout-label { font-family: var(--font); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--fg-dim); margin-bottom: 6px; }
+  .callout.tip  .callout-label { color: var(--memory); }
+  .callout.warn .callout-label { color: var(--alu); }
+  .callout.key  .callout-label { color: var(--working); }
+
+  code { background: var(--code-bg); padding: 1px 5px; font-family: var(--font); font-size: 14px; color: var(--alu); border-radius: 2px; }
+  pre { background: var(--code-bg); padding: 14px 16px; font-family: var(--font); font-size: 13px; line-height: 1.6; overflow-x: auto; margin: 16px 0; border-left: 3px solid var(--border2); }
+  kbd { display: inline-block; background: var(--panel2); border: 1px solid var(--border); border-bottom-width: 2px; padding: 1px 6px; font-family: var(--font); font-size: 13px; border-radius: 2px; white-space: nowrap; }
+
+  .ref-table { width: 100%; border-collapse: collapse; font-size: 15px; margin: 16px 0; }
+  .ref-table th { font-family: var(--font); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--fg-dim); text-align: left; padding: 7px 10px; border-bottom: 2px solid var(--border); background: var(--panel); }
+  .ref-table td { padding: 7px 10px; border-bottom: 1px solid var(--border2); vertical-align: top; font-size: 15px; }
+  .ref-table tr:last-child td { border-bottom: none; }
+  .ref-table td:first-child { font-family: var(--font); font-size: 13px; color: var(--alu); white-space: nowrap; }
+
+  .arch-row { display: flex; gap: 10px; margin: 14px 0; flex-wrap: wrap; }
+  .arch-box {
+    border: 1px solid var(--border2); padding: 10px 14px; flex: 1; min-width: 140px;
+    font-size: 14px; line-height: 1.5;
+  }
+  .arch-box-name { font-family: var(--font); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: bold; margin-bottom: 4px; }
+  .arch-box.working .arch-box-name { color: var(--working); border-left: 3px solid var(--working); padding-left: 8px; }
+  .arch-box.alu     .arch-box-name { color: var(--alu);     border-left: 3px solid var(--alu);     padding-left: 8px; }
+  .arch-box.memory  .arch-box-name { color: var(--memory);  border-left: 3px solid var(--memory);  padding-left: 8px; }
+  .arch-box.big     .arch-box-name { color: var(--big);     border-left: 3px solid var(--big);     padding-left: 8px; }
+  .arch-box-spec { font-family: var(--font); font-size: 11px; color: var(--fg-dim); margin-bottom: 5px; }
+
+  .bus-strip-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--panel); border: 1px solid var(--border2); margin-bottom: 5px; }
+  .bus-label { font-family: var(--font); font-size: 11px; font-weight: bold; min-width: 22px; }
+  .bus-line  { height: 5px; flex: 1; border-radius: 2px; opacity: 0.5; }
+  .bus-desc  { font-size: 14px; color: var(--fg); flex: 3; }
+
+  hr { border: none; border-top: 1px solid var(--border2); margin: 40px 0; }
+
+  .page-footer {
+    max-width: 1200px; margin: 0 auto; padding: 20px 64px 48px 320px;
+    font-family: var(--font); font-size: 10px; color: var(--fg-dim);
+    border-top: 1px solid var(--border2); display: flex; justify-content: space-between;
+  }
+
+  .aside { font-size: 15px; font-style: italic; color: var(--fg-dim); border-top: 1px solid var(--border2); border-bottom: 1px solid var(--border2); padding: 14px 0; margin: 20px 0; }
+</style>
+</head>
+<body class="skin-og">
+
+<div class="page-header">
+  <div>
+    <div class="logo">LOOP 2.1</div>
+    <div class="logo-sub">Manual Flow Computer</div>
+  </div>
+  <div class="header-right">
+    <div class="skin-group">
+      <span style="font-family:var(--font);font-size:9px;letter-spacing:2px;color:var(--fg-dim);text-transform:uppercase;margin-right:4px;">Skin</span>
+      <button class="skin-btn active" onclick="setSkin('og')">OG</button>
+      <button class="skin-btn" onclick="setSkin('winamp')">Winamp</button>
+      <button class="skin-btn" onclick="setSkin('sunrise')">Sunrise</button>
+    </div>
+    <div class="doc-title">
+      <div class="title-main">Technical Quick Start</div>
+      <div class="build-tag">v.209 · March 2026</div>
+    </div>
+  </div>
+</div>
+
+<div class="body-wrap">
+<nav class="toc-sidebar" id="toc">
+  <div class="toc-title">Contents</div>
+  <ul class="toc-list">
+    <li><a href="#ch-overview">Overview</a></li>
+    <li><a href="#ch-arch">Architecture</a></li>
+    <li><a href="#ch-buses">Buses</a></li>
+    <li><a href="#ch-start">Getting Started</a></li>
+    <hr class="toc-sep">
+    <li><a href="#t01">1 · Load &amp; Read a Value</a></li>
+    <li><a href="#t02">2 · ALU Arithmetic</a></li>
+    <li><a href="#t03">3 · Memory Slots</a></li>
+    <li><a href="#t04">4 · Route Between Loops</a></li>
+    <li><a href="#t05">5 · Pattern Matcher</a></li>
+    <li><a href="#t06">6 · Threshold Gate</a></li>
+    <li><a href="#t07">7 · The Big Loop</a></li>
+    <li><a href="#t08">8 · Bus E &amp; Challenges</a></li>
+    <li><a href="#t09">9 · P2P Connections</a></li>
+    <li><a href="#t10">10 · Challenge Network</a></li>
+    <li><a href="#t11">11 · Session Logging</a></li>
+    <hr class="toc-sep">
+    <li><a href="#ch-ref">Quick Reference</a></li>
+  </ul>
+</nav>
+
+<main class="content">
+
+<!-- ══ OVERVIEW ══ -->
+<div class="chapter" id="ch-overview">
+  <div class="chapter-number">Introduction</div>
+  <div class="chapter-title">What This Machine Is</div>
+
+  <p>Loop 2.1 is a manual flow computer — a computing paradigm where the human operator makes every routing and operational decision in real time. There is no stored program, no fetch-decode-execute cycle, no instruction pointer. Data circulates continuously in hardware loops and the operator's job is to intercept it, transform it, and route it to the right place at the right time.</p>
+
+  <p>This is not a simulation of a conventional computer. It is a different model of computation, one that makes the flow of data visible and physical. Every word of data is 17 bits: one marker bit followed by 16 data bits representing an unsigned integer from 0 to 65,535. Words circulate clockwise in their loops at whatever clock rate the operator sets. The operator sees them pass the read head as binary and hexadecimal values, captures them into the ALU, operates on them, and reinjects results.</p>
+
+  <div class="callout key">
+    <div class="callout-label">The Core Paradigm</div>
+    The machine runs continuously. You don't tell it what to do — you intercept what's happening and shape it. Think of it less like programming and more like operating a mixing board or a patch bay. Timing matters. Position matters. Every action you take is an operator action, and the scoring system counts them.
+  </div>
+
+  <p>The machine runs in a single HTML file with no dependencies, no server, and no installation. Open it in a browser and it runs. Everything is visible — right-click and View Source in any browser to read the full implementation, or open the file in a text editor. Source code, state, and session log are all accessible and nothing is hidden behind abstraction.</p>
+</div>
+
+<!-- ══ ARCHITECTURE ══ -->
+<div class="chapter" id="ch-arch">
+  <div class="chapter-number">Architecture</div>
+  <div class="chapter-title">Four Loops, One ALU, Sixteen Memory Slots</div>
+
+  <p>The machine has four circular bit-shift registers of different sizes, a single ALU with four registers, sixteen addressable memory slots, a pattern matcher, a threshold gate, and a set of buses for routing data between components. All components operate synchronously on the master clock.</p>
+
+  <div class="arch-row">
+    <div class="arch-box working">
+      <div class="arch-box-name">Working Loop</div>
+      <div class="arch-box-spec">12 words · 204 bits</div>
+      The primary workspace. Data enters here from the injection channel. Most operations begin and end here.
+    </div>
+    <div class="arch-box alu">
+      <div class="arch-box-name">ALU Loop</div>
+      <div class="arch-box-spec">16 words · 272 bits</div>
+      Feeds the arithmetic unit. Words passing the read head are automatically captured into Register A or B.
+    </div>
+    <div class="arch-box memory">
+      <div class="arch-box-name">Memory Loop</div>
+      <div class="arch-box-spec">16 words · 272 bits</div>
+      Connects to the 16 memory slots. Words are written to and read from addressed slots as they pass.
+    </div>
+    <div class="arch-box big">
+      <div class="arch-box-name">Big Loop</div>
+      <div class="arch-box-spec">32 words · 544 bits</div>
+      High-capacity staging. The Pattern Matcher and Threshold Gate operate here. Used for multi-word pipelines.
+    </div>
+  </div>
+
+  <p>Each loop has three functional positions: the <strong>read head</strong> (position 2 from start, reads the passing word), the <strong>write head</strong> (position 0, injects new words), and the <strong>gate</strong> (position 1, can hold a word in place or let it pass). The marker bit identifies the first bit of each 17-bit word, letting the hardware track word boundaries as bits shift through.</p>
+
+  <p>The ALU has four 16-bit registers: <strong>A</strong> and <strong>B</strong> are inputs, <strong>C</strong> is the result, <strong>D</strong> is a working scratchpad. A comparator runs continuously on A and B. Supported operations include ADD, SUB, MUL (lower 16 bits), AND, OR, XOR, NOT, SHL, SHR, INC, DEC, NEG, and SWAP A↔B.</p>
+</div>
+
+<!-- ══ BUSES ══ -->
+<div class="chapter" id="ch-buses">
+  <div class="chapter-number">Buses</div>
+  <div class="chapter-title">Routing Data Between Components</div>
+
+  <p>Buses are one-way data paths that carry words from a source to a destination. Each bus has a configurable source, destination, and on/off state. Buses A through D are the four internal routing buses. Each can connect any loop or component to any other.</p>
+
+  <div class="bus-strip-row">
+    <span class="bus-label" style="color:var(--bus-a);">A</span>
+    <span class="bus-line" style="background:var(--bus-a);"></span>
+    <span class="bus-desc">General routing — connects any source to any destination. Used for most cross-component transfers.</span>
+  </div>
+  <div class="bus-strip-row">
+    <span class="bus-label" style="color:var(--bus-b);">B</span>
+    <span class="bus-line" style="background:var(--bus-b);"></span>
+    <span class="bus-desc">General routing — identical capability to Bus A. Run two transfers simultaneously.</span>
+  </div>
+  <div class="bus-strip-row">
+    <span class="bus-label" style="color:var(--bus-c);">C</span>
+    <span class="bus-line" style="background:var(--bus-c);"></span>
+    <span class="bus-desc">General routing — identical capability to A and B.</span>
+  </div>
+  <div class="bus-strip-row">
+    <span class="bus-label" style="color:var(--bus-d);">D</span>
+    <span class="bus-line" style="background:var(--bus-d);"></span>
+    <span class="bus-desc">General routing — identical capability to A, B, and C.</span>
+  </div>
+  <div class="bus-strip-row">
+    <span class="bus-label" style="color:var(--bus-e);">E</span>
+    <span class="bus-line" style="background:var(--bus-e);"></span>
+    <span class="bus-desc">Challenge Bus — bidirectional interface to the Challenge Box. Inbound delivers challenge values; outbound carries your answers.</span>
+  </div>
+  <div class="bus-strip-row">
+    <span class="bus-label" style="color:var(--bus-a);">F</span>
+    <span class="bus-line" style="background:var(--bus-a);opacity:0.3;"></span>
+    <span class="bus-desc">P2P Left — connects to the machine to your left via WebRTC. Words exit left, words arrive right.</span>
+  </div>
+  <div class="bus-strip-row">
+    <span class="bus-label" style="color:var(--bus-b);">G</span>
+    <span class="bus-line" style="background:var(--bus-b);opacity:0.3;"></span>
+    <span class="bus-desc">P2P Right — connects to the machine to your right. Bidirectional, same architecture as Bus F.</span>
+  </div>
+  <div class="bus-strip-row">
+    <span class="bus-label" style="color:var(--bus-h);">H</span>
+    <span class="bus-line" style="background:var(--bus-h);"></span>
+    <span class="bus-desc">Challenge Network Bus — CBX protocol coordination layer. Carries chain challenge control traffic between Challenge Boxes.</span>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-label">Buses C and D</div>
+    Buses C and D have identical capabilities to A and B. Any source and any destination is available on all four internal buses. There is no hierarchy.
+  </div>
+</div>
+
+<hr>
+
+<!-- ══ GETTING STARTED ══ -->
+<div class="chapter" id="ch-start">
+  <div class="chapter-number">Before You Begin</div>
+  <div class="chapter-title">Starting the Machine</div>
+
+  <p>The machine opens in a paused state. Nothing moves until you start the clock. This is intentional — it gives you time to configure switches and buses before any data starts flowing.</p>
+
+  <ol class="steps">
+    <li><div class="step-body">Open the HTML file in any modern browser. No server, no install, no dependencies. The simulator renders immediately.</div></li>
+    <li><div class="step-body">Find the <strong>Clock</strong> controls in the top-left of the main canvas area — a START button and a speed slider. Click <kbd>▶ START</kbd> to start the clock. The button changes to <kbd>⏹ STOP</kbd> and the tick counter begins incrementing.</div><div class="step-note">The machine is now running. Loops are empty so nothing interesting is happening yet — that changes the moment you inject a value.</div></li>
+    <li><div class="step-body">Set the clock speed using the slider. The recommended starting speed is <strong>24 Hz</strong> — about two Working Loop rotations per second. This is fast enough to feel live and slow enough to watch individual words travel. You can adjust at any time, including while a challenge is active.</div><div class="step-note">Speeds above 60 Hz are supported. The machine fires multiple ticks per animation frame to keep up. Very high speeds (200+ Hz) are useful for running challenges quickly but make it hard to observe individual transfers.</div></li>
+    <li><div class="step-body">To pause at any time, click <kbd>⏹ STOP</kbd>. The machine freezes mid-tick. All loop contents, register values, and state are preserved exactly. Click <kbd>▶ START</kbd> to resume from the same point.</div></li>
+  </ol>
+
+  <div class="callout key">
+    <div class="callout-label">The Tick Counter</div>
+    The tick counter in the header is the machine's clock. Every tutorial references ticks — "the word reaches the read head after 12 ticks," "your score is based on ticks elapsed." Keep an eye on it. It only increments when the machine is running.
+  </div>
+
+  <p>The right sidebar contains all controls: Challenges, Challenge Network, P2P Bus Config, P2P Connection, Memory, Pattern Matcher, Threshold Gate, and more. Sections are collapsible. If you can't find a control, it's probably in a collapsed section. The main canvas shows the four loops, the bus strips, and the ALU and injection channel displays.</p>
+</div>
+
+<hr>
+
+<!-- ══ TUTORIALS ══ -->
+
+<div class="chapter-number" style="margin-bottom:8px;">Tutorials</div>
+<div class="chapter-title" style="border-bottom:2px solid var(--border);padding-bottom:10px;margin-bottom:28px;">Eleven Operations from First Principles</div>
+
+<!-- T01 -->
+<div class="tutorial working" id="t01">
+  <div class="tutorial-header">
+    <span class="tutorial-num">Tutorial 01</span>
+    <span class="tutorial-title">Load a Value and Read It Back</span>
+  </div>
+  <div class="tutorial-body">
+    <p>The most fundamental operation: set a value on the input switches, inject it into the Working Loop, and watch it circulate. This establishes the inject→loop→read-head cycle that underlies everything else.</p>
+
+    <ol class="steps">
+      <li><div class="step-body">Find the 16 input switches in the <strong>left sidebar</strong>, under the Inject section. Each switch is one bit, MSB at left. Try <code>0x00FF</code> (lower 8 bits on). The hex display below the switches updates as you flip them.</div><div class="step-note">For quick testing, the <strong>RNG</strong> button next to the switches loads a random value instantly. Use it whenever you need a test value without caring what it is.</div></li>
+      <li><div class="step-body">Click <kbd>SEND</kbd>. A 17-bit word — marker bit followed by your 16 data bits — enters the Working Loop at the write head position.</div><div class="step-note">The inject LED flashes. The word takes one full loop rotation (12 clock ticks) to reach the read head.</div></li>
+      <li><div class="step-body">Watch the binary display at the Working Loop read head. The marker bit passes first as a bright dot, followed by the 16 data bits. The hex value appears in the readout to the right.</div></li>
+      <li><div class="step-body">The word continues circulating indefinitely — it will pass the read head every 12 ticks. Nothing destroys a word unless you actively route it out or overwrite it.</div></li>
+    </ol>
+
+    <div class="callout tip">
+      <div class="callout-label">Word Position</div>
+      The marker bit travels with the word as it circulates. Watch for the brighter dot at the start of each word passing the read head — that is the marker bit, and it is how the hardware tracks word boundaries as bits shift through.
+    </div>
+  </div>
+</div>
+
+<!-- T02 -->
+<div class="tutorial alu" id="t02">
+  <div class="tutorial-header">
+    <span class="tutorial-num">Tutorial 02</span>
+    <span class="tutorial-title">ALU Arithmetic: Add Two Numbers</span>
+  </div>
+  <div class="tutorial-body">
+    <p>The ALU reads words from its loop automatically. Route a word there, configure an operation, and the result is available in Register C immediately.</p>
+
+    <ol class="steps">
+      <li><div class="step-body">Inject your first operand (e.g. <code>0x0014</code> = 20) into the Working Loop using the switches and SEND.</div></li>
+      <li><div class="step-body">Turn on Bus A. Set its source to <strong>Working Loop</strong> and its destination to <strong>ALU Loop</strong>. The word transfers on the next tick the read head passes it.</div><div class="step-note">Watch the ALU Loop — your value should appear there within one Working Loop rotation.</div></li>
+      <li><div class="step-body">Turn Bus A off. Set the switches to your second operand (e.g. <code>0x000A</code> = 10) and inject it into Working. Route it to ALU the same way.</div><div class="step-note">Bus A must be off before injecting the second operand, otherwise both values may enter the ALU Loop simultaneously — the second word would push the first past the read head before it loads into Register A, breaking the auto-capture sequence.</div></li>
+      <li><div class="step-body">In the ALU panel, the Comparator section shows Register A and B. Verify both values loaded. Select operation <strong>ADD</strong>. Register C shows the result immediately: <code>0x001E</code> = 30.</div></li>
+      <li><div class="step-body">To use the result: set Bus A source to <strong>ALU Result (C)</strong>, destination to <strong>Working Loop</strong>. The result word enters Working on the next transfer.</div></li>
+    </ol>
+
+    <div class="callout key">
+      <div class="callout-label">Register Auto-Capture</div>
+      Words entering the ALU Loop are captured into Register A automatically on the first pass, then into Register B on the second pass. You do not need to manually load registers — just route two words into the ALU Loop in sequence.
+    </div>
+
+    <p>The full operation set includes ADD, SUB, MUL (lower 16 bits), DIV, MOD, AND, OR, XOR, NOT, SHL, SHR (logical and arithmetic), INC, DEC, NEG, ABS, and SWAP A↔B. The Comparator continuously computes A compared to B, setting EQ, GT, LT flags readable in the flag display.</p>
+  </div>
+</div>
+
+<!-- T03 -->
+<div class="tutorial memory" id="t03">
+  <div class="tutorial-header">
+    <span class="tutorial-num">Tutorial 03</span>
+    <span class="tutorial-title">Memory Slots: Store and Retrieve</span>
+  </div>
+  <div class="tutorial-body">
+    <p>The sixteen memory slots are addressed by a 4-bit address register, which the operator sets using four toggle levers in the Memory section. Values are written and read as words pass through the Memory Loop.</p>
+
+    <ol class="steps">
+      <li><div class="step-body">Set the 4-bit address levers to your target slot (0–15). The address display shows the decimal and hex equivalent.</div></li>
+      <li><div class="step-body">Route a value into the Memory Loop via Bus A (source: Working, destination: Memory Loop).</div></li>
+      <li><div class="step-body">Enable <strong>Write</strong> mode in the Memory panel. As the word passes the write position in the Memory Loop, it is captured and stored in the addressed slot. The slot display updates immediately.</div><div class="step-note">Write mode is destructive — the word is consumed from the loop when written. Disable Write mode once the value is stored, or the next word to pass will overwrite the same slot.</div></li>
+      <li><div class="step-body">Disable Write mode. Change the address levers to a different slot. Enable <strong>Read</strong> mode — the value in the addressed slot is injected as a new word into the Memory Loop on the next tick.</div><div class="step-note">Disable Read mode after one pass, otherwise the same slot will be re-injected every loop rotation, filling the Memory Loop with duplicate copies.</div></li>
+      <li><div class="step-body">Route the retrieved word back to Working via Bus A (source: Memory Loop, destination: Working Loop).</div></li>
+    </ol>
+
+    <div class="callout tip">
+      <div class="callout-label">16 Slots × 16 Bits</div>
+      Each slot holds one 16-bit value. All 16 slots are visible simultaneously in the memory grid display. You can use memory as a scratchpad, a lookup table, an accumulator set, or a register file — the machine assigns no meaning to slots. The <strong>CLEAR ALL</strong> button zeros all 16 slots at once. Per-loop word counters in the sidebar track how many words have passed each read head — directly analogous to hardware performance counters.
+    </div>
+  </div>
+</div>
+
+<!-- T04 -->
+<div class="tutorial bus" id="t04">
+  <div class="tutorial-header">
+    <span class="tutorial-num">Tutorial 04</span>
+    <span class="tutorial-title">Route Between Loops: Copy and Move</span>
+  </div>
+  <div class="tutorial-body">
+    <p>Buses are the machine's wiring. You can run up to four simultaneous transfers using Buses A, B, C, and D. Each bus transfers one word per word-boundary crossing of its source.</p>
+
+    <ol class="steps">
+      <li><div class="step-body">Inject three values into the Working Loop in sequence using the switches and SEND three times. You now have three words circulating.</div></li>
+      <li><div class="step-body">Set Bus A: source = Working, destination = Big Loop. Turn Bus A on. Words transfer one at a time as they cross the Working read head. Watch the Big Loop fill.</div></li>
+      <li><div class="step-body">To copy (not move) — leave Bus A running and the words continue circulating in Working too, since exiting via a bus doesn't destroy the word by default. To move — turn Bus A off after transfer and the word stays in the Big Loop only.</div><div class="step-note">Each loop has a <strong>gate</strong> at position 1 (between write head and read head). When enabled, the gate holds passing words rather than letting them continue. Combined with the eject function, the gate can destructively remove a specific word from a loop. Gate controls are in the left sidebar under each loop's section.</div></li>
+      <li><div class="step-body">Try running Bus A and Bus B simultaneously: A from Working→ALU, B from Memory→Big. Both transfers happen in parallel, one word per tick per bus.</div></li>
+    </ol>
+
+    <p>You can route between any combination: Working↔ALU, Working↔Memory, Working↔Big, ALU↔Memory, ALU↔Big, Memory↔Big, and any loop to/from the P2P buses or the Challenge Bus E. Source and destination selectors are in each bus control panel.</p>
+  </div>
+</div>
+
+<!-- T05 -->
+<div class="tutorial big" id="t05">
+  <div class="tutorial-header">
+    <span class="tutorial-num">Tutorial 05</span>
+    <span class="tutorial-title">Pattern Matcher: Filter and Transform</span>
+  </div>
+  <div class="tutorial-body">
+    <p>The Pattern Matcher (PM1) operates on the Big Loop. It inspects passing words against a configurable mask and match pattern, and either ejects matching words or rewrites them in place. A second, cascadable Pattern Matcher (PM2) operates in series.</p>
+
+    <ol class="steps">
+      <li><div class="step-body">Route several values into the Big Loop. Set Bus A source to Working Loop, destination to Big Loop, and turn it on. Inject a mix of even and odd numbers — for instance, 4, 7, 12, 3, 8, 5 — using the switches and SEND. Turn Bus A off once all six are in the Big Loop.</div><div class="step-note">The Pattern Matcher and Threshold Gate only operate on the Big Loop. Values must be there before either component can act on them.</div></li>
+      <li><div class="step-body">In the PM1 panel, set the <strong>mask</strong> to <code>0x0001</code> (bit 0 only) by flipping the rightmost mask lever on. Set the <strong>pattern</strong> to <code>0x0000</code> (match when bit 0 = 0, i.e. even numbers).</div></li>
+      <li><div class="step-body">Enable PM1 in <strong>Copy</strong> mode (non-destructive). Matching words — the even numbers — will be ejected to the PM1 eject output. Set Bus A source to PM1 eject and destination to Working to receive them.</div></li>
+      <li><div class="step-body">For destructive filtering, switch to <strong>Destructive</strong> mode. Matching words are removed from the Big Loop and ejected. Non-matching words continue circulating.</div></li>
+      <li><div class="step-body">Enable <strong>Rewrite Mode</strong> on PM1. Set a change mask and change value. Matching words have specific bits rewritten in place rather than being ejected. Useful for flag manipulation and in-loop transformation.</div></li>
+    </ol>
+
+    <div class="callout tip">
+      <div class="callout-label">PM2 Cascade</div>
+      PM2 can receive PM1's matched output directly via cascade mode, applying a second filter to what PM1 already matched. This creates a two-stage filter pipeline within the Big Loop — match a broad set with PM1, refine with PM2 — without any operator routing between stages.
+    </div>
+  </div>
+</div>
+
+<!-- T06 -->
+<div class="tutorial big" id="t06">
+  <div class="tutorial-header">
+    <span class="tutorial-num">Tutorial 06</span>
+    <span class="tutorial-title">Threshold Gate: Conditional Ejection</span>
+  </div>
+  <div class="tutorial-body">
+    <p>The Threshold Gate (TG1, and a second TG2 in cascade) monitors words in the Big Loop and ejects them when their value crosses a configurable threshold. Unlike the Pattern Matcher which compares bits, the Threshold Gate compares numeric magnitude.</p>
+
+    <ol class="steps">
+      <li><div class="step-body">Route a stream of values into the Big Loop — a mix of values above and below 1000 works well as a test.</div></li>
+      <li><div class="step-body">In the TG1 panel, set the <strong>threshold value</strong> using the levers or by typing directly into the value field. Set it to 1000.</div></li>
+      <li><div class="step-body">Select a comparison mode: <strong>≥ threshold</strong> ejects values 1000 and above; <strong>≤ threshold</strong> ejects values 1000 and below; <strong>= threshold</strong> ejects exact matches only.</div></li>
+      <li><div class="step-body">Enable TG1. Words matching the condition are ejected from the Big Loop. Route TG1's output to Working via Bus A to collect them.</div></li>
+      <li><div class="step-body">Enable <strong>Clamp Mode</strong> on TG1. Instead of ejecting matching words, TG1 rewrites them in place to the clamp value. Words above 1000 become exactly 1000 — a ceiling clamp. Reverse the condition for a floor clamp.</div></li>
+    </ol>
+
+    <div class="callout key">
+      <div class="callout-label">TG → PM Cascade</div>
+      TG2 can receive TG1's output directly, creating a two-gate pipeline. A value must pass TG1's test before TG2 even sees it. Combined with PM1→PM2 cascade, the Big Loop can run a four-stage conditional pipeline: PM1 → PM2 → TG1 → TG2, all without operator routing between stages.
+    </div>
+  </div>
+</div>
+
+<!-- T07 -->
+<div class="tutorial big" id="t07">
+  <div class="tutorial-header">
+    <span class="tutorial-num">Tutorial 07</span>
+    <span class="tutorial-title">The Big Loop: Multi-Word Pipelines</span>
+  </div>
+  <div class="tutorial-body">
+    <p>The Big Loop's 32-word capacity makes it the natural staging area for operations that require holding multiple values simultaneously — sorting passes, running totals, buffered streams. This tutorial builds a simple running maximum finder.</p>
+
+    <ol class="steps">
+      <li><div class="step-body">Inject 8 random values into the Big Loop using the switches and SEND eight times. Confirm all 8 words are circulating.</div></li>
+      <li><div class="step-body">Route the first word from Big into the ALU Loop via Bus A. It loads into Register A. Note the value.</div></li>
+      <li><div class="step-body">Route the second word from Big into the ALU Loop. It loads into Register B. Set the ALU operation to <strong>MAX</strong> (or use the comparator: if A &lt; B, swap A↔B first). Register C now holds the larger of the two values.</div></li>
+      <li><div class="step-body">Route Register <strong>C</strong> (the result) back into the Big Loop — this is your current running maximum. Do not route the smaller value back. Repeat: pull the next word from Big into the ALU Loop (it loads into B, displacing the old B), compute MAX again, route C back. Each pass through the ALU replaces the running maximum if the new value is larger.</div></li>
+      <li><div class="step-body">After all 8 values have been compared, the remaining word in the ALU is your maximum. Route it to Working or read it from the ALU display.</div></li>
+    </ol>
+
+    <p>This is a sequential scan in O(n) operator actions — the same algorithm a CPU runs, made visible one comparison at a time. The Big Loop's size means you can hold all values in flight simultaneously while you pull them off one at a time for comparison.</p>
+  </div>
+</div>
+
+<!-- T08 -->
+<div class="tutorial challenge" id="t08">
+  <div class="tutorial-header">
+    <span class="tutorial-num">Tutorial 08</span>
+    <span class="tutorial-title">Bus E and the Challenge Box</span>
+  </div>
+  <div class="tutorial-body">
+    <p>Bus E is the interface to the Challenge Box — the machine's built-in problem-generator and scorer. Challenges deliver values to you via Bus E inbound and expect answers back via Bus E outbound. The Challenge Box knows the correct answer and scores your submission on ticks elapsed and operator actions taken.</p>
+
+    <ol class="steps">
+      <li><div class="step-body">Open the <strong>Challenges</strong> section in the right sidebar. Select <strong>Add X Numbers</strong> from the type dropdown. Set the count to 3.</div></li>
+      <li><div class="step-body">Click <kbd>▶ NEW CHALLENGE</kbd>. Bus E activates automatically — its source and destination are preconfigured for the challenge type, so you do not need to set them. The three challenge values begin queuing for delivery via Bus E inbound.</div></li>
+      <li><div class="step-body">Set Bus A source to <strong>Bus E inbound</strong> and destination to <strong>Working Loop</strong>. Turn Bus A on. The three challenge values enter your Working Loop one at a time as they arrive from Bus E.</div></li>
+      <li><div class="step-body">Route all three values through the ALU in sequence: Working → ALU, ADD, result back to Working. After two additions you have the running sum. After the third addition you have the total.</div></li>
+      <li><div class="step-body">Set Bus A source to <strong>Working Loop</strong>, destination to <strong>Bus E outbound</strong>. Route your sum word to Bus E. The Challenge Box receives it and evaluates — correct answers show your score, ticks used, and operations count.</div></li>
+    </ol>
+
+    <div class="callout tip">
+      <div class="callout-label">Scoring Modes</div>
+      Two scoring modes are available: <strong>Efficiency</strong> (ticks 55%, operator actions 45%) and <strong>Speed</strong> (adds real elapsed time at 35%, reducing ticks and ops weight). Switch before starting. Mid-challenge switching is locked to prevent gaming.
+    </div>
+
+    <p>Available challenges: Add X Numbers, Multiply Two Numbers, Transform Every Nth Value, Filter (pass matching values), Sort Values, Find the Maximum, XOR Checksum, Count Matches, Accumulate to Threshold, and Chain Sum (multi-computer, covered in Tutorial 10).</p>
+  </div>
+</div>
+
+<!-- T09 -->
+<div class="tutorial bus" id="t09">
+  <div class="tutorial-header">
+    <span class="tutorial-num">Tutorial 09</span>
+    <span class="tutorial-title">P2P Connections: Buses F and G</span>
+  </div>
+  <div class="tutorial-body">
+    <p>Two machines can connect directly via WebRTC without any server infrastructure. Once connected, words flow between machines via Buses F (left) and G (right), exactly as they flow between loops internally. There is also a text chat channel on each connection.</p>
+
+    <ol class="steps">
+      <li><div class="step-body">Open the <strong>P2P Connection</strong> section in the right sidebar. Your machine ID is shown at the top — a short random identifier that persists across sessions.</div></li>
+      <li><div class="step-body">On the machine that will initiate: click <kbd>CREATE OFFER</kbd> under PL LEFT (Bus F). A WebRTC SDP offer appears in the text area. Copy it and send it to the other operator by any out-of-band means — paste it in an email, a chat message, anything.</div><div class="step-note">The manual copy-paste is intentional. Loop 2.1 uses no signaling server and requires no internet infrastructure beyond the direct WebRTC connection between the two browsers. The SDP exchange is the only coordination required before the connection is fully peer-to-peer.</div></li>
+      <li><div class="step-body">On the second machine: paste the offer into the remote text area and click <kbd>ACCEPT</kbd>. An answer is generated. Copy it.</div></li>
+      <li><div class="step-body">Back on the first machine: paste the answer and click <kbd>ACCEPT</kbd>. Both machines show CONNECTED status and the Bus F strip activates.</div></li>
+      <li><div class="step-body">On the first machine: inject a value into Working and set Bus A source to Working, destination to Bus F outbound. The word travels to the second machine. On the second machine, set Bus A source to Bus F inbound and route it to Working.</div></li>
+    </ol>
+
+    <div class="callout key">
+      <div class="callout-label">Chain Networks</div>
+      A machine can connect Bus F to one neighbor and Bus G to another, forming a chain. Machines can relay words from one side to the other, building computational pipelines across multiple physical computers. There is no hard limit on chain length — WebRTC handles the transport.
+    </div>
+
+    <p>The latency display on each connection shows round-trip time in milliseconds, measured continuously. In a local network test between browser tabs on one machine this will be under 5ms; over the internet typically 20–150ms depending on geography.</p>
+  </div>
+</div>
+
+<!-- T10 -->
+<div class="tutorial network" id="t10">
+  <div class="tutorial-header">
+    <span class="tutorial-num">Tutorial 10</span>
+    <span class="tutorial-title">Challenge Network: Chain Sum</span>
+  </div>
+  <div class="tutorial-body">
+    <p>The Challenge Network (CBX) is a coordination layer built on top of the P2P connections. It allows Challenge Boxes on different machines to run multi-computer challenges together, with the originating Challenge Box acting as the network host and verifier.</p>
+
+    <p><strong>Before starting:</strong> all machines must have P2P connections established (Tutorial 09). Each machine should have the Challenge Network section open and visible.</p>
+
+    <div class="callout key">
+      <div class="callout-label">Availability States</div>
+      Each machine has three availability settings. <strong>Relay</strong> (default) — discovery probes pass through this machine transparently when it's busy. <strong>Open for Challenges</strong> — this machine will accept challenge invitations. <strong>Soft Decline</strong> — this machine is invisible to the challenge network. Set neighboring machines to Open before starting.
+    </div>
+
+    <ol class="steps">
+      <li><div class="step-body">On all participating machines: open the <strong>Challenge Network</strong> section (below Challenges in the right sidebar). Click <kbd>CLOSED FOR CHALLENGES</kbd> to toggle it to OPEN.</div></li>
+      <li><div class="step-body">On the originating machine: click <kbd>⬡ PING NETWORK</kbd>. The probe travels out both connected sides, counts hops, detects ring topology, and returns. The topology display shows: <em>1 machine left · 1 machine right · 3 total</em> (for a 3-machine chain).</div></li>
+      <li><div class="step-body">In the Challenges section, select <strong>⬡ Chain Sum (Network)</strong> from the type dropdown. The network status line confirms machines are connected and ready.</div></li>
+      <li><div class="step-body">Click <kbd>▶ NEW CHALLENGE</kbd>. The originating Challenge Box sends invitations to all neighbors. Each neighboring machine's Challenge Network section expands automatically showing the invitation panel.</div></li>
+      <li><div class="step-body">On each participating machine: click <kbd>ACCEPT</kbd> in the invitation panel. Once all machines accept, the origin distributes one unique value to each machine and announces which machine starts (the terminus on one side).</div></li>
+      <li><div class="step-body"><strong>Starter machine:</strong> your assigned value appears in the Challenge Network panel. The RELEASE button is available immediately. Click <kbd>RELEASE VALUE</kbd> — your value is injected into your Working Loop. This is your first operand; your incoming sum is 0, so your local sum equals your value. Route it to Bus E outbound.</div><div class="step-note">Your Challenge Box submits your local sum to the origin for verification and forwards the running sum to your neighbor automatically.</div></li>
+      <li><div class="step-body"><strong>All other machines:</strong> wait. Your RELEASE button is greyed out. When your neighbor's Challenge Box forwards the running sum to you, your assigned value is released simultaneously and your RELEASE button activates. Click it when ready — but not before: clicking early locks you out for 3 seconds.</div></li>
+      <li><div class="step-body">Add your assigned value to the incoming running sum in your ALU: Working → ALU, get both values loaded, ADD, route result back to Working. Then route the result to Bus E outbound.</div></li>
+      <li><div class="step-body">The chain continues until every machine has submitted. The origin verifies each submission. A wrong answer triggers an immediate full-network abort — the failing machine's position is named in the error. A clean run shows the final sum and your combined score.</div></li>
+    </ol>
+
+    <div class="callout warn">
+      <div class="callout-label">The Stakes</div>
+      Chain Sum fails completely on any wrong answer. Every operator in the chain bears responsibility for the result. The originating machine's progress display shows a cell per machine, going green as each one verifies. Watch it fill.
+    </div>
+  </div>
+</div>
+
+<!-- T11 -->
+<div class="tutorial" id="t11">
+  <div class="tutorial-header">
+    <span class="tutorial-num">Tutorial 11</span>
+    <span class="tutorial-title">Session Logging and the .loop File</span>
+  </div>
+  <div class="tutorial-body">
+    <p>Every operator action, machine state transition, bus transfer, and challenge event is recorded in the session log. The log is readable in the sidebar and can be exported as a <code>.loop</code> file — a structured plaintext format with both machine-code and human-readable columns on every line.</p>
+
+    <ol class="steps">
+      <li><div class="step-body">Open the <strong>Session Log</strong> section in the right sidebar. Every action since the page loaded is listed there, from most recent to oldest.</div></li>
+      <li><div class="step-body">Click <kbd>START LOG</kbd> to begin recording to an exportable session. An active session captures initial machine state, then every operator action and machine event with tick-accurate timestamps.</div></li>
+      <li><div class="step-body">Perform any operations — inject values, run an ALU operation, start a challenge, complete it. Each action appears in the log in real time.</div></li>
+      <li><div class="step-body">Click <kbd>STOP LOG</kbd> then <kbd>DOWNLOAD .loop</kbd>. The file downloads as <code>loop21-session-TIMESTAMP.loop</code>. Open it in any text editor.</div></li>
+    </ol>
+
+    <p>The <code>.loop</code> file format has four sections: <code>SPEC</code> (machine parameters and constants), <code>INIT</code> (full machine state at session start, including all loop bit contents), <code>OPS</code> (every event with tick prefix), and <code>FINAL</code> (machine state at session end). Every line is dual-format: machine code left of <code>||</code>, human-readable description right.</p>
+
+    <pre>T000041892. BUS.A.XFER 14832 working→alu || Bus A transferred 14832 (0x39F0) from Working Loop to ALU Loop
+S000000012. OP.INJECT 0100110000010100 || Operator injects 12308 (0x3014) into Injection Channel → Working Loop</pre>
+
+    <p><code>T</code> prefix lines are machine ticks; <code>S</code> prefix lines are operator setup actions that happen outside the tick cycle. This format is designed to be both machine-parseable for replay and human-readable for analysis.</p>
+
+    <div class="callout tip">
+      <div class="callout-label">Challenge Network Events</div>
+      Multi-computer challenge events log with a <code>CBX.</code> prefix: <code>CBX.CHAIN_SUM.START</code>, <code>CBX.CHAIN_SUM.OK</code>, <code>CBX.CHAIN_SUM.FAIL</code>, and so on. A replay of a Chain Sum session shows the full discovery, invitation, assignment, and verification sequence in chronological order.
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ══ REFERENCE ══ -->
+<div class="chapter" id="ch-ref">
+  <div class="chapter-number">Reference</div>
+  <div class="chapter-title">Constants and Quick Lookup</div>
+
+  <div class="section">
+    <div class="section-title">Machine Constants</div>
+    <table class="ref-table">
+      <tr><th>Constant</th><th>Value</th><th>Meaning</th></tr>
+      <tr><td>BPW</td><td>17</td><td>Bits per word (1 marker + 16 data)</td></tr>
+      <tr><td>Data range</td><td>0–65535</td><td>16-bit unsigned integers only</td></tr>
+      <tr><td>Working Loop</td><td>12 words / 204 bits</td><td>Primary operator workspace</td></tr>
+      <tr><td>ALU Loop</td><td>16 words / 272 bits</td><td>Arithmetic unit feed</td></tr>
+      <tr><td>Memory Loop</td><td>16 words / 272 bits</td><td>Connects to 16 addressable slots</td></tr>
+      <tr><td>Big Loop</td><td>32 words / 544 bits</td><td>High-capacity staging and pipeline</td></tr>
+      <tr><td>Memory slots</td><td>16 slots</td><td>4-bit addressing (0–15)</td></tr>
+      <tr><td>Internal buses</td><td>A, B, C, D</td><td>All four have identical capability</td></tr>
+      <tr><td>Recommended speed</td><td>24 Hz</td><td>~2 Working Loop rotations per second</td></tr>
+      <tr><td>CBX marker word</td><td>0xCB00</td><td>Chain sum forwarding marker (intercepted, never reaches loops)</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">ALU Operations</div>
+    <table class="ref-table">
+      <tr><th>Operation</th><th>Result in C</th><th>Notes</th></tr>
+      <tr><td>ADD</td><td>A + B</td><td>Wraps at 65535</td></tr>
+      <tr><td>SUB</td><td>A − B</td><td>Unsigned; wraps if negative</td></tr>
+      <tr><td>MUL</td><td>A × B (low 16)</td><td>Upper bits discarded</td></tr>
+      <tr><td>DIV</td><td>A ÷ B</td><td>Integer division; B=0 produces 0</td></tr>
+      <tr><td>MOD</td><td>A mod B</td><td>Remainder</td></tr>
+      <tr><td>AND</td><td>A &amp; B</td><td>Bitwise</td></tr>
+      <tr><td>OR</td><td>A | B</td><td>Bitwise</td></tr>
+      <tr><td>XOR</td><td>A ^ B</td><td>Bitwise</td></tr>
+      <tr><td>NOT</td><td>~A</td><td>Bitwise invert of A</td></tr>
+      <tr><td>SHL</td><td>A &lt;&lt; 1</td><td>Logical shift, MSB lost</td></tr>
+      <tr><td>SHR</td><td>A &gt;&gt; 1</td><td>Logical shift, LSB lost</td></tr>
+      <tr><td>NEG</td><td>−A (two's complement)</td><td>Unary</td></tr>
+      <tr><td>INC</td><td>A + 1</td><td>Unary</td></tr>
+      <tr><td>DEC</td><td>A − 1</td><td>Unary</td></tr>
+      <tr><td>ABS</td><td>|A|</td><td>Absolute value</td></tr>
+      <tr><td>SWAP</td><td>A ↔ B</td><td>Exchanges register contents</td></tr>
+      <tr><td>MAX</td><td>max(A, B)</td><td></td></tr>
+      <tr><td>MIN</td><td>min(A, B)</td><td></td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Challenge Network Availability States</div>
+    <table class="ref-table">
+      <tr><th>State</th><th>Behavior</th></tr>
+      <tr><td>RELAY (default)</td><td>Discovery probes pass through transparently. Machine can be in the middle of a chain without participating in the challenge.</td></tr>
+      <tr><td>OPEN</td><td>Machine accepts challenge invitations. Operator sees accept/decline prompt for each incoming challenge.</td></tr>
+      <tr><td>SOFT DECLINE</td><td>Machine always returns TERMINAL to discovery. Invisible to any challenge network. Probes do not pass through.</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Skins</div>
+    <p>The simulator and all documentation share the same three-skin system. <strong>OG</strong> is the default light theme. <strong>Winamp</strong> is the dark green-on-black theme. <strong>Sunrise</strong> is a warm off-white theme. Skin preference is stored in localStorage and persists across sessions. The skin selector is in the top-right header on every document.</p>
+  </div>
+</div>
+
+</main>
+</div>
+
+<div class="page-footer">
+  <span>Loop 2.1 · loop2.computer</span>
+  <span>Technical Quick Start · v.209 · March 2026</span>
+  <span>Shea Gunther · Claude AI</span>
+</div>
+
+<script>
+function setSkin(id) {
+  document.body.className = 'skin-' + id;
+  try { localStorage.setItem('loop2-qs-skin', id); } catch(e) {}
+  document.querySelectorAll('.skin-btn').forEach(b =>
+    b.classList.toggle('active', b.getAttribute('onclick') === `setSkin('${id}')`));
+}
+document.addEventListener('DOMContentLoaded', () => {
+  let saved = 'og';
+  try { saved = localStorage.getItem('loop2-qs-skin') || 'og'; } catch(e) {}
+  setSkin(saved);
+
+  const sections = document.querySelectorAll('.chapter, .tutorial, .section[id]');
+  const tocLinks = document.querySelectorAll('.toc-list a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { rootMargin: '-80px 0px -60% 0px' });
+  sections.forEach(el => el.id && observer.observe(el));
+});
+</script>
+</body>
+</html>

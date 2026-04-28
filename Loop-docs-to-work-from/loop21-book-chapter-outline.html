@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loop 2.1 — The Complete Guide: Chapter Outline</title>
+<style>
+:root {
+  --bg:#e8eef4; --panel:#e8eef4; --panel2:#edf1f5; --panel3:#dce4ec;
+  --border:#9ab0c4; --border2:#b0c4d4;
+  --fg:#000000; --fg-dim:#507090; --fg-faint:#7090a8;
+  --accent:#6030c0; --working:#1060b0; --alu:#b06000;
+  --memory:#006830; --big:#006888;
+  --font:'Courier New',Consolas,monospace;
+  --max-w:820px;
+  --tip-bg:#e8f4ec; --warn-bg:#fef8e0; --key-bg:#eef0f8; --code-bg:#dce4ec;
+}
+body.skin-winamp {
+  --bg:#1e1e1e; --panel:#252525; --panel2:#202020; --panel3:#1c1c1c;
+  --border:#1e4c28; --border2:#163c20;
+  --fg:#33ff44; --fg-dim:#33ff44; --fg-faint:#28cc38;
+  --accent:#33ff44; --working:#44aaff; --alu:#ffaa00;
+  --memory:#33ff44; --big:#00ddff;
+  --tip-bg:#0c1e10; --warn-bg:#1e1000; --key-bg:#0a1020; --code-bg:#0a1a0c;
+}
+body.skin-sunrise {
+  --bg:#fff8ec; --panel:#ffffff; --panel2:#fffcf5; --panel3:#fff4e0;
+  --border:#e8b030; --border2:#d8a020;
+  --fg:#000000; --fg-dim:#705030; --fg-faint:#a08060;
+  --accent:#5828b0; --working:#0060c0; --alu:#c06000;
+  --memory:#007030; --big:#007898;
+  --tip-bg:#e8f8ec; --warn-bg:#fff4dc; --key-bg:#f0eeff; --code-bg:#fff0cc;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased;}
+.page-header{background:var(--panel);border-bottom:2px solid var(--border);padding:22px 48px 18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50;}
+.logo{font-family:var(--font);letter-spacing:6px;font-size:18px;font-weight:bold;color:var(--fg);}
+.logo-sub{font-family:var(--font);font-size:9px;letter-spacing:3px;color:var(--fg-dim);margin-top:3px;}
+.header-right{display:flex;align-items:center;gap:16px;}
+.doc-title{text-align:right;}
+.doc-title .t1{font-family:var(--font);font-size:10px;letter-spacing:3px;color:var(--fg-dim);text-transform:uppercase;}
+.doc-title .t2{font-family:var(--font);font-size:9px;letter-spacing:1px;color:var(--fg-faint);margin-top:3px;}
+.skin-group{display:flex;gap:5px;align-items:center;}
+.skin-lbl{font-family:var(--font);font-size:9px;letter-spacing:2px;color:var(--fg-dim);text-transform:uppercase;margin-right:4px;}
+.skin-btn{font-family:var(--font);font-size:10px;letter-spacing:1px;padding:3px 9px;background:transparent;border:1px solid var(--border2);color:var(--fg-dim);cursor:pointer;text-transform:uppercase;transition:border-color .1s,color .1s,background .1s;}
+.skin-btn:hover{border-color:var(--fg);color:var(--fg);}
+.skin-btn.active{border-color:var(--fg);color:var(--fg);background:var(--panel2);}
+.body-wrap{display:flex;max-width:1200px;margin:0 auto;}
+.toc-sidebar{width:260px;flex-shrink:0;position:sticky;top:68px;height:calc(100vh - 68px);overflow-y:auto;padding:28px 0 28px 28px;border-right:1px solid var(--border2);}
+.toc-head{font-family:var(--font);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--fg-dim);margin-bottom:14px;}
+.toc-list{list-style:none;}
+.toc-list li{margin-bottom:1px;}
+.toc-list a{font-size:11px;letter-spacing:.3px;color:var(--fg-dim);text-decoration:none;display:block;padding:2px 6px;border-left:2px solid transparent;transition:color .1s,border-color .1s;line-height:1.5;}
+.toc-list a:hover{color:var(--fg);border-left-color:var(--border);}
+.toc-list a.active{color:var(--fg);border-left-color:var(--accent);}
+.toc-part-label{font-family:var(--font);font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--fg-faint);padding:10px 6px 3px;border-top:1px solid var(--border2);margin-top:6px;}
+.toc-list .sub a{font-size:10px;padding-left:16px;opacity:.75;}
+.toc-list .sub a:hover{opacity:1;}
+.content{flex:1;min-width:0;padding:44px 60px 96px 48px;max-width:var(--max-w);}
+/* Part banners */
+.part-banner{margin:60px 0 0;padding:28px 0 18px;border-top:3px solid var(--border);}
+.part-eyebrow{font-family:var(--font);font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--fg-dim);margin-bottom:6px;}
+.part-title{font-family:var(--font);font-size:26px;font-weight:bold;letter-spacing:1px;color:var(--fg);margin-bottom:6px;}
+.part-subtitle{font-size:15px;font-style:italic;color:var(--fg-dim);line-height:1.6;margin-bottom:0;}
+/* Chapter entries */
+.chapter-entry{margin:36px 0;padding-bottom:32px;border-bottom:1px solid var(--border2);scroll-margin-top:80px;}
+.chapter-entry:last-child{border-bottom:none;}
+.ch-meta{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;}
+.ch-num{font-family:var(--font);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--fg-dim);white-space:nowrap;}
+.ch-src{font-family:var(--font);font-size:9px;letter-spacing:1px;color:var(--fg-faint);margin-left:auto;white-space:nowrap;}
+.ch-title{font-family:var(--font);font-size:18px;font-weight:bold;letter-spacing:1.5px;color:var(--fg);margin-bottom:10px;border-bottom:2px solid var(--border);padding-bottom:8px;}
+.ch-body{font-size:15.5px;line-height:1.72;color:var(--fg);}
+.ch-body p{margin-bottom:11px;}
+.ch-body ul{margin:0 0 11px 22px;}
+.ch-body li{margin-bottom:4px;font-size:15px;}
+.ch-body strong{font-weight:600;}
+.ch-body em{font-style:italic;color:var(--fg-dim);}
+/* Section header inside chapter */
+.ch-section{font-family:var(--font);font-size:9.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--fg-dim);border-bottom:1px solid var(--border2);padding-bottom:4px;margin:18px 0 8px;}
+/* Callouts */
+.callout{border-left:4px solid var(--border);padding:10px 14px;background:var(--panel);margin:14px 0;font-size:15px;line-height:1.6;}
+.callout.tip{background:var(--tip-bg);border-left-color:var(--memory);}
+.callout.warn{background:var(--warn-bg);border-left-color:var(--alu);}
+.callout.key{background:var(--key-bg);border-left-color:var(--working);}
+.callout.phi{background:var(--panel);border-left-color:var(--accent);font-style:italic;}
+.callout-lbl{font-family:var(--font);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--fg-dim);margin-bottom:5px;}
+.callout.tip .callout-lbl{color:var(--memory);}
+.callout.warn .callout-lbl{color:var(--alu);}
+.callout.key .callout-lbl{color:var(--working);}
+.callout.phi .callout-lbl{color:var(--accent);}
+code{background:var(--code-bg);padding:1px 5px;font-family:var(--font);font-size:13px;color:var(--alu);border-radius:2px;}
+/* Challenge list in Part VI */
+.ch-list{font-family:var(--font);font-size:12px;line-height:1.8;color:var(--fg-dim);margin:8px 0 12px;padding:12px 16px;background:var(--panel);border:1px solid var(--border2);}
+.ch-list .nyd{color:var(--alu);}
+/* Appendix entries */
+.appendix-entry{margin:28px 0;padding-bottom:24px;border-bottom:1px solid var(--border2);scroll-margin-top:80px;}
+.appendix-entry:last-child{border-bottom:none;}
+.app-lbl{font-family:var(--font);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--fg-dim);margin-bottom:4px;}
+.app-title{font-family:var(--font);font-size:15px;font-weight:bold;letter-spacing:1px;color:var(--fg);margin-bottom:8px;}
+/* Structural note box */
+.struct-note{border:1px solid var(--border2);background:var(--panel2);padding:18px 22px;margin:32px 0;}
+.struct-note-lbl{font-family:var(--font);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--fg-dim);margin-bottom:10px;}
+.struct-table{width:100%;border-collapse:collapse;font-size:14px;}
+.struct-table td{padding:5px 10px;border-bottom:1px solid var(--border2);vertical-align:top;}
+.struct-table td:first-child{font-family:var(--font);font-size:12px;color:var(--fg-dim);white-space:nowrap;padding-right:18px;}
+.struct-table tr:last-child td{border-bottom:none;}
+/* Front matter */
+.front-matter{margin-bottom:48px;padding-bottom:40px;border-bottom:3px double var(--border);}
+.front-title{font-family:var(--font);font-size:32px;font-weight:bold;letter-spacing:2px;margin-bottom:4px;}
+.front-title span{color:var(--fg-dim);}
+.front-sub{font-family:var(--font);font-size:13px;letter-spacing:2px;color:var(--fg-dim);margin-bottom:18px;}
+.front-meta{font-family:var(--font);font-size:11px;color:var(--fg-faint);line-height:2;}
+.front-meta span{margin-right:24px;}
+.front-note{font-size:15px;color:var(--fg-dim);line-height:1.7;margin-top:16px;font-style:italic;}
+.front-section{margin:18px 0 6px;font-family:var(--font);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--fg-dim);}
+.front-ul{margin:0 0 12px 20px;}
+.front-ul li{font-size:14px;color:var(--fg-dim);margin-bottom:3px;}
+/* Page footer */
+.page-footer{max-width:1200px;margin:0 auto;padding:18px 48px 40px 320px;font-family:var(--font);font-size:9px;letter-spacing:1px;color:var(--fg-faint);border-top:1px solid var(--border2);display:flex;justify-content:space-between;}
+@media(max-width:900px){.toc-sidebar{display:none;}.content{padding:28px 20px 60px;}.page-footer{padding:14px 20px;}}
+</style>
+</head>
+<body class="skin-og">
+
+<div class="page-header">
+  <div>
+    <div class="logo">LOOP 2.1</div>
+    <div class="logo-sub">Manual Flow Computer</div>
+  </div>
+  <div class="header-right">
+    <div class="skin-group">
+      <span class="skin-lbl">Skin</span>
+      <button class="skin-btn active" onclick="setSkin('og')">OG</button>
+      <button class="skin-btn" onclick="setSkin('winamp')">Winamp</button>
+      <button class="skin-btn" onclick="setSkin('sunrise')">Sunrise</button>
+    </div>
+    <div class="doc-title">
+      <div class="t1">The Complete Guide</div>
+      <div class="t2">Chapter Outline · March 2026</div>
+    </div>
+  </div>
+</div>
+
+<div class="body-wrap">
+
+<nav class="toc-sidebar">
+<div class="toc-head">Contents</div>
+<ul class="toc-list">
+  <li><a href="#front">Front Matter</a></li>
+  <div class="toc-part-label">Part I — The Story</div>
+  <li><a href="#ch1">1 · Origin</a></li>
+  <li><a href="#ch2">2 · Philosophy</a></li>
+  <li><a href="#ch3">3 · Map of the Territory</a></li>
+  <div class="toc-part-label">Part II — The Machine</div>
+  <li><a href="#ch4">4 · The 17-Bit Word</a></li>
+  <li><a href="#ch5">5 · The Four Loops</a></li>
+  <li><a href="#ch6">6 · The Clock</a></li>
+  <li><a href="#ch7">7 · Loading Data</a></li>
+  <li><a href="#ch8">8 · The Buses</a></li>
+  <li><a href="#ch9">9 · The ALU</a></li>
+  <li><a href="#ch10">10 · Memory Slots</a></li>
+  <li><a href="#ch11">11 · Working Scratch</a></li>
+  <li><a href="#ch12">12 · Counters</a></li>
+  <li><a href="#ch13">13 · Pattern Matcher</a></li>
+  <li><a href="#ch14">14 · Threshold Gate</a></li>
+  <li><a href="#ch15">15 · The File System</a></li>
+  <li><a href="#ch16">16 · FTP</a></li>
+  <div class="toc-part-label">Part III — The Network</div>
+  <li><a href="#ch17">17 · P2P Connections</a></li>
+  <li><a href="#ch18">18 · Named Networks</a></li>
+  <li><a href="#ch19">19 · Buses H and I</a></li>
+  <li><a href="#ch20">20 · Challenge Network</a></li>
+  <div class="toc-part-label">Part IV — The Language</div>
+  <li><a href="#ch21">21 · Session Log</a></li>
+  <li><a href="#ch22">22 · Loopscript</a></li>
+  <div class="toc-part-label">Part V — The Practice</div>
+  <li><a href="#ch23">23 · Challenge System</a></li>
+  <li><a href="#ch24">24 · Strategies</a></li>
+  <li><a href="#ch25">25 · Tutorial</a></li>
+  <div class="toc-part-label">Part VI — The Challenges</div>
+  <li><a href="#ch26">26 · How to Read a Challenge</a></li>
+  <li><a href="#ch27">27 · I. Fundamentals</a></li>
+  <li><a href="#ch28">28 · II. Arithmetic &amp; Logic</a></li>
+  <li><a href="#ch29">29 · III. Memory &amp; State</a></li>
+  <li><a href="#ch30">30 · IV. Patterns &amp; Filtering</a></li>
+  <li><a href="#ch31">31 · V. Pipeline &amp; Endurance</a></li>
+  <li><a href="#ch32">32 · VI. Networking</a></li>
+  <li><a href="#ch33">33 · VII. Files &amp; Persistence</a></li>
+  <li><a href="#ch34">34 · VIII. Multi-Machine Architecture</a></li>
+  <li><a href="#ch35">35 · IX. Design &amp; Meta</a></li>
+  <div class="toc-part-label">Part VII — Instructor's Edition</div>
+  <li><a href="#ch36">36 · Loop 2.1 in the Classroom</a></li>
+  <li><a href="#ch37">37 · Solutions — All 99</a></li>
+  <li><a href="#ch38">38 · Instructor Dashboard</a></li>
+  <div class="toc-part-label">Part VIII — Appendices</div>
+  <li><a href="#appa">A · Machine Constants</a></li>
+  <li><a href="#appb">B · ALU Operations</a></li>
+  <li><a href="#appc">C · Counter Triggers</a></li>
+  <li><a href="#appd">D · .loop File Format</a></li>
+  <li><a href="#appe">E · Loopscript Grammar</a></li>
+  <li><a href="#appf">F · CBX Protocol</a></li>
+  <li><a href="#appg">G · Bus Routing Matrix</a></li>
+  <li><a href="#apph">H · Known Open Issues</a></li>
+  <li><a href="#appi">I · Variant Record</a></li>
+  <li><a href="#appj">J · Quick Reference Card</a></li>
+  <li><a href="#appk">K · Glossary</a></li>
+  <div class="toc-part-label">Back Matter</div>
+  <li><a href="#index">Index</a></li>
+  <li><a href="#record">Complete Record</a></li>
+  <li><a href="#colophon">Colophon</a></li>
+</ul>
+</nav>
+<main class="content">
+<div class="front-matter" id="front">
+  <div class="front-title">LOOP 2.1 <span>/</span> THE COMPLETE GUIDE</div>
+  <div class="front-sub">Everything There Is to Know About the Manual Flow Computer</div>
+  <div class="front-meta">
+    <span>38 Chapters</span><span>11 Appendices</span><span>99 Challenges</span><span>March 2026</span>
+  </div>
+  <div class="front-note">This is the Ur Tome. Every other Loop 2.1 document is a tributary. This is the river.</div>
+
+  <div class="front-section">Structure</div>
+  <p style="font-size:15px;color:var(--fg-dim);line-height:1.7;margin-bottom:10px;">Eight parts. <strong style="color:var(--fg)">Part I</strong> tells you what this thing is and why it exists. <strong style="color:var(--fg)">Part II</strong> is the machine — every component, every edge case, every thing you can do and a few you can't. <strong style="color:var(--fg)">Part III</strong> is the network layer. <strong style="color:var(--fg)">Part IV</strong> is the two languages that describe what the machine does. <strong style="color:var(--fg)">Part V</strong> is practice and strategy. <strong style="color:var(--fg)">Part VI</strong> is all 99 challenges. <strong style="color:var(--fg)">Part VII</strong> is the instructor's edition. <strong style="color:var(--fg)">Part VIII</strong> is pure reference — dense tables, no warmth, you know what you came for.</p>
+
+  <div class="front-section">Source Documents Absorbed</div>
+  <ul class="front-ul">
+    <li>User Manual (v.261v1 / v.262v1)</li>
+    <li>Technical Reference (v.250v1)</li>
+    <li>CBX Protocol Specification (v.203)</li>
+    <li>Networking Guide (v.210v1)</li>
+    <li>Loopscript Specification (v.210v4)</li>
+    <li>FTP / File System chapter (draft)</li>
+    <li>Philosophy Tract (v.1)</li>
+    <li>Book of Challenges — all 99</li>
+    <li>Book of Solutions / Teacher's Guide — all 99</li>
+    <li>Course Outline (v.264v2)</li>
+    <li>Session Log format specification</li>
+    <li>Complete Record of development</li>
+  </ul>
+
+  <div class="callout key"><div class="callout-lbl">How to read this book</div><p><strong>Reference reader:</strong> jump to Part II for the machine, Part VIII for dense tables. The TOC is on your left. The index is at the back.</p><p><strong>Cover-to-cover reader:</strong> start at Chapter 1 and keep going. The book is built to be read in order. Every concept earns its place before the next one needs it.</p><p><strong>Everyone else:</strong> the index exists. Use it.</p></div>
+
+  <div class="callout phi"><div class="callout-lbl">On tone</div>The voice of this book is: a person who knows everything about this machine and is genuinely excited to tell you about it. Smart. Unhurried. Occasionally wry. Never condescending. Never pads. If a sentence doesn't need to be there, it isn't there. The explanations assume you are intelligent. The examples assume you are new.</div>
+</div>
+<div class="part-banner" id="part1">
+  <div class="part-eyebrow">Part I</div>
+  <div class="part-title">THE STORY</div>
+  <div class="part-subtitle">"Before you touch the machine, here is why it exists."</div>
+</div>
+<div class="chapter-entry" id="ch1">
+  <div class="ch-meta"><span class="ch-num">Chapter 1</span><span class="ch-src">Philosophy Tract §I · Complete Record</span></div>
+  <div class="ch-title">Origin</div>
+  <div class="ch-body"><p>The Minecraft castle and the throne room computer. What it felt like to build something that computed using delay lines, redstone, and a lot of patience. The question that emerged: what does computation feel like when you do all of it yourself? When there is no stored program, no automation, no abstraction between you and the data? When every addition, every comparison, every movement of a value from here to there passes through your own hands?</p><p>How that question became this machine. The move from Minecraft to a browser. Why a browser — what vibe coding made possible that would have been impossible otherwise. The AI collaboration and what it actually means.</p><div class="callout phi"><div class="callout-lbl">On origins</div>This is the only chapter in the book that is entirely personal. It sets the register for everything that follows: this is a thing a person made because it was interesting, not because they had to.</div></div>
+</div><div class="chapter-entry" id="ch2">
+  <div class="ch-meta"><span class="ch-num">Chapter 2</span><span class="ch-src">Philosophy Tract (in full, restructured)</span></div>
+  <div class="ch-title">The Philosophy of the Machine</div>
+  <div class="ch-body"><p>Ten ideas that shaped every design decision in Loop 2.1. Each one is brief — this is not a philosophy text, it is a design rationale. But each one will pay dividends when the reader hits the specific machine feature it explains.</p><ul><li><strong>I. Transparency</strong> — the machine hides nothing. Every bit, visible.</li><li><strong>II. Flow</strong> — data moves, always. The loop is not storage. It is motion.</li><li><strong>III. Control</strong> — the operator is the program. There is no other program.</li><li><strong>IV. Circles</strong> — patience as a feature. The loop brings data back around.</li><li><strong>V. Craft</strong> — fluency is earned, not given. Par exists for a reason.</li><li><strong>VI. Slowness</strong> — you can always slow down and see exactly what is happening. At 1 Hz, nothing is hidden.</li><li><strong>VII. Augmentation</strong> — this machine makes conventional computers more legible, not less necessary.</li><li><strong>VIII. Computation without stored programs</strong> — what changes when you remove the instruction fetch.</li><li><strong>IX. Joy as sufficient justification</strong> — it does not need to be useful. It is interesting. That is enough.</li><li><strong>X. "The Operator Is the Program"</strong> — what this means, exactly, and why it is the title of the machine.</li></ul></div>
+</div><div class="chapter-entry" id="ch3">
+  <div class="ch-meta"><span class="ch-num">Chapter 3</span><span class="ch-src">Manual §Introduction · Technical Reference §constants</span></div>
+  <div class="ch-title">A Map of the Territory</div>
+  <div class="ch-body"><p>The first time the reader sees the whole machine laid out. Not a technical description — a tour. What each component does in one sentence. How they relate to each other. This chapter prevents disorientation. When the reader hits Chapter 9 (ALU) they have already seen where it sits in the larger machine.</p><p>Includes the only diagram in the book that shows everything at once: four loops, nine buses, ALU, Pattern Matchers, Threshold Gates, memory, scratch registers, file system, network layer.</p><div class="callout tip"><div class="callout-lbl">For the impatient</div>If you have used the machine before, you can skip this chapter. If you are new to it, you cannot.</div></div>
+</div>
+<div class="part-banner" id="part2">
+  <div class="part-eyebrow">Part II</div>
+  <div class="part-title">THE MACHINE</div>
+  <div class="part-subtitle">"Every component, exactly as it is. Nothing invented, nothing omitted."</div>
+</div>
+<div class="callout key"><div class="callout-lbl">Reading guide for Part II</div>The chapters in Part II are ordered the way a new operator would encounter things — data first, then loops, then buses, then computation. But each chapter is also designed to stand alone. A reader who needs to understand the Pattern Matcher and only the Pattern Matcher can read Chapter 13 without reading Chapters 4 through 12 first.</div><div class="chapter-entry" id="ch4">
+  <div class="ch-meta"><span class="ch-num">Chapter 4</span><span class="ch-src">Manual §2 · Technical Reference §BPW</span></div>
+  <div class="ch-title">Data — The 17-Bit Word</div>
+  <div class="ch-body"><p>Everything about the fundamental unit of the machine. The 17-bit word format: 1 marker bit followed by 16 data bits. Why 17 and not 16 — the marker bit as word boundary. Binary representation. Unsigned 16-bit integers, range 0–65535. Two's complement as an operator convention, not a hardware mode.</p><p>The zero-word and why it is not the same as an empty loop position. A loop position with a zero-value word has its marker bit set. An empty loop position has nothing at all. This distinction matters every time you work with zero as a value.</p><div class="callout key"><div class="callout-lbl">The most important number</div>BPW = 17. One marker bit + 16 data bits. This number shows up in the bus latency formula, the inject channel length, and everywhere else timing matters.</div></div>
+</div><div class="chapter-entry" id="ch5">
+  <div class="ch-meta"><span class="ch-num">Chapter 5</span><span class="ch-src">Manual §3 · Technical Reference §loop constants</span></div>
+  <div class="ch-title">The Four Loops</div>
+  <div class="ch-body"><p>Each loop is a shift register — a sequence of bit positions that advances by one on each clock tick. Data circulates.</p><ul><li><strong>Working Loop</strong> — 18 words / 306 bits. The primary workspace. Where values are injected, where ALU results return, where scratch captures happen.</li><li><strong>ALU Loop</strong> — 24 words / 408 bits. Shared with ALU operations. Values feed into ALU registers as they circulate past the capture point.</li><li><strong>Memory Loop</strong> — 24 words / 408 bits. Feeds the 16-slot memory system.</li><li><strong>Big Loop</strong> — 48 words / 816 bits. Home of the PM/TG filtering pipeline. The longest revolution. The most patience required.</li></ul><p>The read head (R), write head (W), and gate (G) on each loop. Gate in HOLD mode vs DESTRUCTIVE mode. Pausing a loop vs closing its gate. STEP mode for single-tick advancement.</p><div class="callout phi"><div class="callout-lbl">The key insight</div>Data does not sit in a loop. It moves through a loop. The read head is a window, not a destination. This is the conceptual inversion that takes new operators the longest to internalize, and it underlies everything else.</div></div>
+</div><div class="chapter-entry" id="ch6">
+  <div class="ch-meta"><span class="ch-num">Chapter 6</span><span class="ch-src">Manual §4 · Technical Reference §tick model</span></div>
+  <div class="ch-title">The Clock</div>
+  <div class="ch-body"><p>The tick as the atomic unit of time. Clock speed in Hz — the full range, the slider, the number input. At 1&nbsp;Hz you can watch a single bit travel. At 24&nbsp;Hz the machine is the right speed for most work. At 60+ Hz it becomes a blur.</p><p>Recommended operating speed: <strong>24 Hz</strong>. The reasoning: fast enough for efficient sessions, slow enough that the machine's operation is still comprehensible. Not a rule — a starting point.</p><p>The Op Count system: set a number, pick a trigger, the machine halts when the count is reached. More useful than it sounds. It lets you run the machine unattended for a precise number of operations and then examine what happened.</p></div>
+</div><div class="chapter-entry" id="ch7">
+  <div class="ch-meta"><span class="ch-num">Chapter 7</span><span class="ch-src">Manual §5 · Technical Reference §INJ_N</span></div>
+  <div class="ch-title">Loading Data — The Inject Channel</div>
+  <div class="ch-body"><p>How values get into the machine. The inject channel: type a value using the binary switch panel, press INJECT, the word enters the Working loop at the write head. The RNG inject. The zero-pulse technique — injecting 0 as a word boundary marker between values in a stream.</p><p>The inject channel length: <code>INJ_N = 17</code> — exactly one word in flight at a time, matching BPW. What happens if you inject while the Working loop is paused. Back-to-back injects and ordering guarantees.</p><div class="callout tip"><div class="callout-lbl">The zero-pulse</div>Inject 0 between values to create a natural separator. A circulating zero-value word has its marker bit set — it is a valid word that means "boundary." The operator who understands this has unlocked stream framing.</div></div>
+</div><div class="chapter-entry" id="ch8">
+  <div class="ch-meta"><span class="ch-num">Chapter 8</span><span class="ch-src">Manual §6 · Technical Reference §bus table</span></div>
+  <div class="ch-title">The Buses — Moving Data</div>
+  <div class="ch-body"><p><strong>The cost of a bus transfer: 41 ticks. Always.</strong> The derivation: <code>BUS_N (24) + BPW (17) = 41</code>. The word enters the bus at tick 1 and exits at tick 41. Multiple words can be in the bus simultaneously. The bus is a pipeline, not a wire.</p><div class="ch-section">The Four Local Buses (A, B, C, D)</div><p>All four are identical in capability. This is worth stating clearly because the original documentation got it wrong — Bus C and D were incorrectly described as lesser. They are not. Bus colors, sidebar controls, inline loop header buttons. Source options, destination options (including TG threshold registers and FILE SAVE).</p><div class="ch-section">Bus E — The Challenge Bus</div><p>The challenge interface. Bidirectional: input values arrive, output values leave. Auto-activates when a challenge starts. The operator does not configure Bus E.</p><div class="ch-section">Buses F and G — P2P Connections</div><p>Left (F) and right (G) direct peer-to-peer connections over WebRTC. Real network transmission. Latency is RTT-dependent, not 41 ticks.</p><div class="ch-section">Buses H and I — Routed Network Buses</div><p>Route through the CBX network to named peers, including non-adjacent machines. Covered in depth in Chapter 19.</p><div class="callout warn"><div class="callout-lbl">Mid-transfer bus off</div>Turning a bus off mid-transfer does not corrupt or duplicate data. Words in transit drain cleanly. Test this once at 1 Hz to see it happen.</div></div>
+</div><div class="chapter-entry" id="ch9">
+  <div class="ch-meta"><span class="ch-num">Chapter 9</span><span class="ch-src">Manual §7 · Technical Reference §ALU ops</span></div>
+  <div class="ch-title">The ALU — Computing Things</div>
+  <div class="ch-body"><div class="ch-section">The Registers</div><p>Four registers: A, B, C, D. A and B are operands. C holds the result. D is auxiliary. ADVANCE mode (A→B→C→D after each capture) vs HOLD mode. AUTO-WRITEBACK: results automatically returned to the ALU loop.</p><div class="ch-section">The Operations</div><p>Every operation that exists on this machine:</p><ul><li><code>ADD</code> — A + B → C, Carry flag on overflow</li><li><code>SUB</code> — A − B → C, Carry and Sign flags</li><li><code>AND</code> / <code>OR</code> / <code>XOR</code> / <code>NOT</code> — bitwise, exactly as expected</li><li><code>SHL</code> — shift left 1 (×2); top bit exits to Carry</li><li><code>SHR</code> — shift right 1 (÷2 floor); bottom bit lost</li><li><code>NEG</code> — two's complement: 65536 − A for nonzero; 0 for zero</li><li><code>INC</code> — A + 1 → C; wraps 65535 → 0 with Carry</li><li><code>DEC</code> — A − 1 → C; wraps 0 → 65535</li></ul><p><em>Operations that do not exist: MUL, DIV, MOD, ABS, CMP, CLR. Knowing what's missing is as important as knowing what's there.</em></p><div class="ch-section">The Flags</div><ul><li><strong>Zero (.Z)</strong> — result = 0</li><li><strong>Carry (.C)</strong> — unsigned overflow, or bit shifted out of SHL/SHR</li><li><strong>Overflow (.V)</strong> — signed overflow (sign bit flips unexpectedly)</li><li><strong>Sign (.S)</strong> — bit 15 of result is set</li><li><strong>Parity (.P)</strong> — even number of 1-bits in result (0 bits counts as even)</li></ul><div class="callout key"><div class="callout-lbl">Edge cases that will surprise you</div>NEG 0 = 0 (not 65536). NEG 32768 = 32768 (its own two's complement; Overflow fires). INC 65535 wraps to 0. DEC 0 wraps to 65535. SHL 32768 produces 0, Carry fires. Every one of these is worth testing once before you rely on them.</div></div>
+</div><div class="chapter-entry" id="ch10">
+  <div class="ch-meta"><span class="ch-num">Chapter 10</span><span class="ch-src">Manual §8</span></div>
+  <div class="ch-title">Memory Slots</div>
+  <div class="ch-body"><p>Sixteen memory slots, addressed 0–15. Write mode, read mode, addr-read mode. Auto-increment. Batch Write All.</p><p><strong>ADDR-READ mode</strong>: the top 4 bits of the circulating word are interpreted as a slot address. The word is consumed and the contents of the addressed slot are ejected. The data chooses the slot. When you see this clearly it is a small revelation: this is what RAM does. 4 bits. 2⁴ = 16. The derivation is not an accident.</p><div class="callout warn"><div class="callout-lbl">Load is a full overwrite</div>Loading a file or doing a Batch Write loads all 16 slots. Whatever was there before is gone. Check your memory state before any load operation.</div></div>
+</div><div class="chapter-entry" id="ch11">
+  <div class="ch-meta"><span class="ch-num">Chapter 11</span><span class="ch-src">Manual §9</span></div>
+  <div class="ch-title">Working Scratch Registers</div>
+  <div class="ch-body"><p>Four fast local holding slots attached directly to the Working loop. No bus transfer required — no 41-tick cost. Values captured from or sent to Working stay within the Working loop's local logic.</p><p>CAPTURE mode: arm it, choose a slot (0–3), wait for the next word at the Working read head. One-shot — fires once and disarms. The cost hierarchy: scratch (no bus latency) → memory slots (loop circulation only) → bus transfer (41 ticks). For holding an intermediate value for a few ticks, scratch is the right tool.</p></div>
+</div><div class="chapter-entry" id="ch12">
+  <div class="ch-meta"><span class="ch-num">Chapter 12</span><span class="ch-src">Manual §10 · Technical Reference §triggers</span></div>
+  <div class="ch-title">Counters</div>
+  <div class="ch-body"><p>The counter accumulates a value as specific machine events fire. 25 trigger types total — the previous documentation was missing 11 of these. They are all here.</p><ul><li>Working loop: 6 triggers (read events, write events, 4 scratch captures)</li><li>ALU loop: 4 triggers (read, write, ALU fire, ALU writeback)</li><li>Memory loop: 4 triggers (read, write, slot write, slot read)</li><li>Big loop: 11 triggers (read, write, PM1 match/miss/eject, PM2 match/miss/eject, TG1 pass/eject, TG2 pass/eject)</li></ul><p>COPY vs DESTRUCTIVE eject. Counter overflow at 65535. The counter as a halt condition via Op Count.</p></div>
+</div><div class="chapter-entry" id="ch13">
+  <div class="ch-meta"><span class="ch-num">Chapter 13</span><span class="ch-src">Manual §11 · Technical Reference §eject indices</span></div>
+  <div class="ch-title">The Pattern Matcher</div>
+  <div class="ch-body"><p>Sits on the Big Loop. Inspects every circulating word against a configured pattern. Does this automatically — always watching, every word, every revolution.</p><p><strong>Mask register</strong>: which bits to check. <strong>Pattern register</strong>: what those bits should equal. If <code>(word AND mask) == (pattern AND mask)</code>, the word matches. MASK = 0x0000: every word matches. MASK = 0xFFFF: only exact matches pass.</p><p><strong>COPY eject</strong>: matched word ejected AND stays in Big Loop. <strong>DESTRUCTIVE eject</strong>: matched word ejected and removed.</p><p><strong>Rewrite mode</strong>: matched words are modified in place before continuing. The rewritten word circulates onward — TG1 sees the rewritten value, not the original.</p><p><strong>PM2 CASCADE</strong>: only words PM1 matched reach PM2. The key edge case: PM1 matched, PM2 rejected. The word is gone — neither in Big Loop nor at the output. Cascade is destructive at every stage.</p><div class="callout key"><div class="callout-lbl">Pipeline positions</div>PM1 at bit position 359 in Big Loop. PM2 at 342. TG1 at 325. TG2 at 308. Spaced 17 bits apart — exactly one word width. The pipeline is physical.</div></div>
+</div><div class="chapter-entry" id="ch14">
+  <div class="ch-meta"><span class="ch-num">Chapter 14</span><span class="ch-src">Manual §12</span></div>
+  <div class="ch-title">The Threshold Gate</div>
+  <div class="ch-body"><p>Where the Pattern Matcher asks "does this word match a pattern?", the Threshold Gate asks "is this word above or below a number?" GTE, LTE, and EQ modes. COPY vs DESTRUCTIVE eject. CLAMP mode: values that would be ejected are replaced by the threshold value instead.</p><p><strong>LOAD FROM BIG</strong>: the next word to pass becomes the new threshold. Useful for dynamic threshold setting from loop data.</p><p><strong>TG2 CASCADE + TG1 GTE + TG2 LTE</strong>: a band-pass filter. Only values in the range [TG1 threshold, TG2 threshold] survive. Both stages in one configuration. No code. Just setup.</p><div class="callout phi"><div class="callout-lbl">The full four-stage pipeline</div>PM1 → PM2 → TG1 → TG2. All four running simultaneously on Big Loop. Every circulating word passes through all four stages automatically. Configure each stage, run the loop, step back. This is the most hardware-like thing the machine does.</div></div>
+</div><div class="chapter-entry" id="ch15">
+  <div class="ch-meta"><span class="ch-num">Chapter 15</span><span class="ch-src">Manual §18 · FTP chapter</span></div>
+  <div class="ch-title">The File System</div>
+  <div class="ch-body"><p>The machine's one concession to persistence. A named storage space that survives between sessions.</p><p><strong>What a file is</strong>: exactly 16 × 16-bit values. The complete memory slot state, named. No header, no checksum, no metadata beyond the filename. One file = 256 bits. Full /local (8 files) = 2,048 bits of persistent state.</p><p><strong>The null-slot invariant</strong>: empty slots are saved as zero-value words. On load, all 16 slots are always written, including zeros. Position is preserved by sequence — word N always maps to slot N. Null slots can never be skipped.</p><p><strong>Building a file</strong>: FILE SAVE as a bus destination (any of A–D). Batch Write All streams 16 words through the bus at current clock speed. At 1 Hz you can watch every bit cross. The cost is real.</p><p><strong>The .l21x archive</strong>: plain text, human-readable, editable. Two rows of eight hex entries per file. Round-trippable: save → export → edit in a text editor → import → load → correct values.</p></div>
+</div><div class="chapter-entry" id="ch16">
+  <div class="ch-meta"><span class="ch-num">Chapter 16</span><span class="ch-src">FTP chapter (in full)</span></div>
+  <div class="ch-title">FTP — Transferring Files Between Machines</div>
+  <div class="ch-body"><p>The FTP system allows an operator to send a named file from their /local directly to another operator's /local. The transfer is not observable as a bit-serial bus operation. This chapter explains why that is acceptable.</p><div class="callout phi"><div class="callout-lbl">Why FTP works differently</div>The machine has two layers: computation (physical, observable, costs ticks) and coordination (abstract, automatic — the infrastructure that makes multi-machine work possible). CBX invitation packets, hub election, heartbeats — none of these traverse a loop. FTP is in the coordination layer. The physical cost of a file was paid when it was built. FTP delivers something that was already made.</div><p><strong>The four messages</strong>: FTP_OFFER (sender → recipient, includes the full 16-slot payload), FTP_ACCEPT, FTP_DECLINE, FTP_CANCEL. Sequence diagrams, failure modes, and routing through named networks all covered.</p><p><strong>What FTP is not</strong>: a way to move raw data without paying the cost. You cannot FTP values circulating in a loop. You cannot FTP a partial memory state. Only named, complete, 16-slot snapshots built through the normal file pipeline.</p></div>
+</div>
+<div class="part-banner" id="part3">
+  <div class="part-eyebrow">Part III</div>
+  <div class="part-title">THE NETWORK</div>
+  <div class="part-subtitle">"When one machine isn't enough."</div>
+</div>
+<div class="callout phi"><div class="callout-lbl">On the network</div>A single Loop 2.1 machine is a meditation device for one operator. A connected network of Loop 2.1 machines is a distributed computer. The same principles apply. The same costs apply. Everything is just bigger.</div><div class="chapter-entry" id="ch17">
+  <div class="ch-meta"><span class="ch-num">Chapter 17</span><span class="ch-src">Manual §13 · Networking Guide</span></div>
+  <div class="ch-title">P2P Connections</div>
+  <div class="ch-body"><p>Direct peer-to-peer connections between two machines via WebRTC. No server involved. Bus F (left / PL) and Bus G (right / PR).</p><p><strong>The SDP handshake</strong>: CREATE OFFER → copy → send to peer via any channel → peer pastes and accepts → answer comes back → CONNECTED. Most first-time failures are because someone clicked in the wrong order.</p><p><strong>Latency</strong>: WebRTC RTT rather than 41 ticks. On a local network: under 5ms. Over the internet: 20–150ms. The 41-tick cost model no longer applies to F and G.</p><p><strong>The inbound buffer</strong>: words arrive from the peer and queue if the receiving loop isn't ready. Buffer depth is observable. What happens when it fills.</p></div>
+</div><div class="chapter-entry" id="ch18">
+  <div class="ch-meta"><span class="ch-num">Chapter 18</span><span class="ch-src">Manual §15 · Networking Guide</span></div>
+  <div class="ch-title">Named Networks</div>
+  <div class="ch-body"><p>Groups of connected machines with a shared identity and a hub. Hub-and-spoke topology. Members communicate through the hub.</p><p><strong>Hub election</strong>: if the hub disconnects, remaining members elect a new hub after ~15 seconds. Bully algorithm — first machine to claim hub status wins. With two machines, the election is immediate.</p><div class="callout warn"><div class="callout-lbl">The all-decline edge case</div>Hub invites all machines; all decline. Hub forms a network of one. Heartbeat fires to nobody. No crash, no error. This is correct behavior.</div></div>
+</div><div class="chapter-entry" id="ch19">
+  <div class="ch-meta"><span class="ch-num">Chapter 19</span><span class="ch-src">Manual §15 · CBX Protocol Spec</span></div>
+  <div class="ch-title">Buses H and I — Routed Network Buses</div>
+  <div class="ch-body"><p>Unlike F and G (direct P2P), Buses H and I route to named network members — including machines not directly connected. They are the long-distance buses.</p><p>Routing is transparent: intermediate machines forward the word without receiving it. The operator acting as a relay can have H targeted at one machine and I targeted at another simultaneously — routing words from one peer to another. The operator is the router.</p></div>
+</div><div class="chapter-entry" id="ch20">
+  <div class="ch-meta"><span class="ch-num">Chapter 20</span><span class="ch-src">Manual §14 · CBX Protocol Spec v.203</span></div>
+  <div class="ch-title">The Challenge Network (CBX)</div>
+  <div class="ch-body"><p>The Challenge Bus eXchange — the coordination protocol that makes multi-machine challenges possible. CBX handles logistics, not computation. The computation is always done locally by each operator.</p><p><strong>The Chain Sum sequence</strong>: INVITE → ACCEPT/DECLINE → ASSIGN (each machine gets its assigned value and chain position) → GO → SUBMIT (each non-origin machine sends its computed running sum) → SUM_OK or SUM_FAIL → COMPLETE or ABORT.</p><p>If any SUBMIT is wrong: SUM_FAIL fires with the exact position and discrepancy. The origin can verify any submitted sum independently because it was assigned all values at the start.</p><p><strong>The Network Monitor</strong>: every CBX packet visible in real time. Capture, modify, and inject packets to test protocol behavior. Set a packet's TTL to 0, inject it, watch it die. This is how you learn what the protocol does by watching it fail.</p></div>
+</div>
+<div class="part-banner" id="part4">
+  <div class="part-eyebrow">Part IV</div>
+  <div class="part-title">THE LANGUAGE</div>
+  <div class="part-subtitle">"Writing down what the machine does."</div>
+</div>
+<div class="callout phi"><div class="callout-lbl">Two languages</div>The session log is what actually happened. Loopscript is what you intended to happen. They are complementary, not redundant. The log is history. Loopscript is a plan.</div><div class="chapter-entry" id="ch21">
+  <div class="ch-meta"><span class="ch-num">Chapter 21</span><span class="ch-src">Technical Reference §5 · Manual §16</span></div>
+  <div class="ch-title">The Session Log — .loop Format</div>
+  <div class="ch-body"><p>Five sections: SPEC, INIT, OPS, FINAL, STATS.</p><ul><li><strong>SPEC</strong> — machine configuration at session start. Known issue: SPEC.BUSES writes 2 with 34-slot pipelines. The machine has 9 buses with 24-slot pipelines. The SPEC section is not currently accurate. Know this.</li><li><strong>INIT</strong> — initial bit state of all four loops</li><li><strong>OPS</strong> — every logged event. T###. prefix for tick events, S###. prefix for operator actions. Dual-format: machine code || human description on every line.</li><li><strong>FINAL</strong> — final bit state of all four loops</li><li><strong>STATS</strong> — 20 statistics keys covering every countable thing the machine tracked during the session</li></ul></div>
+</div><div class="chapter-entry" id="ch22">
+  <div class="ch-meta"><span class="ch-num">Chapter 22</span><span class="ch-src">Loopscript Specification v.210v4 (in full)</span></div>
+  <div class="ch-title">Loopscript — .lps Format</div>
+  <div class="ch-body"><p>The notation for describing L21 algorithms. Not executed by the machine — read by operators. A plan, a recipe, a score.</p><p><strong>Three sections</strong>: HEADER (title, author, date, variant, IN/OUT descriptions), SETUP (non-default configuration — silence means default), EXEC (the algorithm as operator action sequence).</p><p><strong>EXEC syntax</strong>: one action per line. Branching: <code>.Z?→ {} :→ {}</code>. Loops: <code>#N {}</code>, <code>UNTIL(cond) {}</code>, <code>#CTR {}</code>. Parallel: <code>|</code>. Labels: <code>::LABEL</code>. WAIT() as operator-action marker.</p><p><strong>Multi-machine Loopscript</strong>: MACHINE: N blocks. WAIT(CBX.GO), WAIT(EIN) — these are operator-action signals. The operator waits for the visual cue and proceeds. The machine does not wait autonomously.</p><p>Four worked examples: Add Two Numbers (minimum viable), Filter (SETUP doing real work), Find Maximum without ALU (TG destructive mode), Selection Sort (memory + nested loops + counter + branching).</p></div>
+</div>
+<div class="part-banner" id="part5">
+  <div class="part-eyebrow">Part V</div>
+  <div class="part-title">THE PRACTICE</div>
+  <div class="part-subtitle">"What you actually do with all of this."</div>
+</div>
+<div class="chapter-entry" id="ch23">
+  <div class="ch-meta"><span class="ch-num">Chapter 23</span><span class="ch-src">Manual §17</span></div>
+  <div class="ch-title">The Challenge System</div>
+  <div class="ch-body"><p>What challenges are, how they work, and why scoring works the way it does. The <code>generate(params)</code> / <code>par(result, params)</code> contract. All 10 built-in challenge types. Custom challenge authorship and the validator.</p><p>The par system is a reference, not a ceiling. Beating par is unusual in the first half of a course and should not be expected. The par gap is information, not judgment.</p></div>
+</div><div class="chapter-entry" id="ch24">
+  <div class="ch-meta"><span class="ch-num">Chapter 24</span><span class="ch-src">Original content</span></div>
+  <div class="ch-title">Strategies</div>
+  <div class="ch-body"><p>How to actually be good at this. Not solutions — patterns. The strategies that distinguish efficient operators from operators who get correct answers slowly.</p><ul><li><strong>Loading data efficiently</strong> — both operands in one Working→ALU transfer; zero-pulse as word boundary</li><li><strong>The par gap</strong> — where it comes from and the most common culprits</li><li><strong>Shift arithmetic</strong> — N × 12 = (N SHL 3) + (N SHL 2). This is binary long multiplication. It is not a trick.</li><li><strong>The hardware pipeline as work</strong> — when to configure and step back, not keep clicking</li><li><strong>Counter management</strong> — as loop halt, as sequence tracker, as condition</li><li><strong>The timing game</strong> — when to slow down, when to run fast</li><li><strong>Transition hygiene</strong> — the biggest differentiator between good operators and great ones</li><li><strong>Memory management</strong> — the cost hierarchy: scratch → memory slots → bus transfer</li></ul></div>
+</div><div class="chapter-entry" id="ch25">
+  <div class="ch-meta"><span class="ch-num">Chapter 25</span><span class="ch-src">Manual §20</span></div>
+  <div class="ch-title">Tutorial — First Session</div>
+  <div class="ch-body"><p>Hands-on walkthrough from zero. Assumes no prior knowledge. Ends with a completed first challenge.</p><ul><li>Step 1: Open the machine. What you see.</li><li>Step 2: Inject a value. Find it at the read head.</li><li>Step 3: The slow transfer — 1 Hz, Bus A, count the ticks.</li><li>Step 4: Add two numbers. First ALU operation.</li><li>Step 5: Submit your result. First completed challenge.</li><li>Step 6: Read your session log.</li><li>Step 7: Try the next one on your own.</li></ul><div class="callout tip"><div class="callout-lbl">This chapter does not explain everything</div>It shows you enough to start. The rest of the book is for after you've started.</div></div>
+</div>
+<div class="part-banner" id="part6">
+  <div class="part-eyebrow">Part VI</div>
+  <div class="part-title">THE CHALLENGES</div>
+  <div class="part-subtitle">"All ninety-nine of them."</div>
+</div>
+<div class="chapter-entry" id="ch26">
+  <div class="ch-meta"><span class="ch-num">Chapter 26</span><span class="ch-src">Book of Challenges</span></div>
+  <div class="ch-title">How to Read a Challenge Entry</div>
+  <div class="ch-body"><p>Each entry: title, difficulty badge (Easy / Medium / Hard / NTD), format badge (Solo / Multi-Machine / Networked / Files), estimated time, and the challenge description. NTD challenges additionally include: what makes them hard, what partial progress looks like, and what would need to change for them to become solvable.</p><div class="callout phi"><div class="callout-lbl">On the NTDs</div>Not Yet Done does not mean impossible. It means no one has demonstrated a clean solution under current machine constraints. Some NTDs are hard engineering problems. Some are hard coordination problems. Some are genuinely open questions about what the machine can do.</div></div>
+</div><div class="chapter-entry" id="ch27">
+  <div class="ch-meta"><span class="ch-num">Chapter 27</span><span class="ch-src">Challenges #01–#12</span></div>
+  <div class="ch-title">Section I — Fundamentals</div>
+  <div class="ch-body"><p>Fluency exercises. Not trivial — foundational. These are the things you will return to every time something stops making sense in a harder challenge.</p><div class="ch-list">01 Hello, Read Head &nbsp;·&nbsp; 02 Forty-One Ticks &nbsp;·&nbsp; 03 The Marker Bit &nbsp;·&nbsp; 04 All Four Loops &nbsp;·&nbsp; 05 The Slow Transfer &nbsp;·&nbsp; 06 Bus Collision &nbsp;·&nbsp; 07 The Four-Bus Mega-Loop &nbsp;·&nbsp; 08 Loop Size Tax &nbsp;·&nbsp; 09 Op Count Stop &nbsp;·&nbsp; 10 Add Two Numbers &nbsp;·&nbsp; 11 Zero-Pulse Inject &nbsp;·&nbsp; 12 Working Scratch Sprint</div></div>
+</div><div class="chapter-entry" id="ch28">
+  <div class="ch-meta"><span class="ch-num">Chapter 28</span><span class="ch-src">Challenges #13–#24</span></div>
+  <div class="ch-title">Section II — Arithmetic & Logic</div>
+  <div class="ch-body"><p>The ALU in depth. Every operation has at least one challenge that forces you to understand it rather than just use it. Ends with a genuine NTD: Floating Point, Approximately, which bumps into fundamental precision limits.</p><div class="ch-list">13 The Five Flags &nbsp;·&nbsp; 14 Multiply by 12 &nbsp;·&nbsp; 15 Integer Square Root &nbsp;·&nbsp; 16 Auto-Writeback Counter &nbsp;·&nbsp; 17 Two's Complement Tour &nbsp;·&nbsp; 18 Bit Reversal &nbsp;·&nbsp; 19 Population Count &nbsp;·&nbsp; 20 Long Division &nbsp;·&nbsp; 21 GCD &nbsp;·&nbsp; 22 Full Multiplication &nbsp;·&nbsp; 23 CRC-16 &nbsp;·&nbsp; 24 Floating Point, Approximately <span class="nyd">[NTD]</span></div></div>
+</div><div class="chapter-entry" id="ch29">
+  <div class="ch-meta"><span class="ch-num">Chapter 29</span><span class="ch-src">Challenges #25–#34</span></div>
+  <div class="ch-title">Section III — Memory & State</div>
+  <div class="ch-body"><p>The 16 memory slots as working memory. State machines. Data structures built by hand.</p><div class="ch-list">25 Write All, Read All &nbsp;·&nbsp; 26 The Lookup Table &nbsp;·&nbsp; 27 Stack, Manually &nbsp;·&nbsp; 28 Traffic Light State Machine &nbsp;·&nbsp; 29 Histogram &nbsp;·&nbsp; 30 The Sine Table &nbsp;·&nbsp; 31 Insertion Sort &nbsp;·&nbsp; 32 Ring Buffer &nbsp;·&nbsp; 33 Save, Corrupt, Recover &nbsp;·&nbsp; 34 Virtual Memory <span class="nyd">[NTD]</span></div></div>
+</div><div class="chapter-entry" id="ch30">
+  <div class="ch-meta"><span class="ch-num">Chapter 30</span><span class="ch-src">Challenges #35–#44</span></div>
+  <div class="ch-title">Section IV — Patterns & Filtering</div>
+  <div class="ch-body"><p>PM and TG as hardware. The pipeline as a program. The limits of static pattern matching — and what to do when you hit them.</p><div class="ch-list">35 Even or Odd &nbsp;·&nbsp; 36 The Rising Threshold &nbsp;·&nbsp; 37 Band-Pass Filter &nbsp;·&nbsp; 38 Powers of Two Detector &nbsp;·&nbsp; 39 PM Rewrite Pipeline &nbsp;·&nbsp; 40 TG Clamp &nbsp;·&nbsp; 41 Dynamic Mask &nbsp;·&nbsp; 42 Two-Stage PM Cascade &nbsp;·&nbsp; 43 The Full Four-Stage &nbsp;·&nbsp; 44 Hardware Neural Threshold <span class="nyd">[NTD]</span></div></div>
+</div><div class="chapter-entry" id="ch31">
+  <div class="ch-meta"><span class="ch-num">Chapter 31</span><span class="ch-src">Challenges #45–#54</span></div>
+  <div class="ch-title">Section V — Pipeline & Endurance</div>
+  <div class="ch-body"><p>Longer challenges. Operations that require sustained attention. The Midnight Run (#50) is the only challenge with a stated minimum time rather than a par score. The Tour de France (#54) remains unrun.</p><div class="ch-list">45 100 Accumulations &nbsp;·&nbsp; 46 Fibonacci to Overflow &nbsp;·&nbsp; 47 Primes Below 200 &nbsp;·&nbsp; 48 LFSR Full Cycle &nbsp;·&nbsp; 49 Merge Sort (Two Lists) &nbsp;·&nbsp; 50 The Midnight Run &nbsp;·&nbsp; 51 Custom Challenge Authorship &nbsp;·&nbsp; 52 File Library &nbsp;·&nbsp; 53 Quine <span class="nyd">[NTD]</span> &nbsp;·&nbsp; 54 The Tour de France <span class="nyd">[NTD]</span></div></div>
+</div><div class="chapter-entry" id="ch32">
+  <div class="ch-meta"><span class="ch-num">Chapter 32</span><span class="ch-src">Challenges #55–#67</span></div>
+  <div class="ch-title">Section VI — Networking</div>
+  <div class="ch-body"><p>Multi-machine challenges. Coordination under time pressure. These are not harder to compute — they are harder to coordinate. That is a different kind of hard.</p><div class="ch-list">55 First Contact &nbsp;·&nbsp; 56 The Buffer Demonstration &nbsp;·&nbsp; 57 Producer-Consumer &nbsp;·&nbsp; 58 Three-Machine Relay &nbsp;·&nbsp; 59 Agreed Protocol &nbsp;·&nbsp; 60 Routed Delivery &nbsp;·&nbsp; 61 File Handshake &nbsp;·&nbsp; 62 Network Monitor Lab &nbsp;·&nbsp; 63 Operator-as-Router &nbsp;·&nbsp; 64 Chain Sum — Perfect Score &nbsp;·&nbsp; 65 Distributed Max-Finding &nbsp;·&nbsp; 66 Hub Election Live &nbsp;·&nbsp; 67 The Broadcast Storm <span class="nyd">[NTD]</span></div></div>
+</div><div class="chapter-entry" id="ch33">
+  <div class="ch-meta"><span class="ch-num">Chapter 33</span><span class="ch-src">Challenges #68–#74</span></div>
+  <div class="ch-title">Section VII — Files & Persistence</div>
+  <div class="ch-body"><p>The file system in practice. These challenges are about how the machine manages state across time.</p><div class="ch-list">68 The Slow Save &nbsp;·&nbsp; 69 The Null Slot Test &nbsp;·&nbsp; 70 The .l21x Audit &nbsp;·&nbsp; 71 Checkpoint System &nbsp;·&nbsp; 72 FTP: Blind Transfer &nbsp;·&nbsp; 73 Distributed Lookup &nbsp;·&nbsp; 74 Content-Addressed Storage <span class="nyd">[NTD]</span></div></div>
+</div><div class="chapter-entry" id="ch34">
+  <div class="ch-meta"><span class="ch-num">Chapter 34</span><span class="ch-src">Challenges #75–#87</span></div>
+  <div class="ch-title">Section VIII — Multi-Machine Architecture</div>
+  <div class="ch-body"><p>These require coordination at the design level, not just execution. Most NTDs here are genuinely hard. Byzantine Generals (#85) at human speed has not been attempted in a classroom setting as of this writing.</p><div class="ch-list">75 Pipeline Stages &nbsp;·&nbsp; 76 Parallel Sum &nbsp;·&nbsp; 77 Consensus &nbsp;·&nbsp; 78 Distributed Sort &nbsp;·&nbsp; 79 The Invisible Middleman &nbsp;·&nbsp; 80 Commit-Reveal &nbsp;·&nbsp; 81 Five-Machine Chain Sum — Clean &nbsp;·&nbsp; 82 Network-Wide XOR Checksum &nbsp;·&nbsp; 83 Distributed Multiplication Table <span class="nyd">[NTD]</span> &nbsp;·&nbsp; 84 Secret Sharing <span class="nyd">[NTD]</span> &nbsp;·&nbsp; 85 Byzantine Generals <span class="nyd">[NTD]</span> &nbsp;·&nbsp; 86 The Eight-Node Ring <span class="nyd">[NTD]</span> &nbsp;·&nbsp; 87 The Full Internet <span class="nyd">[NTD]</span></div></div>
+</div><div class="chapter-entry" id="ch35">
+  <div class="ch-meta"><span class="ch-num">Chapter 35</span><span class="ch-src">Challenges #88–#99</span></div>
+  <div class="ch-title">Section IX — Design & Meta</div>
+  <div class="ch-body"><p>These don't have canonical solutions. They are about understanding the machine at a level where you can design with it rather than just operate it. Challenge #99 is intentionally empty.</p><div class="ch-list">88 Par Hunt &nbsp;·&nbsp; 89 The Annotated Session Log &nbsp;·&nbsp; 90 Teach the Machine a New Problem &nbsp;·&nbsp; 91 The Wrong Architecture &nbsp;·&nbsp; 92 Headless Run &nbsp;·&nbsp; 93 The Stress Test &nbsp;·&nbsp; 94 The Protocol Autopsy &nbsp;·&nbsp; 95 The Variant <span class="nyd">[NTD]</span> &nbsp;·&nbsp; 96 The Loopscript Program <span class="nyd">[NTD]</span> &nbsp;·&nbsp; 97 The Impossible Protocol <span class="nyd">[NTD]</span> &nbsp;·&nbsp; 98 Teach a Class <span class="nyd">[NTD]</span> &nbsp;·&nbsp; 99 The One That Isn't Here Yet</div><div class="callout phi"><div class="callout-lbl">On Challenge 99</div>Not a placeholder. A permanent reminder that the machine is incomplete. The only way to complete Challenge 99 is to build something the machine cannot do yet and thereby create a challenge that was previously impossible. The invitation is open.</div></div>
+</div>
+<div class="part-banner" id="part7">
+  <div class="part-eyebrow">Part VII</div>
+  <div class="part-title">THE INSTRUCTOR'S EDITION</div>
+  <div class="part-subtitle">"Everything the teacher needs."</div>
+</div>
+<div class="callout key"><div class="callout-lbl">Note on access</div>This part is not marked confidential. Its existence is not secret. It is written for instructors and is most useful to people who are teaching with the machine, not learning on it for the first time.</div><div class="chapter-entry" id="ch36">
+  <div class="ch-meta"><span class="ch-num">Chapter 36</span><span class="ch-src">Course Outline v.264v2 (in full)</span></div>
+  <div class="ch-title">Loop 2.1 in the Classroom</div>
+  <div class="ch-body"><p>The 15-week course structure. Eight modules, each with a theme, a two-week arc, CS concepts introduced, and challenge work. The guiding principle: every CS concept is encountered on the machine before it is formalized in lecture.</p><p>Binary representation, overflow, masking, state machines, sorting algorithms, complexity, pipelining, network protocols, distributed algorithms — all of them arrived at by experience first, formalized second.</p><p>Grading structure: challenge scores (35%), written reflections (20%), midterm timed session (20%), final project (25%). The final project synthesis question: <em>"Name one thing the machine taught you that a textbook could not have."</em></p><p>CS topic cross-reference table: every topic, when students first encounter it experientially, when it is formalized. 30 topics tracked from Week 1 through Week 14.</p></div>
+</div><div class="chapter-entry" id="ch37">
+  <div class="ch-meta"><span class="ch-num">Chapter 37</span><span class="ch-src">Book of Solutions / Teacher's Guide (in full)</span></div>
+  <div class="ch-title">Solutions — All 99</div>
+  <div class="ch-body"><p>The teacher's guide to every challenge. For each solvable challenge: the approach, the key insight, a step-by-step breakdown where warranted, and a full Loopscript. For NTD challenges: Why It's Hard, Partial Progress to Reward, If a Student Claims to Have Solved It, What Would Be Needed.</p><p>52 Loopscript blocks. 21 NTD instructor analysis boxes. This is not an answer key to distribute to students. It is a reference for understanding what each challenge is testing.</p><div class="callout warn"><div class="callout-lbl">Do not distribute to students</div>The solutions undermine the challenge system if students have access before attempting the challenges. Keep this part in mind when deciding how to share the book.</div></div>
+</div><div class="chapter-entry" id="ch38">
+  <div class="ch-meta"><span class="ch-num">Chapter 38</span><span class="ch-src">Design document (this session)</span></div>
+  <div class="ch-title">The Instructor Dashboard (Proposed)</div>
+  <div class="ch-body"><p>A monitoring and assessment tool that does not yet exist as a shipping product. Included here because the design is complete enough to serve as a specification, and because the simulator hooks needed to support it are worth documenting now.</p><p><strong>The Live Monitor</strong>: fleet view (real-time miniaturized machine state for every student), zoom view (read-only mirror of one student's machine), rewind (scrubbing backward through event stream), class-wide aggregate (par distribution, common stuck points by structural similarity).</p><p><strong>The Grader</strong>: session log compliance (SPEC accuracy, tick continuity, timestamp plausibility), integrity analysis (action sequence fingerprinting, temporal analysis, reference solution comparison), structured report per submission.</p><p><strong>Hooks needed in the simulator</strong>: session metadata header (machine ID, operator ID, class ID), continuous WebRTC event streaming, machine state snapshots, challenge boundary events, instructor API, classroom mode indicator.</p></div>
+</div>
+<div class="part-banner" id="part8">
+  <div class="part-eyebrow">Part VIII</div>
+  <div class="part-title">APPENDICES</div>
+  <div class="part-subtitle">"Pure reference. No warmth. You know what you're looking for."</div>
+</div>
+<div class="appendix-entry" id="appa">
+  <div class="app-lbl">Appendix A</div>
+  <div class="app-title">Machine Constants</div>
+  <div class="ch-body"><p>Every constant, its value, its derivation, and what breaks if it changes: BPW (17), BUS_N (24), INJ_N (17), data range (0–65535), loop sizes (Working 18w/306b, ALU 24w/408b, Memory 24w/408b, Big 48w/816b), 16 memory slots with 4-bit addressing, eject indices (PM1: 359, PM2: 342, TG1: 325, TG2: 308).</p></div>
+</div><div class="appendix-entry" id="appb">
+  <div class="app-lbl">Appendix B</div>
+  <div class="app-title">ALU Operations Reference</div>
+  <div class="ch-body"><p>Complete op table: mnemonic, inputs consumed, result, flags affected, edge cases. Every edge case documented. The table to check when a result doesn't make sense.</p></div>
+</div><div class="appendix-entry" id="appc">
+  <div class="app-lbl">Appendix C</div>
+  <div class="app-title">Counter Triggers — Full Table</div>
+  <div class="ch-body"><p>All 25 triggers. Loop, event type, what increments the counter. Organized by loop. The table that was missing 11 entries in prior documentation.</p></div>
+</div><div class="appendix-entry" id="appd">
+  <div class="app-lbl">Appendix D</div>
+  <div class="app-title">.loop File Format — Full Specification</div>
+  <div class="ch-body"><p>Complete format reference. All five sections. Every T-line and S-line type. All 20 FINAL.STATS keys with definitions. The dual-format line spec. The FORMAT_REF subsection.</p></div>
+</div><div class="appendix-entry" id="appe">
+  <div class="app-lbl">Appendix E</div>
+  <div class="app-title">Loopscript — Full Grammar Reference</div>
+  <div class="ch-body"><p>HEADER field list. SETUP syntax table (Component.Property = Value for every settable property). EXEC syntax: every operator, every control structure, every conditional form. The full operator symbol table.</p></div>
+</div><div class="appendix-entry" id="appf">
+  <div class="app-lbl">Appendix F</div>
+  <div class="app-title">CBX Protocol — Full Message Table</div>
+  <div class="ch-body"><p>Every CBX message type. Source → destination. Payload fields. When sent. What triggers it. What the receiver does with it. Chain Sum sequence in full. FTP four-message protocol. TTL behavior.</p></div>
+</div><div class="appendix-entry" id="appg">
+  <div class="app-lbl">Appendix G</div>
+  <div class="app-title">Bus Routing Matrix</div>
+  <div class="ch-body"><p>For each bus (A–I): source options, destination options, color, type (local / P2P / network), capability notes. The complete routing matrix.</p></div>
+</div><div class="appendix-entry" id="apph">
+  <div class="app-lbl">Appendix H</div>
+  <div class="app-title">Known Open Issues</div>
+  <div class="ch-body"><p>Current as of v.265: ALU ops grid HTML truncation (SHL/SHR/NEG/INC/DEC sidebar buttons missing); SPEC section in .loop files writes incorrect bus count; default speed 1 Hz vs recommended 24 Hz; amber color hardcoded rather than CSS variable. Tracked here so they are never silently forgotten.</p></div>
+</div><div class="appendix-entry" id="appi">
+  <div class="app-lbl">Appendix I</div>
+  <div class="app-title">Variant Record</div>
+  <div class="ch-body"><p>The Variants system and what it means. The tenet it enforces. Variant numbering (randomly assigned, not encoded). All approved variants as of publication. The submission process.</p></div>
+</div><div class="appendix-entry" id="appj">
+  <div class="app-lbl">Appendix J</div>
+  <div class="app-title">Quick Reference Card</div>
+  <div class="ch-body"><p>Everything a working operator needs on one page: loop sizes, bus latency, all ALU ops, all flags, memory addressing, challenge types and par targets, CBX sequence at a glance.</p></div>
+</div><div class="appendix-entry" id="appk">
+  <div class="app-lbl">Appendix K</div>
+  <div class="app-title">Glossary</div>
+  <div class="ch-body"><p>Every term defined. Bus, loop, tick, word, marker bit, read head, write head, gate, cascade, eject, PM, TG, CBX, operator, par, variant, slug, hub, SDP, LFSR, .loop, .l21x, .lps, NTD. Alphabetical. No entry longer than three sentences.</p></div>
+</div>
+<div class="chapter-entry" id="index">
+  <div class="ch-meta"><span class="ch-num">Back Matter</span></div>
+  <div class="ch-title">INDEX</div>
+  <div class="ch-body"><p>Every major concept, component name, challenge title, protocol message type, and constant. Every page a reference reader needs to find in seconds. The index is the reference reader's friend.</p></div>
+</div>
+<div class="chapter-entry" id="record">
+  <div class="ch-title">COMPLETE RECORD (Condensed)</div>
+  <div class="ch-body"><p>The development history of Loop 2.1 — where it came from, major milestones, build numbers, what changed and when. Not a changelog — a narrative. The full Complete Record exists as a separate document; this version has the boring parts trimmed.</p></div>
+</div>
+<div class="chapter-entry" id="colophon">
+  <div class="ch-title">COLOPHON</div>
+  <div class="ch-body"><p>How this book was made. The AI collaboration in detail. What human work went into it and what didn't. Honest in the same register as the foreword.</p></div>
+</div>
+<div class="struct-note">
+  <div class="struct-note-lbl">Structural Notes</div>
+  <table class="struct-table">
+    <tr><td>Chapters</td><td>38 + 11 appendices</td></tr>
+    <tr><td>Parts</td><td>8 + front and back matter</td></tr>
+    <tr><td>Part I–IV</td><td>For the cover-to-cover reader. Narrative arc builds from origin to language.</td></tr>
+    <tr><td>Parts V–VI</td><td>The curriculum. Both audiences use these.</td></tr>
+    <tr><td>Part VII</td><td>Instructor material. Public in access, instructor-facing in intent.</td></tr>
+    <tr><td>Part VIII</td><td>Reference only. No narrative.</td></tr>
+    <tr><td>Cross-references</td><td>Every Part V–VI concept references the Part II chapter that covers it, and vice versa.</td></tr>
+    <tr><td>Callout types</td><td>KEY (blue) · TIP (green) · WARN (amber) · PHI (purple)</td></tr>
+  </table>
+</div>
+</main>
+</div>
+
+<div class="page-footer">
+  <span>Loop 2.1 · loop2.computer</span>
+  <span>"The Operator Is the Program"</span>
+  <span>Chapter Outline · Designed by Shea Gunther · March 2026</span>
+</div>
+
+<script>
+function setSkin(id){
+  document.body.className='skin-'+id;
+  try{localStorage.setItem('loop2-outline-skin',id);}catch(e){}
+  document.querySelectorAll('.skin-btn').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')==="setSkin('"+id+"')"));
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  let s='og';try{s=localStorage.getItem('loop2-outline-skin')||'og';}catch(e){}
+  setSkin(s);
+  const els=document.querySelectorAll('[id]');
+  const links=document.querySelectorAll('.toc-list a[href^="#"]');
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+id));}});
+  },{rootMargin:'-15% 0px -75% 0px'});
+  els.forEach(e=>obs.observe(e));
+});
+</script>
+</body>
+</html>

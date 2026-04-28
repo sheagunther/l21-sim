@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dev Playbook</title>
+<style>
+  /* ─────────────────────────────────────────────
+     SKINS
+     OG: cool grey-blue. Sunrise: warm amber.
+     Choice persists in localStorage under
+     the key 'dev-playbook-skin'.
+  ───────────────────────────────────────────── */
+  :root {
+    --bg:            #e8eef4;
+    --panel:         #e8eef4;
+    --panel2:        #edf1f5;
+    --panel3:        #dce4ec;
+    --border:        #9ab0c4;
+    --border2:       #b0c4d4;
+    --fg:            #000000;
+    --fg-dim:        #507090;
+    --fg-faint:      #90a8b8;
+    --accent:        #1e3a6e;
+    --working:       #1060b0;
+    --good:          #1a5c2a;
+    --bad:           #8c1c10;
+    --warn-bg:       #fef8e0;
+    --warn-border:   #c08000;
+    --tip-bg:        #e8f4ec;
+    --tip-border:    #1a5c2a;
+    --key-bg:        #eef0f8;
+    --key-border:    #1060b0;
+    --ai-bg:         #f0eef8;
+    --ai-border:     #6040b0;
+    --code-bg:       #dce4ec;
+    --good-bg:       #eaf5ec;
+    --bad-bg:        #faecea;
+    --font:          'Courier New', Consolas, monospace;
+    --max-w:         840px;
+  }
+
+  body.skin-sunrise {
+    --bg:            #fff8ec;
+    --panel:         #ffffff;
+    --panel2:        #fffcf5;
+    --panel3:        #fff4e0;
+    --border:        #e8b030;
+    --border2:       #d8a020;
+    --fg:            #1a1000;
+    --fg-dim:        #705030;
+    --fg-faint:      #a08060;
+    --accent:        #1e3a6e;
+    --working:       #0060c0;
+    --good:          #1a5c2a;
+    --bad:           #8c1c10;
+    --warn-bg:       #fff4dc;
+    --warn-border:   #c08000;
+    --tip-bg:        #eaf5e0;
+    --tip-border:    #1a5c2a;
+    --key-bg:        #f0eeff;
+    --key-border:    #0060c0;
+    --ai-bg:         #f0ecff;
+    --ai-border:     #5030a0;
+    --code-bg:       #fff0cc;
+    --good-bg:       #eaf5e0;
+    --bad-bg:        #fdf0ee;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.72;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─────────────────────────────────────────────
+     PAGE HEADER
+     Sticky. Logo left, doc info + skin switcher
+     right.
+  ───────────────────────────────────────────── */
+  .page-header {
+    background: var(--panel);
+    border-bottom: 2px solid var(--border);
+    padding: 18px 40px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .logo {
+    font-family: var(--font);
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 5px;
+    color: var(--fg);
+    text-transform: uppercase;
+  }
+  .logo-sub {
+    font-family: var(--font);
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--fg-dim);
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .doc-title-block { text-align: right; }
+  .doc-title-main {
+    font-family: var(--font);
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--fg-dim);
+    text-transform: uppercase;
+  }
+  .doc-build-tag {
+    font-family: var(--font);
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--fg-faint);
+    margin-top: 3px;
+  }
+  .skin-group { display: flex; align-items: center; gap: 5px; }
+  .skin-btn {
+    font-family: var(--font);
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 3px 9px;
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--fg-dim);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: border-color 0.1s, color 0.1s, background 0.1s;
+  }
+  .skin-btn:hover  { border-color: var(--fg); color: var(--fg); }
+  .skin-btn.active { border-color: var(--fg); color: var(--fg); background: var(--panel2); }
+
+  /* ─────────────────────────────────────────────
+     LAYOUT
+     Sticky sidebar TOC left, scrolling content
+     right.
+  ───────────────────────────────────────────── */
+  .body-wrap {
+    display: flex;
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  .toc-sidebar {
+    width: 242px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 64px;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+    padding: 26px 0 26px 26px;
+    border-right: 1px solid var(--border2);
+    font-family: var(--font);
+  }
+  .toc-heading {
+    font-size: 8px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--fg-faint);
+    margin-bottom: 12px;
+  }
+  .toc-section-label {
+    font-size: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--fg-faint);
+    display: block;
+    padding: 10px 5px 3px;
+  }
+  .toc-list { list-style: none; }
+  .toc-list li { margin-bottom: 1px; }
+  .toc-list a {
+    font-size: 10px;
+    letter-spacing: 0.3px;
+    color: var(--fg-dim);
+    text-decoration: none;
+    display: block;
+    padding: 3px 6px;
+    border-left: 2px solid transparent;
+    transition: color 0.1s, border-color 0.1s;
+  }
+  .toc-list a:hover  { color: var(--fg); border-left-color: var(--border); }
+  .toc-list a.active { color: var(--fg); border-left-color: var(--accent); }
+  .toc-sub { list-style: none; padding-left: 10px; }
+  .toc-sub a { font-size: 9px; opacity: 0.75; }
+  .toc-sub a:hover { opacity: 1; }
+
+  .content {
+    flex: 1;
+    min-width: 0;
+    padding: 44px 56px 100px 44px;
+    max-width: var(--max-w);
+  }
+
+  /* ─────────────────────────────────────────────
+     CHAPTER & SECTION STRUCTURE
+  ───────────────────────────────────────────── */
+  .chapter {
+    margin-bottom: 72px;
+    scroll-margin-top: 84px;
+  }
+  .chapter-eyebrow {
+    font-family: var(--font);
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--fg-faint);
+    margin-bottom: 5px;
+  }
+  .chapter-title {
+    font-family: var(--font);
+    font-size: 21px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    color: var(--fg);
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 9px;
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+  .section {
+    margin: 32px 0;
+    scroll-margin-top: 84px;
+  }
+  .section-title {
+    font-family: var(--font);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    border-bottom: 1px solid var(--border2);
+    padding-bottom: 6px;
+    margin-bottom: 16px;
+  }
+  h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--fg);
+    margin: 22px 0 8px;
+  }
+
+  /* ─────────────────────────────────────────────
+     PROSE
+  ───────────────────────────────────────────── */
+  p { margin-bottom: 14px; }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  a { color: var(--accent); }
+  a:hover { text-decoration: underline; }
+  ul, ol { margin: 0 0 16px 26px; }
+  li { margin-bottom: 6px; line-height: 1.6; }
+  hr { border: none; border-top: 1px solid var(--border2); margin: 40px 0; }
+
+  /* ─────────────────────────────────────────────
+     CALLOUTS
+     tip (green), warn (amber), key (blue),
+     note (neutral), ai (purple — AI-directed
+     instructions specifically).
+  ───────────────────────────────────────────── */
+  .callout {
+    border-left: 4px solid var(--border);
+    padding: 12px 16px;
+    background: var(--panel);
+    margin: 20px 0;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .callout.tip  { background: var(--tip-bg);  border-left-color: var(--tip-border); }
+  .callout.warn { background: var(--warn-bg); border-left-color: var(--warn-border); }
+  .callout.key  { background: var(--key-bg);  border-left-color: var(--key-border); }
+  .callout.note { background: var(--panel2);  border-left-color: var(--border2); font-style: italic; }
+  .callout.ai   { background: var(--ai-bg);   border-left-color: var(--ai-border); }
+  .callout-label {
+    font-family: var(--font);
+    font-size: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--fg-faint);
+    margin-bottom: 5px;
+    display: block;
+  }
+  .callout.tip  .callout-label { color: var(--tip-border); }
+  .callout.warn .callout-label { color: var(--warn-border); }
+  .callout.key  .callout-label { color: var(--key-border); }
+  .callout.ai   .callout-label { color: var(--ai-border); }
+
+  /* ─────────────────────────────────────────────
+     CODE BLOCKS
+     Standard inline code, full-width pre blocks,
+     and side-by-side before/after comparisons
+     for Clean Code examples.
+  ───────────────────────────────────────────── */
+  code {
+    font-family: var(--font);
+    font-size: 14px;
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+  pre {
+    font-family: var(--font);
+    font-size: 13px;
+    background: var(--panel2);
+    border: 1px solid var(--border2);
+    border-left: 3px solid var(--border);
+    padding: 14px 16px;
+    overflow-x: auto;
+    line-height: 1.7;
+    margin: 14px 0 20px;
+    color: var(--fg-dim);
+  }
+
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .compare-block { border-radius: 2px; overflow: hidden; }
+  .compare-label {
+    font-family: var(--font);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: bold;
+    padding: 5px 10px;
+  }
+  .compare-block.bad  .compare-label { background: var(--bad);  color: white; }
+  .compare-block.good .compare-label { background: var(--good); color: white; }
+  .compare-block pre { margin: 0; border-radius: 0; border-left-color: transparent; border-top: none; height: 100%; }
+  .compare-block.bad  pre { background: var(--bad-bg);  border-color: #e0c8c6; }
+  .compare-block.good pre { background: var(--good-bg); border-color: #c0d8c4; }
+
+  /* ─────────────────────────────────────────────
+     TABLES
+  ───────────────────────────────────────────── */
+  .ref-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 14px 0 20px;
+  }
+  .ref-table th {
+    font-family: var(--font);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    text-align: left;
+    padding: 7px 10px;
+    border-bottom: 2px solid var(--border);
+    background: var(--panel);
+  }
+  .ref-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border2);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .ref-table tr:last-child td { border-bottom: none; }
+  .ref-table td:first-child {
+    font-family: var(--font);
+    font-size: 12px;
+    color: var(--working);
+    white-space: nowrap;
+  }
+
+  /* ─────────────────────────────────────────────
+     NUMBERED STEPS
+  ───────────────────────────────────────────── */
+  .steps { counter-reset: step; list-style: none; margin: 0 0 16px; }
+  .steps li {
+    counter-increment: step;
+    display: flex;
+    gap: 16px;
+    margin-bottom: 14px;
+    align-items: flex-start;
+  }
+  .steps li::before {
+    content: counter(step);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px;
+    height: 26px;
+    background: var(--fg);
+    color: var(--bg);
+    font-family: var(--font);
+    font-size: 11px;
+    font-weight: bold;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .steps li .step-body { flex: 1; font-size: 15px; line-height: 1.65; }
+
+  /* ─────────────────────────────────────────────
+     PRINCIPLE CARDS
+     Used in the Clean Code chapter. Each
+     principle gets a header strip and a body
+     with prose and optional before/after example.
+  ───────────────────────────────────────────── */
+  .principle {
+    border: 1px solid var(--border2);
+    background: var(--panel2);
+    margin: 24px 0;
+    overflow: hidden;
+  }
+  .principle-header {
+    background: var(--panel3);
+    border-bottom: 1px solid var(--border2);
+    padding: 9px 16px;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .principle-number {
+    font-family: var(--font);
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--fg-faint);
+    flex-shrink: 0;
+    text-transform: uppercase;
+  }
+  .principle-name {
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--fg);
+    letter-spacing: 0.5px;
+  }
+  .principle-body { padding: 14px 16px; }
+  .principle-body p { font-size: 15px; margin-bottom: 10px; }
+  .principle-body p:last-child { margin-bottom: 0; }
+
+  /* ─────────────────────────────────────────────
+     DEV HISTORY ENTRY TEMPLATE
+  ───────────────────────────────────────────── */
+  .history-entry {
+    border-left: 3px solid var(--border);
+    padding: 16px 20px;
+    background: var(--panel2);
+    margin: 20px 0;
+  }
+  .history-range {
+    font-family: var(--font);
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--fg-faint);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .history-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--fg);
+    margin-bottom: 12px;
+  }
+  .history-category {
+    font-family: var(--font);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    margin: 14px 0 5px;
+  }
+  .history-entry ul { margin: 0 0 0 18px; }
+  .history-entry li { font-size: 14px; margin-bottom: 4px; line-height: 1.5; }
+
+  /* ─────────────────────────────────────────────
+     ASIDE
+  ───────────────────────────────────────────── */
+  .aside {
+    background: var(--panel3);
+    border: 1px solid var(--border2);
+    padding: 12px 16px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--fg-dim);
+    margin: 18px 0;
+    font-style: italic;
+  }
+
+  /* ─────────────────────────────────────────────
+     CHECKLIST STYLE
+     Used for pre-delivery and other checklists.
+     Checkboxes are visual only.
+  ───────────────────────────────────────────── */
+  .checklist { list-style: none; margin: 0 0 16px; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border2);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li::before {
+    content: '☐';
+    font-size: 16px;
+    color: var(--fg-dim);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ─────────────────────────────────────────────
+     PAGE FOOTER
+  ───────────────────────────────────────────── */
+  .page-footer {
+    border-top: 1px solid var(--border2);
+    padding: 16px 40px;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font);
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--fg-faint);
+    margin-top: 40px;
+  }
+
+  @media (max-width: 800px) {
+    .toc-sidebar { display: none; }
+    .content { padding: 24px 20px 60px; }
+    .page-header { padding: 14px 20px; }
+    .compare { grid-template-columns: 1fr; }
+    .page-footer { flex-direction: column; gap: 6px; padding: 14px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     PAGE HEADER
+══════════════════════════════════════════════ -->
+<header class="page-header">
+  <div>
+    <div class="logo">Dev Playbook</div>
+    <div class="logo-sub">Standing Build Standards · Shea Gunther</div>
+  </div>
+  <div class="header-right">
+    <div class="doc-title-block">
+      <div class="doc-title-main">Process · Code · Standards · Records</div>
+      <div class="doc-build-tag">Playbook v2 · March 2026</div>
+    </div>
+    <div class="skin-group">
+      <button class="skin-btn" onclick="setSkin('og')">OG</button>
+      <button class="skin-btn" onclick="setSkin('sunrise')">Sunrise</button>
+    </div>
+  </div>
+</header>
+
+<div class="body-wrap">
+
+<!-- ══════════════════════════════════════════════
+     SIDEBAR TOC
+══════════════════════════════════════════════ -->
+<nav class="toc-sidebar">
+  <div class="toc-heading">Contents</div>
+  <ul class="toc-list">
+
+    <span class="toc-section-label">Introduction</span>
+    <li><a href="#ch-intro">0 · What This Document Is</a>
+      <ul class="toc-sub">
+        <li><a href="#s-intro-purpose">Purpose</a></li>
+        <li><a href="#s-intro-ai">Instructions for the AI</a></li>
+        <li><a href="#s-intro-evolution">How It Evolves</a></li>
+      </ul>
+    </li>
+
+    <span class="toc-section-label">Process</span>
+    <li><a href="#ch-kickoff">1 · Project Kickoff</a>
+      <ul class="toc-sub">
+        <li><a href="#s-kick-questions">Required Questions</a></li>
+        <li><a href="#s-kick-before-code">Before Writing Code</a></li>
+      </ul>
+    </li>
+    <li><a href="#ch-versioning">2 · Versioning</a>
+      <ul class="toc-sub">
+        <li><a href="#s-ver-numbers">Version Numbers</a></li>
+        <li><a href="#s-ver-files">File Naming</a></li>
+        <li><a href="#s-ver-badge">Dev Badge</a></li>
+        <li><a href="#s-ver-docs">Accompanying Docs</a></li>
+      </ul>
+    </li>
+    <li><a href="#ch-bugs">3 · Bug Tracking</a>
+      <ul class="toc-sub">
+        <li><a href="#s-bug-protocol">Protocol</a></li>
+        <li><a href="#s-bug-format">Format</a></li>
+      </ul>
+    </li>
+    <li><a href="#ch-delivery">4 · Delivery & Handoff</a>
+      <ul class="toc-sub">
+        <li><a href="#s-del-checklist">Pre-Delivery Checklist</a></li>
+        <li><a href="#s-del-what">What Gets Delivered</a></li>
+      </ul>
+    </li>
+
+    <span class="toc-section-label">Code Standards</span>
+    <li><a href="#ch-cleancode">5 · Clean Code</a>
+      <ul class="toc-sub">
+        <li><a href="#s-cc-names">Naming</a></li>
+        <li><a href="#s-cc-functions">Functions</a></li>
+        <li><a href="#s-cc-comments">Comments</a></li>
+        <li><a href="#s-cc-structure">Structure</a></li>
+      </ul>
+    </li>
+    <li><a href="#ch-mobile">6 · Mobile & Responsive</a>
+      <ul class="toc-sub">
+        <li><a href="#s-mob-touch">Touch Targets</a></li>
+        <li><a href="#s-mob-type">Typography</a></li>
+        <li><a href="#s-mob-layout">Layout</a></li>
+        <li><a href="#s-mob-performance">Performance</a></li>
+      </ul>
+    </li>
+    <li><a href="#ch-accessibility">7 · Accessibility</a>
+      <ul class="toc-sub">
+        <li><a href="#s-a11y-contrast">Contrast</a></li>
+        <li><a href="#s-a11y-semantics">Semantics</a></li>
+        <li><a href="#s-a11y-interaction">Interaction</a></li>
+      </ul>
+    </li>
+    <li><a href="#ch-security">8 · Security</a>
+      <ul class="toc-sub">
+        <li><a href="#s-sec-storage">Storage</a></li>
+        <li><a href="#s-sec-input">Input</a></li>
+        <li><a href="#s-sec-data">Sensitive Data</a></li>
+      </ul>
+    </li>
+    <li><a href="#ch-performance">9 · Performance</a>
+      <ul class="toc-sub">
+        <li><a href="#s-perf-baseline">Baseline</a></li>
+        <li><a href="#s-perf-mistakes">Common Mistakes</a></li>
+      </ul>
+    </li>
+
+    <span class="toc-section-label">Records</span>
+    <li><a href="#ch-devhistory">10 · Dev History</a>
+      <ul class="toc-sub">
+        <li><a href="#s-dh-protocol">Protocol</a></li>
+        <li><a href="#s-dh-template">Entry Template</a></li>
+      </ul>
+    </li>
+    <li><a href="#ch-techref">11 · Technical Reference</a>
+      <ul class="toc-sub">
+        <li><a href="#s-tr-scope">Scope</a></li>
+        <li><a href="#s-tr-template">Structure</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════════════ -->
+<main class="content">
+
+
+<!-- ══ CHAPTER 0: INTRODUCTION ══ -->
+<div class="chapter" id="ch-intro">
+  <div class="chapter-eyebrow">Introduction</div>
+  <div class="chapter-title">What This Document Is</div>
+
+  <div class="section" id="s-intro-purpose">
+    <div class="section-title">Purpose</div>
+
+    <p>This is the Dev Playbook — a standing document that defines how every software project built by Shea Gunther is structured, coded, documented, and delivered. It is not tied to any single project. It is the baseline that every project inherits.</p>
+
+    <p>The playbook covers four areas: <strong>process</strong> (how work is organized and tracked), <strong>code standards</strong> (how code is written so that humans can read and maintain it), <strong>quality baselines</strong> (mobile behavior, accessibility, security, performance), and <strong>records</strong> (how the history and architecture of a project are documented).</p>
+
+    <p>The playbook is a living document. It is updated as experience accumulates — when a new standard is adopted, when a previous rule proves wrong, or when a new category of concern is identified. The version number in the header reflects its current revision. Older versions are retained.</p>
+  </div>
+
+  <div class="section" id="s-intro-ai">
+    <div class="section-title">Instructions for the AI</div>
+
+    <div class="callout ai">
+      <span class="callout-label">To the AI reading this document</span>
+      <p style="margin-bottom:10px;">This document is being shared with you at the start of a development project. Read it fully before doing anything else. It establishes the standards you are expected to follow for the entire project, without being reminded of each rule on every turn.</p>
+      <p style="margin-bottom:10px;">Specifically:</p>
+      <ul style="margin: 0 0 10px 20px;">
+        <li>Apply the versioning protocol from the first deliverable. Name every file correctly. Maintain the dev badge in the app.</li>
+        <li>Write all code to the Clean Code standards in Chapter 5. Do not use abbreviations. Do not write functions that do more than one thing. Do not leave magic numbers unexplained. Comments explain why, not what.</li>
+        <li>Apply the mobile, accessibility, security, and performance baselines in Chapters 6–9 to every app deliverable, even if not explicitly asked.</li>
+        <li>When a project reaches approximately 20 versions, prompt to write a dev history entry.</li>
+        <li>When meaningful architectural decisions are made, note them — they belong in the technical reference and dev history.</li>
+        <li>All accompanying documents are HTML unless explicitly requested otherwise, and use the project's established doc template (OG + Sunrise skins, sidebar TOC).</li>
+        <li>Do not ask for permission to follow these standards. They are always in effect.</li>
+        <li>If something in the playbook conflicts with an explicit instruction given during the project, follow the explicit instruction and flag the conflict.</li>
+      </ul>
+      <p style="margin: 0;">When you have read and understood this document, acknowledge it briefly and ask what we are building.</p>
+    </div>
+  </div>
+
+  <div class="section" id="s-intro-evolution">
+    <div class="section-title">How This Document Evolves</div>
+
+    <p>The playbook is versioned the same way any other deliverable is versioned — integer version numbers, incrementing by one, reflected in the file name: <code>dev-playbook(N).html</code>. When the playbook is updated, the old version is kept. The new version is shared with the AI on the next project.</p>
+
+    <p>Reasons to update the playbook include: a new standard being adopted, an existing rule being refined or reversed based on experience, a new chapter being added, or a change in the document structure itself. The update does not need to be large to justify a new version — a single meaningful clarification is enough.</p>
+
+    <div class="callout tip">
+      <span class="callout-label">Note</span>
+      The playbook version and the project version are independent counters. A project can be at v34 while the playbook is still at v2. The playbook version tracks the evolution of the standards themselves, not any specific project.
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ CHAPTER 1: PROJECT KICKOFF ══ -->
+<div class="chapter" id="ch-kickoff">
+  <div class="chapter-eyebrow">Chapter 1</div>
+  <div class="chapter-title">Project Kickoff Protocol</div>
+
+  <p>No code gets written until the project is understood. The kickoff is the process of getting that understanding on record. It protects against building the wrong thing, and it gives the AI enough context to make good decisions throughout the project without constant re-explanation.</p>
+
+  <div class="section" id="s-kick-questions">
+    <div class="section-title">Required Questions</div>
+
+    <p>At the start of every project, the following questions must be answered before any design or code work begins. The AI is responsible for asking any that have not already been answered.</p>
+
+    <table class="ref-table">
+      <thead>
+        <tr><th>Question</th><th>Why It Matters</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>What does this app do?</td>
+          <td>A one-sentence answer. If it cannot be said in one sentence, the scope is not clear yet.</td>
+        </tr>
+        <tr>
+          <td>Who uses it?</td>
+          <td>Determines vocabulary, complexity level, and assumptions about technical comfort.</td>
+        </tr>
+        <tr>
+          <td>What device does it run on?</td>
+          <td>Phone, desktop, tablet, or all three. Determines layout approach and touch requirements.</td>
+        </tr>
+        <tr>
+          <td>What does "done" look like?</td>
+          <td>The minimum feature set that constitutes a usable v1. Everything else is backlog.</td>
+        </tr>
+        <tr>
+          <td>Where does data go?</td>
+          <td>Local storage, export only, a server, nowhere. Determines storage architecture early.</td>
+        </tr>
+        <tr>
+          <td>Who else touches this besides the primary user?</td>
+          <td>Multi-user scenarios, admin roles, staff vs. customer access — these shape auth and permissions.</td>
+        </tr>
+        <tr>
+          <td>Are there existing forms, processes, or documents this replaces?</td>
+          <td>Understanding what currently exists prevents reinventing a workflow that already works.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout ai">
+      <span class="callout-label">For the AI</span>
+      Do not fire all of these as a list at once. Read the conversation for what has already been answered. Ask only what is genuinely missing. Group related questions. If the person has shared a form, a screenshot, a website, or an existing document, read it before asking questions that it might already answer.
+    </div>
+  </div>
+
+  <div class="section" id="s-kick-before-code">
+    <div class="section-title">Before Writing Code</div>
+
+    <p>Once the kickoff questions are answered, confirm understanding before building. This does not need to be a formal document — a brief plain-language summary of what is being built, for whom, and what the v1 feature set includes is enough. The person confirms or corrects it, and then code begins.</p>
+
+    <div class="callout warn">
+      <span class="callout-label">Common mistake</span>
+      Starting to code based on a partial understanding and then discovering a fundamental mismatch at v8. The kickoff exists to catch that mismatch in a two-sentence conversation, not after hours of work.
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ CHAPTER 2: VERSIONING ══ -->
+<div class="chapter" id="ch-versioning">
+  <div class="chapter-eyebrow">Chapter 2</div>
+  <div class="chapter-title">Versioning Protocol</div>
+
+  <p>Every project uses the same version numbering and file naming system from the first deliverable onward. Anyone looking at a file name should know exactly where it sits in the project's history. Any two files with matching version numbers correspond to the same state of the work.</p>
+
+  <div class="section" id="s-ver-numbers">
+    <div class="section-title">Version Numbers</div>
+
+    <p>Versions are integers, starting at 1, incrementing by 1 with every new deliverable. No major/minor splits, no semantic versioning, no decimals. The version number is a counter — it records how many times a deliverable has been produced, nothing more.</p>
+
+    <div class="callout key">
+      <span class="callout-label">Rule</span>
+      A new version is produced every time a change is made and a new file is delivered. No change is too small to increment. If a file was exported, it gets a new number.
+    </div>
+  </div>
+
+  <div class="section" id="s-ver-files">
+    <div class="section-title">File Naming</div>
+
+    <p>All project files follow the same pattern: <code>project-name(version).extension</code></p>
+    <p>Version number in parentheses, immediately after the base name, before the extension. No spaces. Base name uses lowercase with hyphens.</p>
+
+    <table class="ref-table">
+      <thead><tr><th>Example</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>deer-hill-intake(1).html</td><td>First deliverable of the intake app</td></tr>
+        <tr><td>deer-hill-intake(14).html</td><td>Fourteenth version of the same app</td></tr>
+        <tr><td>user-manual(14).html</td><td>User manual built at app version 14</td></tr>
+        <tr><td>dev-history(20).html</td><td>Development history written at app version 20</td></tr>
+        <tr><td>dev-playbook(2).html</td><td>Second revision of this playbook</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout warn">
+      <span class="callout-label">Important</span>
+      Accompanying documents are named with the version of the <strong>app</strong> they correspond to, not their own counter. A user manual written when the app is at v14 is <code>user-manual(14).html</code>, even if it is the first time that document has been produced.
+    </div>
+  </div>
+
+  <div class="section" id="s-ver-badge">
+    <div class="section-title">Dev Badge</div>
+
+    <p>During development, a small version indicator lives in the app UI. Visible but unobtrusive — small, low contrast, in a corner that does not interfere with the interface. Removed before customer delivery.</p>
+
+    <pre>/* Dev version badge — remove before customer delivery */
+.dev-version-badge {
+  position: fixed;
+  bottom: max(6px, env(safe-area-inset-bottom, 6px));
+  right: 8px;
+  font-family: monospace;
+  font-size: 10px;
+  color: rgba(0, 0, 0, 0.22);
+  pointer-events: none;
+  z-index: 999;
+  letter-spacing: 0.5px;
+}
+
+&lt;div class="dev-version-badge"&gt;v14&lt;/div&gt;</pre>
+  </div>
+
+  <div class="section" id="s-ver-docs">
+    <div class="section-title">Accompanying Documents</div>
+
+    <p>All project documents are HTML unless explicitly requested otherwise. Self-contained, skinnable, viewable anywhere without special software.</p>
+
+    <table class="ref-table">
+      <thead><tr><th>Document</th><th>When Produced</th><th>Naming</th></tr></thead>
+      <tbody>
+        <tr><td>User Manual</td><td>When the app reaches a stable feature state</td><td><code>user-manual(N).html</code></td></tr>
+        <tr><td>Technical Reference</td><td>As the codebase grows — see Chapter 11</td><td><code>tech-reference(N).html</code></td></tr>
+        <tr><td>Dev History</td><td>Every ~20 versions — see Chapter 10</td><td><code>dev-history(N).html</code></td></tr>
+        <tr><td>Dev Playbook</td><td>Once, shared across all projects</td><td><code>dev-playbook(N).html</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- ══ CHAPTER 3: BUG TRACKING ══ -->
+<div class="chapter" id="ch-bugs">
+  <div class="chapter-eyebrow">Chapter 3</div>
+  <div class="chapter-title">Bug Tracking</div>
+
+  <p>Bugs get documented. Not in a separate tool, not in a mental list — in a consistent format that makes it possible to look back and understand what broke, when, why, and how it was resolved. This record feeds the development history.</p>
+
+  <div class="section" id="s-bug-protocol">
+    <div class="section-title">Protocol</div>
+
+    <ul>
+      <li><strong>Every bug gets a version stamp.</strong> The version where the bug was discovered is part of the record. This makes it possible to trace when something was introduced.</li>
+      <li><strong>Bugs are described in three parts:</strong> what the symptom was, what caused it, and how it was fixed. All three matter. The cause is often the most instructive part.</li>
+      <li><strong>Bugs that cannot be fixed immediately are flagged as open.</strong> An open bug with no fix is still documented — it belongs in the technical reference under Known Limitations until it is resolved.</li>
+      <li><strong>Patterns matter.</strong> If the same class of bug recurs (e.g., off-by-one errors in price calculations, state not resetting on form clear), that pattern belongs in the dev history and may warrant a new rule in the playbook.</li>
+    </ul>
+
+    <div class="callout ai">
+      <span class="callout-label">For the AI</span>
+      When a bug is discovered and fixed in the course of a build session, note it explicitly. Format: <code>[v##] [Symptom] — Cause: [what caused it]. Fix: [how it was resolved].</code> This note goes into the dev history entry at the ~20 version mark.
+    </div>
+  </div>
+
+  <div class="section" id="s-bug-format">
+    <div class="section-title">Bug Record Format</div>
+
+    <pre>[v##] Short description of the symptom
+
+  Cause:   What caused the bug. Be specific — "a logic error" is not
+           useful. "The pork fat cost was being added even when
+           porkFat was null rather than false" is useful.
+
+  Fix:     What was changed to resolve it. Reference the function
+           or section of code if it helps.
+
+  Status:  Fixed in v## | Open — [reason not yet fixed]</pre>
+  </div>
+</div>
+
+
+<!-- ══ CHAPTER 4: DELIVERY & HANDOFF ══ -->
+<div class="chapter" id="ch-delivery">
+  <div class="chapter-eyebrow">Chapter 4</div>
+  <div class="chapter-title">Delivery & Handoff</div>
+
+  <p>A deliverable to a customer is not the same as a working development build. Before anything goes to a real user, it passes through a defined checklist. The goal is that a customer receives something that is clean, professional, and free of development scaffolding.</p>
+
+  <div class="section" id="s-del-checklist">
+    <div class="section-title">Pre-Delivery Checklist</div>
+
+    <ul class="checklist">
+      <li>Dev version badge removed from the UI.</li>
+      <li>All console.log statements and debug output removed from the code.</li>
+      <li>No commented-out code blocks left in the file.</li>
+      <li>All placeholder text replaced — no [brackets], no "lorem ipsum", no sample data left in.</li>
+      <li>Default credentials changed or removed — no <code>PIN: 1111</code> shipped as-is.</li>
+      <li>All form fields validated — no way to submit incomplete or malformed data.</li>
+      <li>Error states handled — every failure mode shows a useful message, not a blank screen or a raw error.</li>
+      <li>Tested on the actual target device and browser, not just a desktop simulator.</li>
+      <li>File name reflects the current version number and the project name.</li>
+      <li>If any data persists between sessions, the customer has been told where it lives and what "clearing it" means.</li>
+    </ul>
+  </div>
+
+  <div class="section" id="s-del-what">
+    <div class="section-title">What Gets Delivered</div>
+
+    <p>The default deliverable is a single self-contained HTML file. No build step, no server required, no dependencies that need to be installed. The customer opens it in a browser and it works.</p>
+
+    <p>If the project requires more than a single file, a clear README-equivalent is included that explains what each file is and how to use it.</p>
+
+    <div class="callout tip">
+      <span class="callout-label">On self-containment</span>
+      External fonts and libraries loaded from CDNs are a dependency. If the customer opens the file without internet access, they should still get a functional, readable app. Where possible, fall back gracefully — system fonts instead of web fonts, for example. If a CDN dependency is unavoidable, document it explicitly.
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ CHAPTER 5: CLEAN CODE ══ -->
+<div class="chapter" id="ch-cleancode">
+  <div class="chapter-eyebrow">Chapter 5</div>
+  <div class="chapter-title">Clean Code Standards</div>
+
+  <p>The principles here are drawn from Robert C. Martin's <em>Clean Code</em>, adapted for language-agnostic use. The governing idea: <strong>code is written for humans to read, and only incidentally for machines to execute.</strong> A codebase that a stranger — or a future version of yourself — can read, understand, and safely modify without asking anyone questions is the measure of quality. Maintainability is not a bonus. It is the goal.</p>
+
+  <div class="aside">The compiler does not care whether your variable is named <code>x</code> or <code>customersWithOverdueBalances</code>. Anyone who touches this code after you cares enormously. Write for them.</div>
+
+  <div class="section" id="s-cc-names">
+    <div class="section-title">Naming</div>
+
+    <div class="principle">
+      <div class="principle-header">
+        <span class="principle-number">Principle 1</span>
+        <span class="principle-name">Use Full Words. No Abbreviations.</span>
+      </div>
+      <div class="principle-body">
+        <p>Names should say exactly what a thing is. Abbreviations trade a few keystrokes for permanent confusion. A reader should never have to stop and decode a name.</p>
+        <div class="compare">
+          <div class="compare-block bad"><div class="compare-label">Avoid</div>
+<pre>let usr = getUsr();
+let amt = calcAmt(ord);
+function updBal(acct, chg) { }</pre>
+          </div>
+          <div class="compare-block good"><div class="compare-label">Prefer</div>
+<pre>let user = getUser();
+let amount = calculateAmount(order);
+function updateBalance(account, charge) { }</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle">
+      <div class="principle-header">
+        <span class="principle-number">Principle 2</span>
+        <span class="principle-name">Names Reveal Intent.</span>
+      </div>
+      <div class="principle-body">
+        <p>A name should answer: what is it, why does it exist, and how is it used. If a name requires a comment to explain it, the name is not good enough.</p>
+        <div class="compare">
+          <div class="compare-block bad"><div class="compare-label">Avoid</div>
+<pre>let d;           // days since start
+let flag = true; // whether to show error</pre>
+          </div>
+          <div class="compare-block good"><div class="compare-label">Prefer</div>
+<pre>let daysSinceStart;
+let shouldShowErrorMessage = true;</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle">
+      <div class="principle-header">
+        <span class="principle-number">Principle 3</span>
+        <span class="principle-name">One Word Per Concept, Used Consistently.</span>
+      </div>
+      <div class="principle-body">
+        <p>Pick one word for one concept and use it everywhere. Do not mix <code>get</code>, <code>fetch</code>, and <code>retrieve</code> interchangeably. Do not use <code>customer</code> in one place and <code>client</code> in another for the same thing. Consistency lets a reader build a mental model that stays reliable.</p>
+      </div>
+    </div>
+
+    <div class="principle">
+      <div class="principle-header">
+        <span class="principle-number">Principle 4</span>
+        <span class="principle-name">No Noise Words.</span>
+      </div>
+      <div class="principle-body">
+        <p><code>customerInfo</code>, <code>customerData</code>, and <code>customerObject</code> are meaningless distinctions. <code>info</code>, <code>data</code>, and <code>object</code> add no meaning — they are noise. If two things need different names, give them names that reflect their actual difference.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="s-cc-functions">
+    <div class="section-title">Functions</div>
+
+    <div class="principle">
+      <div class="principle-header">
+        <span class="principle-number">Principle 5</span>
+        <span class="principle-name">Functions Do One Thing.</span>
+      </div>
+      <div class="principle-body">
+        <p>A function should do exactly one thing, do it well, and do it only. If you can describe what it does using the word "and," it is doing more than one thing. Split it.</p>
+        <div class="compare">
+          <div class="compare-block bad"><div class="compare-label">Avoid — does four things</div>
+<pre>function processOrder(order) {
+  validate(order);
+  calculateTax(order);
+  saveToDatabase(order);
+  sendEmail(order);
+}</pre>
+          </div>
+          <div class="compare-block good"><div class="compare-label">Prefer — orchestrates named single-purpose functions</div>
+<pre>function submitOrder(order) {
+  validateOrder(order);
+  applyTax(order);
+  saveOrder(order);
+  notifyCustomer(order);
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle">
+      <div class="principle-header">
+        <span class="principle-number">Principle 6</span>
+        <span class="principle-name">Function Names Are Verbs That Say What They Do.</span>
+      </div>
+      <div class="principle-body">
+        <p>Functions perform actions, so their names start with a verb. Specific enough that a reader knows what the function does without opening it.</p>
+        <div class="compare">
+          <div class="compare-block bad"><div class="compare-label">Avoid</div>
+<pre>function data() { }
+function run() { }
+function handler() { }</pre>
+          </div>
+          <div class="compare-block good"><div class="compare-label">Prefer</div>
+<pre>function loadOrderHistory() { }
+function calculateTotalWithTax() { }
+function handleLoginFailure() { }</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle">
+      <div class="principle-header">
+        <span class="principle-number">Principle 7</span>
+        <span class="principle-name">Keep Functions Small. Prefer Few Arguments.</span>
+      </div>
+      <div class="principle-body">
+        <p>The ideal number of arguments is zero or one. Three or more is a strong signal that a redesign is needed — group related arguments into a named object.</p>
+        <div class="compare">
+          <div class="compare-block bad"><div class="compare-label">Avoid</div>
+<pre>function createUser(
+  firstName, lastName, email,
+  phone, address, role
+) { }</pre>
+          </div>
+          <div class="compare-block good"><div class="compare-label">Prefer</div>
+<pre>function createUser(userDetails) {
+  // userDetails.firstName
+  // userDetails.email, etc.
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle">
+      <div class="principle-header">
+        <span class="principle-number">Principle 8</span>
+        <span class="principle-name">No Hidden Side Effects.</span>
+      </div>
+      <div class="principle-body">
+        <p>A function that promises to do one thing should not secretly do something else. If a side effect is necessary, the function's name must make it explicit. Hidden side effects are among the hardest bugs to find.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="s-cc-comments">
+    <div class="section-title">Comments</div>
+
+    <p>The goal is code that explains itself. A comment is a failure of expression — a sign that the code could not communicate its own meaning clearly enough. Some comments are genuinely valuable. Many are noise or, worse, lies (code changes, comments don't).</p>
+
+    <div class="principle">
+      <div class="principle-header">
+        <span class="principle-number">Principle 9</span>
+        <span class="principle-name">Comments Explain Why. Code Explains What.</span>
+      </div>
+      <div class="principle-body">
+        <p>If a comment restates what the code is visibly doing, delete it. If a comment explains <em>why</em> a decision was made — a business rule, a known edge case, a deliberate trade-off — keep it. That context cannot be expressed in code.</p>
+        <div class="compare">
+          <div class="compare-block bad"><div class="compare-label">Avoid — restates the obvious</div>
+<pre>// Increment the counter
+count = count + 1;
+
+// Check if user is active
+if (user.isActive) { }</pre>
+          </div>
+          <div class="compare-block good"><div class="compare-label">Prefer — explains the why</div>
+<pre>// Flat $165 up to 160 lbs, then $1/lb over.
+// Rick confirmed this applies to all animals.
+const baseRate = weight <= FLAT_RATE_CEILING_LBS
+  ? FLAT_BASE_RATE
+  : FLAT_BASE_RATE + (weight - FLAT_RATE_CEILING_LBS);</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle">
+      <div class="principle-header">
+        <span class="principle-number">Principle 10</span>
+        <span class="principle-name">Never Leave Commented-Out Code.</span>
+      </div>
+      <div class="principle-body">
+        <p>Commented-out code is noise. It suggests it might matter when it doesn't, and rots as the surrounding code changes. Delete it. Version history preserves the past — commented-out code does not need to be a safety net in the source file.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="s-cc-structure">
+    <div class="section-title">Structure & Formatting</div>
+
+    <div class="principle">
+      <div class="principle-header">
+        <span class="principle-number">Principle 11</span>
+        <span class="principle-name">Use Constants for Magic Numbers and Strings.</span>
+      </div>
+      <div class="principle-body">
+        <p>A raw number sitting in code with no explanation is a magic value — the reader has to guess what it means. Named constants make the meaning explicit and make future changes safe.</p>
+        <div class="compare">
+          <div class="compare-block bad"><div class="compare-label">Avoid</div>
+<pre>if (weight <= 160) {
+  total = 165;
+} else {
+  total = 165 + (weight - 160);
+}</pre>
+          </div>
+          <div class="compare-block good"><div class="compare-label">Prefer</div>
+<pre>const FLAT_RATE_CEILING_LBS = 160;
+const BASE_PROCESSING_RATE  = 165;
+const OVERAGE_RATE_PER_LB   = 1;
+
+if (weight <= FLAT_RATE_CEILING_LBS) {
+  total = BASE_PROCESSING_RATE;
+} else {
+  total = BASE_PROCESSING_RATE
+    + (weight - FLAT_RATE_CEILING_LBS)
+    * OVERAGE_RATE_PER_LB;
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle">
+      <div class="principle-header">
+        <span class="principle-number">Principle 12</span>
+        <span class="principle-name">Organize Code Like a Newspaper. High Level First.</span>
+      </div>
+      <div class="principle-body">
+        <p>Important, high-level things come first. Details and implementation go lower. A reader should understand the overall shape of a file by reading the top. Functions that call other functions appear before the functions they call.</p>
+      </div>
+    </div>
+
+    <div class="principle">
+      <div class="principle-header">
+        <span class="principle-number">Principle 13</span>
+        <span class="principle-name">Consistent Formatting Throughout.</span>
+      </div>
+      <div class="principle-body">
+        <p>Indentation, spacing, bracket placement — consistent throughout the entire codebase, always. Inconsistent formatting is distracting in the same way inconsistent spelling is distracting: the reader's brain spends cycles on noise instead of meaning.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ CHAPTER 6: MOBILE & RESPONSIVE ══ -->
+<div class="chapter" id="ch-mobile">
+  <div class="chapter-eyebrow">Chapter 6</div>
+  <div class="chapter-title">Mobile & Responsive Standards</div>
+
+  <p>Most apps built under this playbook are used on phones. Mobile is not an afterthought or a special case — it is the primary target. These standards apply to every app deliverable unless the app is explicitly desktop-only.</p>
+
+  <div class="section" id="s-mob-touch">
+    <div class="section-title">Touch Targets</div>
+
+    <ul>
+      <li><strong>Minimum touch target size: 44×44px.</strong> This is Apple's HIG recommendation and applies to any interactive element — buttons, toggles, links, inputs. Smaller targets cause errors and frustration.</li>
+      <li><strong>Adequate spacing between targets.</strong> Two tappable elements should not be close enough that a normal thumb can accidentally hit both. Minimum 8px gap between adjacent targets.</li>
+      <li><strong>No hover-only interactions.</strong> Touch screens have no hover state. Any information or control that only appears on hover is invisible on mobile.</li>
+      <li><strong>Suppress tap highlight where custom feedback is provided.</strong> Use <code>-webkit-tap-highlight-color: transparent</code> when the element has its own active/pressed state. Otherwise leave the default.</li>
+    </ul>
+  </div>
+
+  <div class="section" id="s-mob-type">
+    <div class="section-title">Typography</div>
+
+    <ul>
+      <li><strong>Minimum body font size: 16px.</strong> iOS will auto-zoom input fields if the font size is below 16px. This breaks layout and is disorienting. Set <code>font-size: 16px</code> on all <code>&lt;input&gt;</code> and <code>&lt;textarea&gt;</code> elements.</li>
+      <li><strong>Set <code>inputmode</code> on numeric inputs.</strong> <code>inputmode="decimal"</code> for numbers with decimals, <code>inputmode="numeric"</code> for integers. This presents the right keyboard without forcing <code>type="number"</code>, which has undesirable behavior on some platforms.</li>
+      <li><strong>Line length.</strong> On small screens, full-width text can be hard to read. Max content width of 680–720px for prose. Below that, let it be full-width.</li>
+    </ul>
+  </div>
+
+  <div class="section" id="s-mob-layout">
+    <div class="section-title">Layout</div>
+
+    <ul>
+      <li><strong>Respect safe areas.</strong> iPhone notches and home indicator bars intrude on the screen. Use <code>env(safe-area-inset-bottom)</code> and <code>env(safe-area-inset-top)</code> for fixed elements near screen edges. Include the viewport meta tag: <code>viewport-fit=cover</code>.</li>
+      <li><strong>Fixed bottom elements need bottom padding.</strong> Any fixed bar at the bottom of the screen — a submit button, a nav bar — needs <code>padding-bottom: max(12px, env(safe-area-inset-bottom))</code> to clear the home indicator.</li>
+      <li><strong>Prevent unwanted zoom on double-tap.</strong> Set <code>touch-action: manipulation</code> on interactive elements where double-tap zoom would be disruptive.</li>
+      <li><strong>Disable user-scalable only when justified.</strong> <code>user-scalable=no</code> in the viewport meta should not be used casually — it breaks accessibility for users who need to zoom. Only use it when the layout is genuinely broken by pinch-zoom and there is no better solution.</li>
+    </ul>
+
+    <div class="callout key">
+      <span class="callout-label">Required viewport tag</span>
+      <code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"&gt;</code><br><br>
+      For apps targeting home screen installation: also add <code>&lt;meta name="apple-mobile-web-app-capable" content="yes"&gt;</code>
+    </div>
+  </div>
+
+  <div class="section" id="s-mob-performance">
+    <div class="section-title">Mobile Performance</div>
+
+    <ul>
+      <li><strong>No layout thrash.</strong> Reading then writing DOM properties in a loop forces repeated reflows. Batch reads together, then writes together.</li>
+      <li><strong>Transitions on transform and opacity only.</strong> Animating <code>width</code>, <code>height</code>, <code>top</code>, or <code>margin</code> triggers layout recalculation on every frame. <code>transform</code> and <code>opacity</code> animate on the GPU and do not.</li>
+      <li><strong>Debounce expensive event handlers.</strong> Scroll, resize, and input events can fire dozens of times per second. Handlers that do heavy work should be debounced.</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ══ CHAPTER 7: ACCESSIBILITY ══ -->
+<div class="chapter" id="ch-accessibility">
+  <div class="chapter-eyebrow">Chapter 7</div>
+  <div class="chapter-title">Accessibility Baseline</div>
+
+  <p>Accessibility is not a compliance exercise — it is building things that work for more people. The standards here represent the minimum floor. They apply to every deliverable.</p>
+
+  <div class="section" id="s-a11y-contrast">
+    <div class="section-title">Color & Contrast</div>
+
+    <ul>
+      <li><strong>Minimum contrast ratio: 4.5:1</strong> for normal text, <strong>3:1</strong> for large text (18px+ regular or 14px+ bold). This is WCAG AA, the standard minimum.</li>
+      <li><strong>Do not use color as the only signal.</strong> If an error state is shown only by turning something red, a colorblind user gets no information. Pair color with a label, icon, or message.</li>
+      <li><strong>Test with the screen in grayscale.</strong> If the interface still communicates clearly in grayscale, color is being used as enhancement, not as a crutch.</li>
+    </ul>
+  </div>
+
+  <div class="section" id="s-a11y-semantics">
+    <div class="section-title">Semantic HTML</div>
+
+    <ul>
+      <li><strong>Use the right element for the job.</strong> Buttons that do things are <code>&lt;button&gt;</code>. Links that navigate are <code>&lt;a&gt;</code>. Do not make a <code>&lt;div&gt;</code> clickable when a <code>&lt;button&gt;</code> is what it is.</li>
+      <li><strong>Every form input has a label.</strong> Either a visible <code>&lt;label&gt;</code> element associated via <code>for</code>/<code>id</code>, or an <code>aria-label</code> attribute. Placeholder text is not a label — it disappears when the user starts typing.</li>
+      <li><strong>Heading hierarchy is meaningful.</strong> <code>&lt;h1&gt;</code> through <code>&lt;h6&gt;</code> should reflect actual document structure, not be chosen for their default visual size.</li>
+      <li><strong>Images have alt text.</strong> Decorative images use <code>alt=""</code>. Meaningful images describe what they show.</li>
+    </ul>
+  </div>
+
+  <div class="section" id="s-a11y-interaction">
+    <div class="section-title">Interaction</div>
+
+    <ul>
+      <li><strong>Keyboard navigability.</strong> Every interactive element should be reachable and operable by keyboard alone. Tab order should follow the visual order of the page.</li>
+      <li><strong>Visible focus indicators.</strong> The browser's default focus ring should not be suppressed without providing a replacement. A user who navigates by keyboard needs to know where focus is.</li>
+      <li><strong>Error messages are descriptive.</strong> "Error" is not a message. "Please enter a customer name before saving" is a message. Errors should tell the user what went wrong and what to do about it.</li>
+      <li><strong>Do not auto-advance focus unexpectedly.</strong> Automatically moving focus when a user makes a selection (e.g., advancing to the next field mid-PIN entry) can disorient screen reader users. Use it deliberately and sparingly.</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ══ CHAPTER 8: SECURITY ══ -->
+<div class="chapter" id="ch-security">
+  <div class="chapter-eyebrow">Chapter 8</div>
+  <div class="chapter-title">Security Basics</div>
+
+  <p>Most of the apps built under this playbook are small, local, single-file tools — not high-value attack targets. But basic security hygiene costs nothing and prevents a class of problems that are embarrassing and sometimes serious.</p>
+
+  <div class="section" id="s-sec-storage">
+    <div class="section-title">What Goes in localStorage</div>
+
+    <p>localStorage is visible to any JavaScript running on the page, persists indefinitely, and is not encrypted. It is appropriate for non-sensitive user preferences and locally-generated app data. It is not appropriate for the following:</p>
+
+    <ul>
+      <li>Passwords or PINs in plaintext</li>
+      <li>Authentication tokens or session credentials</li>
+      <li>Social Security numbers, financial account numbers, or government ID numbers</li>
+      <li>Medical information</li>
+      <li>Any data the user would consider private and expect to be protected</li>
+    </ul>
+
+    <div class="callout warn">
+      <span class="callout-label">On PINs specifically</span>
+      A PIN stored in localStorage in plaintext is readable by anyone who opens DevTools. For apps where the PIN is low-stakes (it protects a local order form, not a bank account), this may be an acceptable trade-off — but the limitation should be documented and the customer should understand it. Never store PINs in plaintext for anything with real security requirements.
+    </div>
+  </div>
+
+  <div class="section" id="s-sec-input">
+    <div class="section-title">Input Handling</div>
+
+    <ul>
+      <li><strong>Escape user-generated content before rendering it as HTML.</strong> If a user types a name and that name gets inserted into the DOM via <code>innerHTML</code>, a malicious user can inject arbitrary HTML or script. Use a sanitizing function or <code>textContent</code> instead of <code>innerHTML</code> wherever user input is displayed.</li>
+      <li><strong>Validate on submission, not only on input.</strong> Client-side validation that only fires on the input event can be bypassed. Always validate again at the point of saving or submitting.</li>
+      <li><strong>Do not trust the URL.</strong> If the app reads parameters from the URL (query strings, hash values), treat them as untrusted input — validate and sanitize before using them.</li>
+    </ul>
+
+    <pre>/* Escape user content before inserting into the DOM.
+   Use this instead of innerHTML when displaying
+   any value that came from user input. */
+function escapeHtmlCharacters(rawText) {
+  return String(rawText)
+    .replace(/&amp;/g, '&amp;amp;')
+    .replace(/&lt;/g, '&amp;lt;')
+    .replace(/&gt;/g, '&amp;gt;')
+    .replace(/"/g, '&amp;quot;');
+}</pre>
+  </div>
+
+  <div class="section" id="s-sec-data">
+    <div class="section-title">Sensitive Data in Code</div>
+
+    <ul>
+      <li><strong>No API keys, passwords, or secrets in source code.</strong> A single-file HTML app delivered to a customer is readable source. Any secret embedded in it is exposed.</li>
+      <li><strong>No real customer data in example or default values.</strong> Placeholder data should be obviously fictional. Do not use real names, real phone numbers, or real records as defaults or examples.</li>
+      <li><strong>Default credentials must be changed before delivery.</strong> Any app with a login — even a simple PIN — ships with either no default credentials or with an explicit first-run setup flow that forces the user to set their own.</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ══ CHAPTER 9: PERFORMANCE ══ -->
+<div class="chapter" id="ch-performance">
+  <div class="chapter-eyebrow">Chapter 9</div>
+  <div class="chapter-title">Performance Baseline</div>
+
+  <p>"Fast enough" means the app responds to a user action in under 100ms. At 100ms, a response feels instantaneous. At 300ms, it feels slightly slow. At 1000ms, users start to wonder if something is broken. These are not strict rules — they are calibration points.</p>
+
+  <div class="section" id="s-perf-baseline">
+    <div class="section-title">Baseline Expectations</div>
+
+    <ul>
+      <li><strong>First render is immediate.</strong> The app should display something useful within one second of the file being opened, on a mid-range phone, on a slow connection. If it takes longer, investigate why.</li>
+      <li><strong>Interactions are synchronous where possible.</strong> Button presses, toggles, and form field updates should respond visually before any async operation completes. Show state change immediately, then do the work.</li>
+      <li><strong>Scrolling is never janky.</strong> If scroll performance is poor, the most common causes are: expensive operations in scroll handlers, heavy DOM trees, and non-composited CSS animations. Address those in order.</li>
+    </ul>
+  </div>
+
+  <div class="section" id="s-perf-mistakes">
+    <div class="section-title">Common Mistakes to Avoid</div>
+
+    <table class="ref-table">
+      <thead><tr><th>Mistake</th><th>Why It Hurts</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Rebuilding the entire DOM on every state change</td>
+          <td>Re-rendering a list of 200 items when one changes is 200× more work than it needs to be</td>
+          <td>Update only the elements that changed</td>
+        </tr>
+        <tr>
+          <td>Blocking the main thread with synchronous work</td>
+          <td>Any synchronous operation over ~50ms will cause a visible freeze</td>
+          <td>Break heavy work into chunks, or use async patterns</td>
+        </tr>
+        <tr>
+          <td>Loading unused code</td>
+          <td>Every byte of JS must be parsed before anything runs</td>
+          <td>Only include what the app actually uses</td>
+        </tr>
+        <tr>
+          <td>Animating layout properties</td>
+          <td>Width, height, margin, top trigger reflow on every frame</td>
+          <td>Animate transform and opacity only</td>
+        </tr>
+        <tr>
+          <td>No loading feedback on async operations</td>
+          <td>The user doesn't know if something is happening or broken</td>
+          <td>Show a visible state change immediately; resolve it when done</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- ══ CHAPTER 10: DEV HISTORY ══ -->
+<div class="chapter" id="ch-devhistory">
+  <div class="chapter-eyebrow">Chapter 10</div>
+  <div class="chapter-title">Development History Protocol</div>
+
+  <p>The development history is a running record of what happened to a project and why. It is not a changelog — it is a narrative that captures what was built, what broke, and the reasoning behind the decisions that shaped the project. Someone reading it should be able to understand how the project got to where it is without reading all the code.</p>
+
+  <div class="section" id="s-dh-protocol">
+    <div class="section-title">Protocol</div>
+
+    <p>A new development history entry is written approximately every 20 versions. The exact trigger is judgment-based — if a lot happened in 15 versions, write it. If not much changed in 25, wait. The goal is meaningful chunks of work, not mechanical scheduling.</p>
+
+    <div class="callout key">
+      <span class="callout-label">What to record</span>
+      <ul style="margin: 8px 0 0 18px;">
+        <li><strong>Features added</strong> — what was built and what problem it solved.</li>
+        <li><strong>Bugs found and fixed</strong> — what broke, what caused it, how it was resolved. Include bugs that were instructive.</li>
+        <li><strong>Architectural decisions</strong> — why was something built a particular way? What alternatives were considered?</li>
+        <li><strong>Things removed or changed</strong> — what was undone and why.</li>
+        <li><strong>Open questions</strong> — deferred decisions, known limitations, unresolved issues.</li>
+      </ul>
+    </div>
+
+    <p>The file is named <code>dev-history(N).html</code> where N is the current app version. Each new entry is prepended — most recent first. The file is cumulative. Old entries are never deleted.</p>
+
+    <div class="callout warn">
+      <span class="callout-label">Write while it is fresh</span>
+      A history written weeks after the fact misses the decisions and reasoning that seemed obvious at the time. The most valuable part of a development history is the "why" — and that fades quickly.
+    </div>
+  </div>
+
+  <div class="section" id="s-dh-template">
+    <div class="section-title">Entry Template</div>
+
+    <div class="history-entry">
+      <div class="history-range">Versions [N] – [N+~19] · [Month Year]</div>
+      <div class="history-title">[Short descriptive title for this phase of development]</div>
+
+      <div class="history-category">Features Added</div>
+      <ul>
+        <li>[Feature name] — [what it does and why it was added]</li>
+      </ul>
+
+      <div class="history-category">Bugs Found & Fixed</div>
+      <ul>
+        <li>[v##] [Symptom] — Cause: [what caused it]. Fix: [how it was resolved].</li>
+      </ul>
+
+      <div class="history-category">Architectural Decisions</div>
+      <ul>
+        <li>[Decision] — [reasoning, alternatives considered, constraints that drove the choice]</li>
+      </ul>
+
+      <div class="history-category">Things Changed or Removed</div>
+      <ul>
+        <li>[What changed] — [why]</li>
+      </ul>
+
+      <div class="history-category">Open Questions & Known Limitations</div>
+      <ul>
+        <li>[Issue or question] — [current status or plan]</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ CHAPTER 11: TECHNICAL REFERENCE ══ -->
+<div class="chapter" id="ch-techref">
+  <div class="chapter-eyebrow">Chapter 11</div>
+  <div class="chapter-title">Technical Reference Protocol</div>
+
+  <p>The technical reference is the authoritative document for how a project is built — its architecture, data structures, constants, functions, storage, and external dependencies. Its intended reader is a developer who needs to understand the project precisely enough to modify it safely.</p>
+
+  <p>Not every project needs a deep technical reference from day one. A small, simple project may only need one eventually. A growing project should start one early, while architectural decisions are still fresh.</p>
+
+  <div class="section" id="s-tr-scope">
+    <div class="section-title">Scope — What to Include</div>
+
+    <table class="ref-table">
+      <thead><tr><th>Section</th><th>Contents</th><th>Include When</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Architecture Overview</td>
+          <td>What the system is, how it is organized, what the major pieces are and how they relate.</td>
+          <td>Always</td>
+        </tr>
+        <tr>
+          <td>Constants & Configuration</td>
+          <td>All named constants, their values, units, and meaning. Pricing, limits, defaults.</td>
+          <td>Always</td>
+        </tr>
+        <tr>
+          <td>Data Structures</td>
+          <td>The shape of the primary objects the app works with. Fields, types, valid values.</td>
+          <td>Always</td>
+        </tr>
+        <tr>
+          <td>Storage</td>
+          <td>Where and how data is persisted. Keys, formats, what gets saved, what gets cleared.</td>
+          <td>When data is stored</td>
+        </tr>
+        <tr>
+          <td>Function Index</td>
+          <td>Significant functions — name, purpose, inputs, outputs, side effects.</td>
+          <td>When codebase exceeds ~20 functions</td>
+        </tr>
+        <tr>
+          <td>External Dependencies</td>
+          <td>Libraries, APIs, fonts, or services the project cannot function without.</td>
+          <td>When any exist</td>
+        </tr>
+        <tr>
+          <td>Known Bugs & Limitations</td>
+          <td>Current known issues not yet fixed, with trigger conditions and status.</td>
+          <td>When any exist</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout warn">
+      <span class="callout-label">Keep it current</span>
+      An out-of-date technical reference is worse than none — it actively misleads. Update relevant sections every time a meaningful architectural change is made. At minimum, review it when writing each dev history entry.
+    </div>
+  </div>
+
+  <div class="section" id="s-tr-template">
+    <div class="section-title">Recommended Structure</div>
+
+    <pre>1 · Architecture Overview
+    1.1  What This App Does (one paragraph)
+    1.2  How It Is Organized
+    1.3  Technology Stack
+
+2 · Constants & Configuration
+    Table: Name | Value | Units | Description
+
+3 · Data Structures
+    3.N  [Object Name]
+         Table: Field | Type | Description | Example
+
+4 · Storage
+    4.1  Persistence Mechanism
+    4.2  Table: Key | Contains | Format
+
+5 · Function Index
+    Table: Function | Purpose | Arguments | Returns | Side Effects
+
+6 · External Dependencies
+    Table: Name | Version | Purpose | URL
+
+7 · Known Bugs & Limitations
+    List: Description | Trigger | Status</pre>
+  </div>
+</div>
+
+
+<hr>
+<p style="font-size: 14px; color: var(--fg-faint); margin-bottom: 60px;">
+  Dev Playbook · Maintained by Shea Gunther · Updated as the process evolves · v2
+</p>
+
+</main>
+</div>
+
+<footer class="page-footer">
+  <span>Dev Playbook · Shea Gunther · North Windham, Maine</span>
+  <span>Playbook v2 · March 2026</span>
+  <span>Share with AI at the start of every build</span>
+</footer>
+
+<script>
+/* Applies a named skin by toggling a class on body and
+   persisting the choice to localStorage for next visit. */
+function setSkin(skinName) {
+  document.body.className = skinName === 'og' ? '' : 'skin-' + skinName;
+  try { localStorage.setItem('dev-playbook-skin', skinName); } catch (storageError) {}
+  document.querySelectorAll('.skin-btn').forEach(function(button) {
+    button.classList.toggle('active',
+      button.getAttribute('onclick') === "setSkin('" + skinName + "')"
+    );
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+
+  /* Restore skin from last visit, defaulting to OG. */
+  var savedSkin = 'og';
+  try { savedSkin = localStorage.getItem('dev-playbook-skin') || 'og'; } catch (storageError) {}
+  setSkin(savedSkin);
+
+  /* Highlight the active section in the sidebar TOC
+     as the user scrolls through the document. */
+  var allSections = document.querySelectorAll('.chapter, .section[id]');
+  var allTocLinks = document.querySelectorAll('.toc-list a');
+
+  var sectionObserver = new IntersectionObserver(function(visibleEntries) {
+    visibleEntries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var visibleSectionId = entry.target.id;
+        allTocLinks.forEach(function(link) { link.classList.remove('active'); });
+        var matchingLink = document.querySelector(
+          '.toc-list a[href="#' + visibleSectionId + '"]'
+        );
+        if (matchingLink) { matchingLink.classList.add('active'); }
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '-64px 0px -60% 0px' });
+
+  allSections.forEach(function(section) { sectionObserver.observe(section); });
+});
+</script>
+</body>
+</html>

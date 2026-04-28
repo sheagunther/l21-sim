@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loop 2.1 — The Operators Club</title>
+<style>
+  :root{--bg:#e8eef4;--panel:#e8eef4;--panel2:#edf1f5;--panel3:#dce4ec;--border:#9ab0c4;--border2:#b0c4d4;--fg:#000;--fg-dim:#507090;--accent:#6030c0;--working:#1060b0;--alu:#b06000;--memory:#006830;--big:#006888;--font:'Courier New','Consolas',monospace;--max-w:820px;--callout-tip-bg:#e8f4ec;--callout-warn-bg:#fef8e0;--callout-key-bg:#eef0f8;--callout-note-bg:#f0f0f4;--code-bg:#dce4ec;}
+  body.skin-winamp{--bg:#1e1e1e;--panel:#252525;--panel2:#202020;--panel3:#1c1c1c;--border:#1e4c28;--border2:#163c20;--fg:#33ff44;--fg-dim:#33ff44;--accent:#33ff44;--working:#44aaff;--alu:#ffaa00;--memory:#33ff44;--big:#00ddff;--callout-tip-bg:#0c1e10;--callout-warn-bg:#1e1000;--callout-key-bg:#0a1020;--callout-note-bg:#1a1a1a;--code-bg:#0a1a0c;}
+  body.skin-sunrise{--bg:#fff8ec;--panel:#fff;--panel2:#fffcf5;--panel3:#fff4e0;--border:#e8b030;--border2:#d8a020;--fg:#000;--fg-dim:#705030;--accent:#5828b0;--working:#0060c0;--alu:#c06000;--memory:#007030;--big:#007898;--callout-tip-bg:#e8f8ec;--callout-warn-bg:#fff4dc;--callout-key-bg:#f0eeff;--callout-note-bg:#fef8f0;--code-bg:#fff0cc;}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}body{background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:17px;line-height:1.7;}
+  .page-header{background:var(--panel);border-bottom:2px solid var(--border);padding:28px 48px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50;}.logo{font-family:var(--font);letter-spacing:6px;font-size:20px;font-weight:bold;}.logo-sub{font-family:var(--font);font-size:10px;letter-spacing:3px;color:var(--fg-dim);margin-top:4px;}.header-right{display:flex;align-items:center;gap:16px;}.doc-title{text-align:right;}.doc-title .title-main{font-family:var(--font);font-size:11px;letter-spacing:3px;color:var(--fg-dim);text-transform:uppercase;}.doc-title .build-tag{font-family:var(--font);font-size:10px;letter-spacing:1px;color:var(--fg-dim);margin-top:3px;}
+  .skin-group{display:flex;align-items:center;gap:5px;}.skin-btn{font-family:var(--font);font-size:10px;letter-spacing:1px;padding:3px 9px;background:transparent;border:1px solid var(--border2);color:var(--fg-dim);cursor:pointer;text-transform:uppercase;}.skin-btn:hover{border-color:var(--fg);color:var(--fg);}.skin-btn.active{border-color:var(--fg);color:var(--fg);background:var(--panel2);}
+  .body-wrap{display:flex;max-width:1200px;margin:0 auto;}.toc-sidebar{width:260px;flex-shrink:0;position:sticky;top:80px;height:calc(100vh - 80px);overflow-y:auto;padding:32px 0 32px 32px;border-right:1px solid var(--border2);font-family:var(--font);}.toc-title{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--fg-dim);margin-bottom:16px;}.toc-list{list-style:none;}.toc-list li{margin-bottom:2px;}.toc-list a{font-size:11px;letter-spacing:.5px;color:var(--fg-dim);text-decoration:none;display:block;padding:3px 6px;border-left:2px solid transparent;}.toc-list a:hover{color:var(--fg);border-left-color:var(--border);}.toc-list a.active{color:var(--fg);border-left-color:var(--accent);}.toc-list .toc-sub a{font-size:10px;padding-left:14px;opacity:.75;}.toc-list .toc-sub a:hover{opacity:1;}.toc-sep{border:none;border-top:1px solid var(--border2);margin:8px 6px;}
+  .content{flex:1;min-width:0;padding:48px 64px 96px 48px;max-width:var(--max-w);}.chapter{margin-bottom:64px;scroll-margin-top:100px;}.chapter-number{font-family:var(--font);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--fg-dim);margin-bottom:6px;}.chapter-title{font-family:var(--font);font-size:22px;font-weight:bold;letter-spacing:2px;border-bottom:2px solid var(--border);padding-bottom:10px;margin-bottom:6px;}.section{margin:32px 0;scroll-margin-top:100px;}.section-title{font-family:var(--font);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--fg-dim);border-bottom:1px solid var(--border2);padding-bottom:6px;margin-bottom:16px;}h4{font-size:16px;font-weight:600;margin:20px 0 8px;}
+  p{margin-bottom:14px;}strong{font-weight:600;}em{font-style:italic;}a{color:inherit;}ul,ol{margin:0 0 14px 24px;}li{margin-bottom:6px;}
+  .callout{border-left:4px solid var(--border);padding:12px 16px;background:var(--panel);margin:20px 0;font-size:16px;line-height:1.6;}.callout.tip{background:var(--callout-tip-bg);border-left-color:var(--memory);}.callout.warn{background:var(--callout-warn-bg);border-left-color:var(--alu);}.callout.key{background:var(--callout-key-bg);border-left-color:var(--working);}.callout.note{background:var(--callout-note-bg);border-left-color:var(--border);}.callout-label{font-family:var(--font);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--fg-dim);margin-bottom:6px;}.callout.tip .callout-label{color:var(--memory);}.callout.warn .callout-label{color:var(--alu);}.callout.key .callout-label{color:var(--working);}
+  code{background:var(--code-bg);padding:1px 5px;font-family:var(--font);font-size:14px;color:var(--alu);border-radius:2px;}pre{background:var(--code-bg);padding:14px 16px;font-family:var(--font);font-size:13px;line-height:1.6;overflow-x:auto;margin:16px 0;border-left:3px solid var(--border2);}
+  .ref-table{width:100%;border-collapse:collapse;font-size:15px;margin:16px 0;line-height:1.5;}.ref-table th{font-family:var(--font);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--fg-dim);text-align:left;padding:7px 10px;border-bottom:2px solid var(--border);background:var(--panel);}.ref-table td{padding:7px 10px;border-bottom:1px solid var(--border2);vertical-align:top;}.ref-table tr:last-child td{border-bottom:none;}.ref-table td:first-child{font-family:var(--font);font-size:13px;color:var(--fg-dim);white-space:nowrap;}
+  hr{border:none;border-top:1px solid var(--border2);margin:40px 0;}
+  .page-footer{max-width:1200px;margin:0 auto;padding:20px 64px 48px 320px;font-family:var(--font);font-size:10px;letter-spacing:1px;color:var(--fg-dim);border-top:1px solid var(--border2);display:flex;justify-content:space-between;}
+  .q-list{list-style:none;margin:0 0 14px 0;counter-reset:qcount;}.q-list li{margin-bottom:14px;padding-left:28px;position:relative;}.q-list li::before{counter-increment:qcount;content:"Q" counter(qcount);position:absolute;left:0;font-family:var(--font);font-size:11px;letter-spacing:1px;color:var(--accent);font-weight:bold;}
+  .cand{border:1px solid var(--border2);padding:20px 24px;margin:20px 0;background:var(--panel2);}
+  .cand-num{font-family:var(--font);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:4px;}
+  .cand-name{font-size:20px;font-weight:bold;margin-bottom:4px;}
+  .cand-tagline{font-size:15px;color:var(--fg-dim);margin-bottom:14px;font-style:italic;}
+  .sys-tag{display:inline-block;font-family:var(--font);font-size:10px;letter-spacing:1px;padding:1px 6px;margin:0 3px 4px 0;border:1px solid var(--border2);color:var(--fg-dim);}
+  .verdict{margin-top:12px;padding-top:12px;border-top:1px solid var(--border2);}
+  .verdict-label{font-family:var(--font);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--fg-dim);margin-bottom:4px;}
+  .flow-step{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;}.flow-num{font-family:var(--font);font-size:12px;color:var(--accent);flex-shrink:0;width:24px;text-align:right;padding-top:2px;}.flow-text{flex:1;}
+</style>
+</head>
+<body class="skin-og">
+<div class="page-header"><div><div class="logo">LOOP 2.1</div><div class="logo-sub">Manual Flow Computer</div></div><div class="header-right"><div class="skin-group"><span style="font-family:var(--font);font-size:9px;letter-spacing:2px;color:var(--fg-dim);text-transform:uppercase;margin-right:4px;">Skin</span><button class="skin-btn active" onclick="setSkin('og')">OG</button><button class="skin-btn" onclick="setSkin('winamp')">Winamp</button><button class="skin-btn" onclick="setSkin('sunrise')">Sunrise</button></div><div class="doc-title"><div class="title-main">The Operators Club</div><div class="build-tag">Design Document · March 2026</div></div></div></div>
+<div class="body-wrap">
+<nav class="toc-sidebar" id="toc"><div class="toc-title">Contents</div>
+<ul class="toc-list">
+<li><a href="#ch-overview">Overview</a></li>
+<hr class="toc-sep">
+<li><a href="#ch-club">1 · The Club</a><ul class="toc-sub"><li><a href="#s-what">What It Is</a></li><li><a href="#s-application">Application Process</a></li><li><a href="#s-what-you-get">What You Get</a></li><li><a href="#s-numbers">Member Numbers</a></li><li><a href="#s-auctions">Number Auctions</a></li><li><a href="#s-newsletter">Newsletter</a></li></ul></li>
+<li><a href="#ch-variant">2 · Variant Registry</a></li>
+<li><a href="#ch-challenge">3 · The Challenge</a><ul class="toc-sub"><li><a href="#s-criteria">Design Criteria</a></li><li><a href="#s-sizing">Sizing Constraint</a></li><li><a href="#s-knowledge">Public Knowledge Property</a></li></ul></li>
+<li><a href="#ch-candidates">4 · Challenge Candidates</a><ul class="toc-sub"><li><a href="#c1">Proving Ground</a></li><li><a href="#c2">Switchboard</a></li><li><a href="#c3">Accumulator</a></li><li><a href="#c4">Bit Surgery</a></li><li><a href="#c5">Relay</a></li><li><a href="#c6">Sort and Report</a></li><li><a href="#c7">Gatekeeper</a></li><li><a href="#c8">Echo Chamber</a></li><li><a href="#c9">Census</a></li><li><a href="#c10">Bridge Crossing</a></li></ul></li>
+<li><a href="#ch-matrix">5 · Comparison Matrix</a></li>
+<li><a href="#ch-stats">6 · Stats Philosophy</a><ul class="toc-sub"><li><a href="#s-stats-tension">The Core Tension</a></li><li><a href="#s-stats-tiers">Three Tiers of Data</a></li><li><a href="#s-why-actions">Why Operator Actions</a></li><li><a href="#s-what-counts">What Counts as an Action</a></li><li><a href="#s-public-record">The Public Record</a></li><li><a href="#s-stats-aging">How Stats Age</a></li></ul></li>
+<li><a href="#ch-code">7 · Completion Code</a><ul class="toc-sub"><li><a href="#s-code-format">Format</a></li><li><a href="#s-code-layout">Bit Layout</a></li><li><a href="#s-code-uniqueness">Uniqueness Guarantee</a></li><li><a href="#s-code-verifier">Verification Tool</a></li><li><a href="#s-code-threat">Threat Model</a></li></ul></li>
+<li><a href="#ch-operations">8 · Operations</a><ul class="toc-sub"><li><a href="#s-ops-physical">Physical Operations</a></li><li><a href="#s-ops-duplicate">The Duplicate Rule</a></li><li><a href="#s-ops-tooling">Tooling</a></li><li><a href="#s-ops-scale">Scale Estimates</a></li></ul></li>
+<hr class="toc-sep">
+<li><a href="#ch-questions">Unresolved Questions</a></li>
+</ul></nav>
+
+<main class="content">
+
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter" id="ch-overview"><div class="chapter-title">Overview</div>
+<p>The Operators Club is a physical membership club for Loop 2.1 operators. To join, an operator must solve a specific challenge on the machine, obtain a cryptographic completion code, and mail a printed application with $16 in two-dollar bills to Shea Gunther in Maine. In return, they are assigned a randomly-generated member number, mailed a postcard confirming their membership, and added to a monthly email newsletter.</p>
+<p>The club is deliberately analog, deliberately inconvenient, and deliberately small. The two-dollar bill requirement functions as a self-selection filter: anyone who goes to a bank, asks for eight two-dollar bills, puts them in an envelope with a printed application, and mails it to North Windham, Maine is exactly the kind of person this club is for. The physical mail round-trip is also a return ping — on brand for a machine that communicates by sending data packets.</p>
+<p>This document covers the club structure, the challenge design, the completion code system, the stats philosophy, and all operational details. A separate Variant Registry program uses the same physical mail infrastructure at a different price point.</p>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter" id="ch-club"><div class="chapter-number">Section 1</div><div class="chapter-title">The Club</div>
+
+<div class="section" id="s-what"><div class="section-title">What It Is</div>
+<p>The Operators Club is a membership organization for people who have demonstrated they can operate the Loop 2.1 Manual Flow Computer. Membership is permanent. There are no tiers, no renewals, no levels. You're in or you're not.</p>
+<p>The club is maintained personally by Shea Gunther. It is not a company, not a nonprofit, not an LLC. It's a guy in Maine with a spreadsheet, a stack of postcards, and an email list. This is intentional. The club should feel like a thing maintained by a person, not a thing operated by an organization.</p>
+</div>
+
+<div class="section" id="s-application"><div class="section-title">Application Process</div>
+<p>To apply for membership, an operator must:</p>
+<ol>
+<li><strong>Complete the Operators Club Challenge</strong> on the Loop 2.1 simulator. On success, the system generates a unique completion code.</li>
+<li><strong>Print and fill out the application form.</strong> The form includes: the operator's name (or handle), their completion code, a mailing address for the return postcard, and an email address for the newsletter.</li>
+<li><strong>Include $16 in two-dollar bills.</strong> Eight bills. Not a check, not a money order, not crypto. Two-dollar bills.</li>
+<li><strong>Include a pre-addressed, stamped postcard.</strong> The applicant provides the postcard and the stamp. Shea writes the member number on it and drops it in a mailbox.</li>
+<li><strong>Mail everything</strong> to a designated address in North Windham, Maine.</li>
+</ol>
+<p>On receipt, Shea verifies the completion code using a standalone verification tool (see Section 7). If the code is valid and not a duplicate, the applicant is assigned a member number and their postcard is mailed back. Their email address is added to the newsletter list.</p>
+</div>
+
+<div class="section" id="s-what-you-get"><div class="section-title">What You Get</div>
+<p>Membership includes:</p>
+<ul>
+<li><strong>A member number.</strong> Randomly assigned (see below). Permanent. Published alongside the operator's handle and their operator action count from the challenge run.</li>
+<li><strong>A postcard.</strong> Mailed back to the address provided by the applicant, with the member number written on it. This is the physical confirmation of membership and a return ping from the machine's maintainer.</li>
+<li><strong>The monthly newsletter.</strong> An email from Shea. Not a product update. Not a corporate drip campaign. Whatever he wants to send. Could be about L21, could be about something else entirely. The content will be idiosyncratic because the person writing it is idiosyncratic.</li>
+</ul>
+</div>
+
+<div class="section" id="s-numbers"><div class="section-title">Member Numbers</div>
+<p>Member numbers are randomly assigned, following the same principle as L21 variant numbers. Numbers are not sequential. They do not encode join date, join order, or any other metadata. A member who joins on day one might get number 58312 and a member who joins a year later might get number 4027. The randomness is the point — no one's number is "better" because it's lower.</p>
+<p>The number space and format need to be decided (see Unresolved Questions). Options include 5-digit numbers (00000–99999), 6-digit numbers, or something with a prefix.</p>
+</div>
+
+<div class="section" id="s-auctions"><div class="section-title">Number Auctions</div>
+<p>Certain "cool" numbers will be reserved and auctioned off over time. Numbers like 42069, 31337, 80085, 00001, 99999, and whatever else strikes Shea as interesting or funny. These are sold in dribs and drabs — one here, one there — not in bulk. Each auction is a small event that gives the newsletter something to talk about and gives the community a reason to pay attention.</p>
+<p>The auction mechanism is not defined yet. It could be simple email-based bids, a social media post, or something more creative. The key constraint is that it must be low-effort to run. Shea is one person.</p>
+</div>
+
+<div class="section" id="s-newsletter"><div class="section-title">Newsletter</div>
+<p>A monthly email sent to all club members. The content is entirely at Shea's discretion. It will not be a product update email. It will not be a marketing email. It will not follow any template or formula. It will be whatever Shea wants to write about that month, and the two-dollar-bill crowd is self-selected for exactly that kind of relationship.</p>
+<p>The newsletter is also the natural channel for announcing number auctions, celebrating new members (by number and handle, if they opt in), and sharing anything interesting happening in the L21 world.</p>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter" id="ch-variant"><div class="chapter-number">Section 2</div><div class="chapter-title">Variant Registry</div>
+<p>The Variant Registry is a separate program using the same physical mail infrastructure. An operator who has designed a variant of the Loop 2.1 architecture can apply to have it officially registered and assigned a variant number.</p>
+<p>The application costs $32 in two-dollar bills (16 bills). The higher cost reflects the additional work involved: Shea reviews the variant submission, assigns the number, and maintains the registry. The same pre-addressed stamped postcard system applies — the applicant provides the return postcard.</p>
+<p>Variant applicants do not need to be Operators Club members, though the overlap will likely be near-total in practice.</p>
+<div class="callout note"><div class="callout-label">Note</div>The variant registry application process, review criteria, and what constitutes a valid variant submission are not detailed in this document. Those decisions are independent of the Operators Club design and can be specified separately.</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter" id="ch-challenge"><div class="chapter-number">Section 3</div><div class="chapter-title">The Challenge</div>
+
+<div class="section" id="s-criteria"><div class="section-title">Design Criteria</div>
+<p>The Operators Club Challenge is a one-time initiation challenge built into the L21 simulator as a foundational CBX Local challenge. Every operator who wants to join the club must complete it. The challenge must satisfy all of the following:</p>
+<ul>
+<li><strong>Procedure is fully public.</strong> The exact steps are documented, posted, and shared. Walkthroughs will exist. This is expected and acceptable.</li>
+<li><strong>Random inputs each run.</strong> The challenge generates fresh random values on each attempt. No pre-configuration possible.</li>
+<li><strong>Touches multiple subsystems.</strong> This is proof the operator can work the machine, not proof they can use one part of it.</li>
+<li><strong>Single correct answer.</strong> The random inputs deterministically produce exactly one correct output. No ambiguity, no partial credit.</li>
+<li><strong>Re-rollable.</strong> The operator can start the challenge as many times as they want. Each start generates a new seed and new random values. There is no penalty for restarting.</li>
+<li><strong>Generates a cryptographic completion code on success.</strong> The code is the proof of membership eligibility.</li>
+<li><strong>No code on failure or abort.</strong> The completion code only appears on the success screen. No code if you don't finish.</li>
+</ul>
+</div>
+
+<div class="section" id="s-sizing"><div class="section-title">Sizing Constraint</div>
+<p>The challenge should be sized so that a skilled operator — someone fluent with the machine, who knows the procedure cold — naturally finishes in about <strong>five minutes</strong>. This is not a time limit. There is no timer enforcement, no failure condition, no penalty for taking longer. It is a design constraint on the amount of work involved.</p>
+<p>A newcomer who has just learned the basics might take 20 or 30 minutes. Someone still actively learning might take longer and might restart a few times. All of that is fine. The five-minute figure describes the floor, not the ceiling — it's how much work there is, not how fast you have to do it.</p>
+<p>In practice, this means the challenge should involve roughly <strong>15–25 distinct operator actions</strong> for someone who executes the procedure efficiently. At 24 Hz, five minutes is 7,200 ticks, which is generous — most of those ticks are the operator thinking and configuring, not the machine computing.</p>
+</div>
+
+<div class="section" id="s-knowledge"><div class="section-title">The Public Knowledge Property</div>
+<p>This is the most important design property of the challenge: <strong>knowing the solution should not make the challenge meaningfully easier.</strong></p>
+<p>The challenge is not a puzzle. It is a recipe. The exact steps are printed in the challenge description. "Load these values into memory. Route Bus A from Memory to ALU. Set ALU to ADD. Capture the result." Everyone knows the answer. People will post walkthroughs. People will make videos. None of that matters.</p>
+<p>You still have to sit at the machine and do it. You still have to configure the buses, inject the values, run the ALU, move the data, and get the right numbers out the other end. It's like knowing the combination to a lock doesn't help if you still have to physically turn the dial.</p>
+<p>This property comes from the fact that L21 is a manual machine. There is no way to automate the procedure from outside the simulator. The operator is the program. Knowing the program doesn't let you skip being the program.</p>
+<div class="callout key"><div class="callout-label">Implication</div>The challenge procedure should be explicitly documented in the challenge description itself. Not hidden, not obscured, not "discoverable." The entire procedure is right there. The satisfaction is in the doing, not in the figuring out.</div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter" id="ch-candidates"><div class="chapter-number">Section 4</div><div class="chapter-title">Challenge Candidates</div>
+<p>Ten candidate challenges. Each describes the task, the procedure, the subsystems touched, the estimated time for a skilled operator, and an honest assessment. The five-minute sizing constraint applies — candidates that would take a skilled operator significantly longer than five minutes are noted as oversized.</p>
+
+<div class="cand" id="c1">
+<div class="cand-num">Candidate 1</div>
+<div class="cand-name">The Proving Ground</div>
+<div class="cand-tagline">Arithmetic, logic, comparison — the full cross-section.</div>
+<p><strong>Task:</strong> Receive 5 random values (A, B, C, D, E) in memory slots 0–4. Compute <code>((A + B) XOR C)</code> → R1. Compute <code>(D − E)</code> → R2. Compare R1 and R2. Send R1 if R1 ≥ R2, send R2 otherwise.</p>
+<p><strong>Procedure:</strong> Read A and B from memory into ALU registers. ADD. Store result. Read C, XOR with the ADD result. That's R1 — store it. Read D and E, SUB, that's R2 — store it. Feed both into the comparator. Read the flags. Send the correct value out Bus E.</p>
+<p><strong>Systems touched:</strong></p>
+<span class="sys-tag">Memory</span><span class="sys-tag">ALU (ADD)</span><span class="sys-tag">ALU (XOR)</span><span class="sys-tag">ALU (SUB)</span><span class="sys-tag">Comparator</span><span class="sys-tag">Bus Routing</span><span class="sys-tag">Bus E Output</span>
+<p><strong>Skilled time:</strong> ~5 minutes. <strong>Actions:</strong> ~20–25.</p>
+<div class="verdict"><div class="verdict-label">Assessment</div>
+<p>Strong all-rounder. Covers arithmetic, bitwise logic, comparison, and conditional output. The conditional at the end — send R1 or R2 depending on comparison — is the one moment where the operator applies judgment, but even that is fully documented. Doesn't touch the Big loop, pattern matchers, threshold gates, or counters. It's a tour of the core, not the whole machine. But the core is what matters for an initiation challenge.</p></div>
+</div>
+
+<div class="cand" id="c2">
+<div class="cand-num">Candidate 2</div>
+<div class="cand-name">The Switchboard</div>
+<div class="cand-tagline">Route data through four different buses. The machine is a switchboard; prove you can patch it.</div>
+<p><strong>Task:</strong> Receive 4 values (A, B, C, D) in memory. Route A through Bus A to ALU, INC. Route result through Bus B to Working Scratch slot 0. Route B through Bus C to ALU, DEC. Route result through Bus D to Working Scratch slot 1. ADD the two scratch values. Send the sum out Bus E.</p>
+<p><strong>Systems touched:</strong></p>
+<span class="sys-tag">Memory</span><span class="sys-tag">Bus A</span><span class="sys-tag">Bus B</span><span class="sys-tag">Bus C</span><span class="sys-tag">Bus D</span><span class="sys-tag">ALU (INC, DEC, ADD)</span><span class="sys-tag">Working Scratch</span><span class="sys-tag">Bus E Output</span>
+<p><strong>Skilled time:</strong> ~5 minutes. <strong>Actions:</strong> ~22–28.</p>
+<div class="verdict"><div class="verdict-label">Assessment</div>
+<p>Forces the operator to demonstrate bus routing fluency — all four buses get used with different source/destination pairs. Routing is the most "operator" skill on L21. The computation itself is trivial (INC, DEC, ADD). Could feel like busywork if the steps are too mechanical, or could feel like the right test of the right skill. Depends on whether you want the initiation to test computational thinking or operational fluency.</p></div>
+</div>
+
+<div class="cand" id="c3">
+<div class="cand-num">Candidate 3</div>
+<div class="cand-name">The Accumulator</div>
+<div class="cand-tagline">Add six numbers. The fundamental loop.</div>
+<p><strong>Task:</strong> Receive 6 values in memory. Sum them sequentially. Send the sum out Bus E.</p>
+<p><strong>Systems touched:</strong></p>
+<span class="sys-tag">Memory (6 reads)</span><span class="sys-tag">ALU (ADD × 5)</span><span class="sys-tag">Bus Routing</span><span class="sys-tag">Bus E Output</span>
+<p><strong>Skilled time:</strong> ~3 minutes. <strong>Actions:</strong> ~15–18.</p>
+<div class="verdict"><div class="verdict-label">Assessment</div>
+<p>The "Hello World" of L21. Simple and clear. Anyone who can do this understands memory reads, ALU ops, and bus routing. But it only touches two subsystems and the repetition is monotonous. Too thin for an initiation — it's a warm-up exercise, not a challenge.</p></div>
+</div>
+
+<div class="cand" id="c4">
+<div class="cand-num">Candidate 4</div>
+<div class="cand-name">Bit Surgery</div>
+<div class="cand-tagline">Precise bitwise operations on a single value. Every bit matters.</div>
+<p><strong>Task:</strong> Receive 3 values: DATA, MASK, PATCH. Compute <code>(DATA AND (NOT MASK)) OR (PATCH AND MASK)</code>. This replaces the bits selected by MASK with the corresponding bits from PATCH, leaving the rest of DATA intact. Send the result out Bus E.</p>
+<p><strong>Procedure:</strong> NOT the MASK. AND with DATA — clears target bits. Store intermediate. AND PATCH with original MASK — isolates replacement bits. OR the two intermediates. Send.</p>
+<p><strong>Systems touched:</strong></p>
+<span class="sys-tag">Memory</span><span class="sys-tag">ALU (NOT, AND × 2, OR)</span><span class="sys-tag">Working Scratch</span><span class="sys-tag">Bus Routing</span><span class="sys-tag">Bus E Output</span>
+<p><strong>Skilled time:</strong> ~4 minutes. <strong>Actions:</strong> ~16–20.</p>
+<div class="verdict"><div class="verdict-label">Assessment</div>
+<p>Elegant. Four operations that compose into one real-world primitive — bit masking and patching is how hardware actually works. Requires managing intermediate results in scratch. Might feel abstract to operators unfamiliar with bitwise operations. Doesn't touch comparison or anything beyond ALU + memory. But the precision and composability give it a satisfying density.</p></div>
+</div>
+
+<div class="cand" id="c5">
+<div class="cand-num">Candidate 5</div>
+<div class="cand-name">The Relay</div>
+<div class="cand-tagline">Move a value through four transformations. Each hop changes it.</div>
+<p><strong>Task:</strong> Receive V and four modifiers (M1–M4). ADD V+M1, XOR with M2, SUB M3, AND with M4. Send the final value.</p>
+<p><strong>Systems touched:</strong></p>
+<span class="sys-tag">Memory (5 reads)</span><span class="sys-tag">ALU (ADD, XOR, SUB, AND)</span><span class="sys-tag">Bus Routing</span><span class="sys-tag">Bus E Output</span>
+<p><strong>Skilled time:</strong> ~4 minutes. <strong>Actions:</strong> ~16–20.</p>
+<div class="verdict"><div class="verdict-label">Assessment</div>
+<p>Nice narrative arc — a value mutates through four stages. Covers four ALU operations. But structurally repetitive (read, compute, store, repeat) and doesn't touch anything outside the memory → ALU corridor. Similar coverage to The Accumulator with more operational variety. Solid but linear.</p></div>
+</div>
+
+<div class="cand" id="c6">
+<div class="cand-num">Candidate 6</div>
+<div class="cand-name">Sort and Report</div>
+<div class="cand-tagline">Find the largest and smallest of four values. Report both.</div>
+<p><strong>Task:</strong> Receive 4 values. Find max and min via repeated comparison. Send max first, then min (two answers).</p>
+<p><strong>Systems touched:</strong></p>
+<span class="sys-tag">Memory</span><span class="sys-tag">Comparator (6 comparisons)</span><span class="sys-tag">Working Scratch</span><span class="sys-tag">Bus Routing</span><span class="sys-tag">Bus E Output (× 2)</span>
+<p><strong>Skilled time:</strong> ~7 minutes. <strong>Actions:</strong> ~28–35.</p>
+<div class="verdict"><div class="verdict-label">Assessment</div>
+<p>Algorithmically real but oversized for the five-minute target. Six comparisons is a lot of repetitive compare-and-swap. The two-output requirement adds complexity. Could be trimmed to 3 values (find max only) to fit, but then it's just The Accumulator with comparisons instead of additions. Probably not the right fit.</p></div>
+</div>
+
+<div class="cand" id="c7">
+<div class="cand-num">Candidate 7</div>
+<div class="cand-name">The Gatekeeper</div>
+<div class="cand-tagline">Use a threshold gate to separate values, then compute on the survivors.</div>
+<p><strong>Task:</strong> Load 6 values into Big loop. Set TG1 to threshold T in GREATER-THAN mode. Let the gate filter. Count survivors. Multiply count by T. Send the product.</p>
+<p><strong>Systems touched:</strong></p>
+<span class="sys-tag">Memory</span><span class="sys-tag">Big Loop</span><span class="sys-tag">Threshold Gate</span><span class="sys-tag">Counter</span><span class="sys-tag">ALU</span><span class="sys-tag">Bus Routing</span><span class="sys-tag">Bus E Output</span>
+<p><strong>Skilled time:</strong> ~8–10 minutes. <strong>Actions:</strong> ~30–40.</p>
+<div class="verdict"><div class="verdict-label">Assessment</div>
+<p>Touches the most subsystems. The Big loop and threshold gate are the parts of L21 that make it distinctive. Strong narrative: load, filter, count, compute. But significantly oversized — this is an 8–10 minute challenge for skilled operators. Too much for initiation. Would make a good separate challenge, not the club challenge.</p></div>
+</div>
+
+<div class="cand" id="c8">
+<div class="cand-num">Candidate 8</div>
+<div class="cand-name">Echo Chamber</div>
+<div class="cand-tagline">Transform, verify, confirm. A closed loop of verification.</div>
+<p><strong>Task:</strong> Receive INPUT and KEY. Compute INPUT XOR KEY → RESULT. Verify: RESULT XOR KEY should equal INPUT. Send RESULT if verified.</p>
+<p><strong>Systems touched:</strong></p>
+<span class="sys-tag">Memory</span><span class="sys-tag">ALU (XOR × 2)</span><span class="sys-tag">Comparator</span><span class="sys-tag">Working Scratch</span><span class="sys-tag">Bus Routing</span><span class="sys-tag">Bus E Output</span>
+<p><strong>Skilled time:</strong> ~3 minutes. <strong>Actions:</strong> ~14–18.</p>
+<div class="verdict"><div class="verdict-label">Assessment</div>
+<p>Conceptually nice — compute, verify, confirm. But the verification step always passes (XOR is its own inverse), which a thoughtful operator will notice. The CHECK step feels like padding once you understand the math. Too lightweight and slightly dishonest in its construction.</p></div>
+</div>
+
+<div class="cand" id="c9">
+<div class="cand-num">Candidate 9</div>
+<div class="cand-name">The Census</div>
+<div class="cand-tagline">Count, classify, total. A data processing job.</div>
+<p><strong>Task:</strong> Receive 8 values and a THRESHOLD. For each value, compare against THRESHOLD. Count how many are strictly greater (COUNT_HIGH). Sum all that qualify (SUM_HIGH). Compute SUM_HIGH XOR COUNT_HIGH. Send it.</p>
+<p><strong>Systems touched:</strong></p>
+<span class="sys-tag">Memory (9 reads)</span><span class="sys-tag">Comparator (8 comparisons)</span><span class="sys-tag">ALU (ADD, XOR)</span><span class="sys-tag">Working Scratch</span><span class="sys-tag">Bus Routing</span><span class="sys-tag">Bus E Output</span>
+<p><strong>Skilled time:</strong> ~10–12 minutes. <strong>Actions:</strong> ~40–55.</p>
+<div class="verdict"><div class="verdict-label">Assessment</div>
+<p>The most "real programming" — it's a filter-and-aggregate. Teaches the compare-and-branch pattern central to all computation. But massively oversized. Eight iterations of compare-accumulate is tedious. Even trimmed to 4 values it would be borderline. Better as its own challenge than as the club challenge.</p></div>
+</div>
+
+<div class="cand" id="c10">
+<div class="cand-num">Candidate 10</div>
+<div class="cand-name">Bridge Crossing</div>
+<div class="cand-tagline">Move data across three loops. The machine is bigger than any one part.</div>
+<p><strong>Task:</strong> Receive 3 values (A, B, C) in memory. Write A into Working loop, transfer to ALU loop, ADD B (from memory), transfer result to Memory loop, store it, read it back, XOR with C (from memory), send the final result out Bus E.</p>
+<p><strong>Procedure:</strong> Inject A into Working. Transfer Working → ALU via bus. Read B from memory into ALU register, ADD. Transfer ALU result → Memory loop. Store in a slot. Read back. Read C, XOR. Send.</p>
+<p><strong>Systems touched:</strong></p>
+<span class="sys-tag">Memory</span><span class="sys-tag">Working Loop</span><span class="sys-tag">ALU Loop</span><span class="sys-tag">Memory Loop</span><span class="sys-tag">ALU (ADD, XOR)</span><span class="sys-tag">Bus Routing (multiple reconfigurations)</span><span class="sys-tag">Bus E Output</span>
+<p><strong>Skilled time:</strong> ~5 minutes. <strong>Actions:</strong> ~20–26.</p>
+<div class="verdict"><div class="verdict-label">Assessment</div>
+<p>The only candidate that explicitly requires data to move between multiple loops — the thing about L21 that's hardest to learn and most rewarding to master. The "bridge crossing" metaphor is apt: data physically travels from one loop to another, and the operator manages the transit. The computation is simple (ADD, XOR) but the routing is demanding. Tests the thing that makes this machine unique. Operators who haven't grasped inter-loop transfers will hit a wall, but the procedure is fully documented, so that wall becomes a learning opportunity — which is exactly what an initiation challenge should be.</p></div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter" id="ch-matrix"><div class="chapter-number">Section 5</div><div class="chapter-title">Comparison Matrix</div>
+<table class="ref-table">
+<tr><th>Candidate</th><th>Subsystems</th><th>Skilled Time</th><th>Actions</th><th>Difficulty</th><th>Repetition</th><th>Narrative</th></tr>
+<tr><td>1 · Proving Ground</td><td>5</td><td>~5m</td><td>~20–25</td><td>Medium</td><td>Low</td><td>Strong</td></tr>
+<tr><td>2 · Switchboard</td><td>7</td><td>~5m</td><td>~22–28</td><td>Medium</td><td>Medium</td><td>Medium</td></tr>
+<tr><td>3 · Accumulator</td><td>3</td><td>~3m</td><td>~15–18</td><td>Low</td><td>High</td><td>Weak</td></tr>
+<tr><td>4 · Bit Surgery</td><td>4</td><td>~4m</td><td>~16–20</td><td>Medium</td><td>Low</td><td>Strong</td></tr>
+<tr><td>5 · Relay</td><td>3</td><td>~4m</td><td>~16–20</td><td>Low–Med</td><td>Medium</td><td>Medium</td></tr>
+<tr><td>6 · Sort &amp; Report</td><td>4</td><td>~7m</td><td>~28–35</td><td>Med–High</td><td>High</td><td>Medium</td></tr>
+<tr><td>7 · Gatekeeper</td><td>6</td><td>~8–10m</td><td>~30–40</td><td>High</td><td>Low</td><td>Strong</td></tr>
+<tr><td>8 · Echo Chamber</td><td>4</td><td>~3m</td><td>~14–18</td><td>Low</td><td>Low</td><td>Medium</td></tr>
+<tr><td>9 · Census</td><td>5</td><td>~10–12m</td><td>~40–55</td><td>Med–High</td><td>Very High</td><td>Strong</td></tr>
+<tr><td>10 · Bridge Crossing</td><td>7</td><td>~5m</td><td>~20–26</td><td>Med–High</td><td>Low</td><td>Strong</td></tr>
+</table>
+
+<div class="callout key"><div class="callout-label">Shortlist</div>
+<p>Three candidates fit the five-minute sizing and have the right balance of subsystem coverage, low repetition, and strong narrative: <strong>1 (Proving Ground)</strong>, <strong>4 (Bit Surgery)</strong>, and <strong>10 (Bridge Crossing)</strong>.</p>
+<p><strong>Proving Ground</strong> is the safest pick — clean, balanced, medium difficulty. It tests arithmetic, logic, comparison, and conditional output. A solid cross-section of the core.</p>
+<p><strong>Bit Surgery</strong> is the most elegant — four operations composing into one real-world primitive. Teaches something genuinely useful about how data is manipulated at the bit level. But it's ALU-heavy and might feel abstract.</p>
+<p><strong>Bridge Crossing</strong> is the most L21-native — it tests the thing that makes this machine unique, which is inter-loop data movement. The computation is simple but the routing is real. This is the one that would feel most like "I can operate this machine."</p>
+<p>These could also be combined. A two-part challenge — Bit Surgery (precision) followed by Bridge Crossing (system fluency), two answers sent out Bus E — would cover more ground without exceeding five minutes. But adding complexity to the initiation challenge is a decision that should be weighed carefully.</p>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter" id="ch-stats"><div class="chapter-number">Section 6</div><div class="chapter-title">Stats Philosophy</div>
+
+<div class="section" id="s-stats-tension"><div class="section-title">The Core Tension</div>
+<p>Whatever stats you publish next to someone's member number becomes a scoreboard whether you intend it to or not. If wall time is public, people will speedrun. If tick count is public, people will optimize clock speed. If operator actions are public, people will min-action optimize. The question isn't whether this happens — it will — it's whether the optimization incentive produces behavior you want to encourage.</p>
+</div>
+
+<div class="section" id="s-stats-tiers"><div class="section-title">Three Tiers of Data</div>
+<p>There are three categories of data to think about separately:</p>
+<h4>Tier 1: Encoded in the completion code (private to Shea)</h4>
+<p>This is diagnostic data for verification purposes. Shea sees it when checking a code. It helps spot anomalies — someone claiming a 3-second completion, which is impossible, or absurdly low tick counts that suggest tampering. This tier can include everything: ticks, actions, wall time, clock speed. It's private. No one sees it but Shea.</p>
+
+<h4>Tier 2: Published with the membership (permanent public record)</h4>
+<p>This is the part that matters. Whatever is published here becomes part of someone's identity in the community. It must be chosen carefully because it cannot be un-published. The published stat should reward the right behavior and tell an interesting story.</p>
+
+<h4>Tier 3: Not recorded</h4>
+<p>Some data is better left uncollected. If you don't record it, no one can demand it be published, and no one can optimize for it.</p>
+</div>
+
+<div class="section" id="s-why-actions"><div class="section-title">Why Operator Actions</div>
+<p>The single published stat per member is <strong>operator actions</strong> — the count of clicks, toggles, and configuration changes the operator made during the challenge run.</p>
+<p>Operator actions is the right metric for several reasons:</p>
+<p><strong>It measures comprehension, not speed.</strong> Someone who deeply understands the machine will naturally use fewer actions than someone who fumbles through the procedure. That gap narrows with learning but it reflects genuine understanding, not motor speed or memorization.</p>
+<p><strong>It has a theoretical minimum.</strong> For any given challenge, there is a fixed minimum number of actions required to complete it. The community will eventually work out what that minimum is, and then every member's action count sits somewhere relative to it. That's a more interesting spectrum than a time leaderboard.</p>
+<p><strong>It ages well.</strong> If you publish wall time, early members look slow compared to later members who've read all the walkthroughs and optimized their approach. But operator actions has a floor — once you know the procedure, you can't really get below the minimum. Someone who joins in month one with 24 actions and someone who joins in year three with 21 actions are telling roughly the same story: they knew what they were doing.</p>
+<p><strong>It rewards elegance.</strong> Economy of motion — doing exactly what's needed and nothing more — is the most L21-native value there is. It maps directly to the concept of operator elegance that the challenge system already measures.</p>
+<p><strong>It doesn't reward hardware or environment.</strong> Wall time varies with browser performance, computer speed, and distractions. Tick count varies with clock speed settings. Operator actions is the same number regardless of environment.</p>
+</div>
+
+<div class="section" id="s-what-counts"><div class="section-title">What Counts as an Action</div>
+<p>In the current simulator, <code>stats.operatorActions</code> increments on operator-initiated clicks and configuration changes. This includes:</p>
+<ul>
+<li>Clicking a bus source or destination selector.</li>
+<li>Toggling a bus on or off.</li>
+<li>Setting an ALU operation.</li>
+<li>Selecting ALU operand sources.</li>
+<li>Clicking EXECUTE on the ALU.</li>
+<li>Clicking SEND TO LOOP.</li>
+<li>Loading a value into ALU registers via capture.</li>
+<li>Reading from or writing to memory.</li>
+<li>Toggling gates.</li>
+<li>Injecting values.</li>
+<li>Changing clock speed.</li>
+<li>Pressing start/stop on the clock.</li>
+</ul>
+<p>It does <em>not</em> include: the clock ticking (that's machine time, not operator action), values circulating through loops (passive), bus transfers completing (initiated by a prior action), or pattern matcher/threshold gate triggers (automatic).</p>
+<p>The exact definition should be reviewed against the chosen challenge to make sure it produces meaningful numbers. If two operators follow the same procedure identically, they should get the same action count. Any source of non-determinism in the count (e.g., extra clicks needed because of UI timing) should be identified and eliminated or documented.</p>
+<div class="callout warn"><div class="callout-label">Audit Point</div>Before shipping, the chosen challenge should be run multiple times following the documented procedure exactly, confirming that the same sequence of actions produces the same action count every time. Any variance means something is being counted that shouldn't be, or something depends on timing.</div>
+</div>
+
+<div class="section" id="s-public-record"><div class="section-title">The Public Record</div>
+<p>Each club member's public record consists of exactly three fields:</p>
+<table class="ref-table">
+<tr><th>Field</th><th>Example</th><th>Notes</th></tr>
+<tr><td>Member Number</td><td>58312</td><td>Randomly assigned. Permanent.</td></tr>
+<tr><td>Date</td><td>2026-04-15</td><td>Date the application was processed (not the date of the challenge run).</td></tr>
+<tr><td>Operator Actions</td><td>23</td><td>From the challenge run encoded in the completion code.</td></tr>
+</table>
+<p>That's it. No wall time. No tick count. No handle (unless the member opts in — see Unresolved Questions). Clean, permanent, minimal.</p>
+</div>
+
+<div class="section" id="s-stats-aging"><div class="section-title">How Stats Age</div>
+<p>Over time, the community will converge on the theoretical minimum action count. Early members may have higher counts because they were figuring things out. Later members may have lower counts because walkthroughs exist. This is fine — it's a natural record of the community's learning curve.</p>
+<p>What matters is that the minimum is finite and discoverable. Once someone hits the minimum, the only thing left to improve is... nothing. There's no infinity to chase. The stat has a floor, and that floor is interesting because it represents the most elegant possible execution of the procedure. Everyone who hits the floor is equally good. Everyone above it did something extra — maybe an unnecessary click, maybe a configuration change they had to undo, maybe an exploratory detour. That's a story, not a failure.</p>
+<p>If the minimum turns out to be, say, 19 actions, then the member list will eventually show a cluster at 19 and a spread above it. The cluster says "I knew what I was doing." The spread says "I got there my own way." Both are valid ways to join the club.</p>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter" id="ch-code"><div class="chapter-number">Section 7</div><div class="chapter-title">Completion Code</div>
+
+<div class="section" id="s-code-format"><div class="section-title">Format</div>
+<p>Eight groups of four characters, separated by dashes:</p>
+<pre>K7MR-4WPN-B6XT-DHVJ-9QFC-2YAE-N3KS-7RMG</pre>
+<p>The alphabet excludes visually ambiguous characters to survive handwriting. 22 usable characters:</p>
+<pre>2 3 4 6 7 9 A C D E F G H J K M N P Q R S T V W X Y</pre>
+<p>Excluded: 0 (looks like O), 1 (looks like I and L), 5 (looks like S), 8 (looks like B). Each character encodes ~4.46 bits of entropy. 32 characters = ~143 bits total.</p>
+<p>The format is designed to be written on a piece of paper by hand, included in a printed application, and read by a person on the other end. It must survive one human's handwriting and another human's reading. The character exclusions are critical.</p>
+</div>
+
+<div class="section" id="s-code-layout"><div class="section-title">Bit Layout</div>
+<table class="ref-table">
+<tr><th>Field</th><th>Bits</th><th>Range</th><th>Purpose</th></tr>
+<tr><td>Seed</td><td>48</td><td>0 – 281 trillion</td><td>Random seed that determined input values. Primary uniqueness guarantee.</td></tr>
+<tr><td>Tick count</td><td>16</td><td>0 – 65,535</td><td>Clock ticks elapsed during the run.</td></tr>
+<tr><td>Operator actions</td><td>12</td><td>0 – 4,095</td><td>Clicks, toggles, and configuration changes. <strong>This is the published stat.</strong></td></tr>
+<tr><td>Wall-clock seconds</td><td>12</td><td>0 – 4,095 (~68 min)</td><td>Real elapsed time from challenge start to completion.</td></tr>
+<tr><td>Hash</td><td>55</td><td>—</td><td>HMAC-like hash of seed + expected outputs + all stats + embedded salt.</td></tr>
+</table>
+<p>Total: 143 bits in 32 characters.</p>
+<p>The seed encodes what the challenge's random inputs were. The stats encode how the operator completed it. The hash locks everything together — change any field and the hash breaks.</p>
+</div>
+
+<div class="section" id="s-code-uniqueness"><div class="section-title">Uniqueness Guarantee</div>
+<p>The 48-bit seed provides 281 trillion possible values. Using birthday paradox math: with 800,000 total club applications across a thousand years of operation (1,000 years × 800/year), the probability of any two applicants ever receiving the same seed is approximately <strong>one in 60 million</strong>.</p>
+<p>For all practical purposes, duplicate seeds do not happen by chance. If a duplicate code appears in Shea's verification tool, it is someone submitting someone else's code. This is the basis for the duplicate rule (see Section 8).</p>
+</div>
+
+<div class="section" id="s-code-verifier"><div class="section-title">Verification Tool</div>
+<p>A standalone HTML file. No server, no database, no network connection. One file on Shea's laptop. The workflow:</p>
+<ol>
+<li>Paste (or type) the completion code from the application.</li>
+<li>The tool decodes the 143 bits: seed, tick count, actions, wall time, hash.</li>
+<li>From the seed, the tool re-derives what the challenge's random inputs should have been.</li>
+<li>From the inputs, the tool computes the expected correct outputs.</li>
+<li>The tool recomputes the hash using seed + expected outputs + decoded stats + the embedded salt.</li>
+<li>If the recomputed hash matches the decoded hash: <strong>VALID</strong>. Display all stats.</li>
+<li>If mismatch: <strong>INVALID</strong>. The code has been tampered with, mistyped, or fabricated.</li>
+</ol>
+<p>On a valid code, the tool displays: tick count, operator actions, wall time in minutes and seconds. The operator actions number is what gets published with the membership. The rest is for Shea's eyes only.</p>
+</div>
+
+<div class="section" id="s-code-threat"><div class="section-title">Threat Model</div>
+<p>The threat model is someone mailing in someone else's completion code. The threat model is <em>not</em> someone reverse-engineering the hash algorithm from the open-source simulator code to forge a valid code with fabricated stats.</p>
+<p>The second threat is technically possible — the salt is embedded in the JavaScript, the hash algorithm is visible, and a determined person could construct a valid code from scratch. This is fine. Someone who is willing to reverse-engineer the hash, construct a forged code, obtain eight two-dollar bills, print an application, find a postcard and a stamp, and mail it all to Maine has demonstrated a level of commitment that arguably qualifies them for membership anyway.</p>
+<p>The practical defense is the two-dollar-bill barrier. Forging a code is work. Going to the bank for two-dollar bills is work. Doing both to join a niche club for a niche machine is not a realistic attack vector. If it ever becomes one, the system has bigger problems — it means L21 is popular enough that people are trying to cheat their way in, which is a good problem to have.</p>
+<div class="callout tip"><div class="callout-label">Design Principle</div>The cryptography protects against casual fraud (copying someone's code). The two-dollar bills protect against everything else. Together they're sufficient for a club with hundreds of members. If the club grows to thousands, revisit the threat model.</div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter" id="ch-operations"><div class="chapter-number">Section 8</div><div class="chapter-title">Operations</div>
+
+<div class="section" id="s-ops-physical"><div class="section-title">Physical Operations</div>
+<p>When an envelope arrives, Shea:</p>
+<ol>
+<li>Opens the envelope. Confirms it contains: printed application form, $16 in two-dollar bills (8 bills), and a pre-addressed stamped postcard.</li>
+<li>Reads the completion code from the application.</li>
+<li>Opens the verification tool on his laptop. Enters the code.</li>
+<li>If VALID and not a duplicate: assigns a member number, writes it on the postcard, records the membership in the spreadsheet (number, date, handle, email, operator actions), adds the email to the newsletter list, drops the postcard in a mailbox.</li>
+<li>If INVALID: sets the application aside. No postcard sent. The $16 is kept — there's no refund mechanism for invalid codes, and the most likely cause is a transcription error. (See Unresolved Questions for how to handle this gracefully.)</li>
+<li>If DUPLICATE: application rejected. Shea spends the $16 on ice cream.</li>
+</ol>
+<p>Total handling time per valid application: approximately 3–5 minutes.</p>
+</div>
+
+<div class="section" id="s-ops-duplicate"><div class="section-title">The Duplicate Rule</div>
+<p>If a completion code has already been used by a previous member, the application is rejected. The code is a duplicate. This means someone submitted someone else's code — whether by copying, buying, or finding it online.</p>
+<p>The math guarantees this: with a 48-bit seed space and realistic application volumes, the probability of two legitimate operators generating the same seed is one in 60 million. A duplicate is not a coincidence. It's fraud.</p>
+<p>The consequence is simple and non-punitive: the application is rejected, the money is spent on ice cream, and no further action is taken. No public shaming, no ban list, no drama. The person is welcome to complete the challenge themselves and submit a new, legitimate code.</p>
+</div>
+
+<div class="section" id="s-ops-tooling"><div class="section-title">Tooling</div>
+<p>The operational tooling consists of:</p>
+<ul>
+<li><strong>Verification tool:</strong> Standalone HTML file. Paste code, get result. Lives on Shea's laptop.</li>
+<li><strong>Spreadsheet:</strong> Member registry. Columns: member number, date processed, handle (optional), email, operator actions, completion code (for duplicate checking). Could be a Google Sheet, a local CSV, or whatever works.</li>
+<li><strong>Email list:</strong> Newsletter distribution. Could be a simple BCC list, a Mailchimp account, or similar. Must be able to handle unsubscribes.</li>
+<li><strong>P.O. Box or mailing address:</strong> Where applications are sent. Could be Shea's home address or a dedicated P.O. box.</li>
+<li><strong>Stack of postcards:</strong> No — applicants provide their own. Shea just needs a pen.</li>
+</ul>
+<p>The tooling is deliberately minimal. One person, one laptop, one spreadsheet, one pen. If it requires more than that, it's overengineered.</p>
+</div>
+
+<div class="section" id="s-ops-scale"><div class="section-title">Scale Estimates</div>
+<p>Year-one expectations for L21: 200–800 sustained operators. If 10% of those apply for club membership, that's 20–80 envelopes in the first year. If 25% apply, that's 50–200.</p>
+<p>At 5 minutes per application, 200 applications is about 17 hours of work spread across a year — roughly one afternoon per month. That's manageable for one person. If volume exceeds this, the bottleneck is envelope opening and postcard writing, not verification.</p>
+<p>Revenue at 200 members: $3,200 in two-dollar bills. Not a business. Covers the P.O. box, the newsletter service, and a lot of ice cream.</p>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<hr>
+<div class="chapter" id="ch-questions"><div class="chapter-title">Unresolved Questions</div>
+
+<h4>The Challenge</h4>
+<ul class="q-list">
+<li>Which challenge candidate should be selected? The shortlist is Proving Ground (1), Bit Surgery (4), and Bridge Crossing (10). A combination of two is also possible. This is the most consequential decision in this document — it can only be made once.</li>
+<li>Should the challenge procedure be written as step-by-step instructions in the challenge description, or as a high-level algorithm the operator interprets? Step-by-step is more accessible but more prescriptive. High-level gives more room for the operator's own approach but risks confusion.</li>
+<li>Should the challenge count as a "real" challenge with scoring, par times, and history entries, or should it be a separate system that only produces a completion code? If it's a real challenge, it participates in the scoring system. If it's separate, it lives outside the challenge framework.</li>
+<li>The challenge needs to be a foundational CBX Local script in the Scripts Box. Should it be listed alongside the other foundational challenges (Add, Multiply, etc.) or given a visually distinct treatment — a different color, a badge, a note — to signal that it's the club initiation?</li>
+<li>Should the challenge be available to everyone (visible in the challenge list for anyone who opens the simulator) or gated behind some awareness (e.g., only visible if the operator knows to look for it, or accessible via a specific URL parameter)? The argument for universal visibility: it's the first thing new operators hear about. The argument for soft gating: discovering it feels like finding a secret society.</li>
+</ul>
+
+<h4>The Completion Code</h4>
+<ul class="q-list">
+<li>The hash uses an embedded salt. How should the salt be obscured in the source code? It can't be truly hidden (the code is open-source), but it can be non-obvious. Options: bury it in an unrelated-looking constant, split it across multiple variables, derive it from other constants via a non-obvious computation. Or just leave it as a clearly-named constant and accept that the two-dollar bills are the real security.</li>
+<li>Should the completion code be copyable to clipboard (a "COPY CODE" button on the success screen), or should it only be displayed for manual transcription? Clipboard copy is convenient and reduces transcription errors. Manual-only reinforces the analog nature of the club. There's also a middle ground: display it prominently, make it selectable, but don't provide a one-click copy button.</li>
+<li>Should the simulator store the most recent completion code in localStorage so the operator can find it again if they close the browser before writing it down? This is a convenience feature that slightly undermines the "one moment, write it down now" ceremony. Could also store a history of all codes generated (for operators who complete the challenge multiple times for fun).</li>
+<li>The 22-character alphabet excludes 5 and S. Is this actually necessary? 5 and S are less ambiguous than 0/O or 1/I. Including them would give 24 characters (~4.58 bits each) and a total of ~146 bits in 32 characters, providing more room for the hash. Counter-argument: the more conservative the alphabet, the fewer transcription errors.</li>
+</ul>
+
+<h4>Member Numbers</h4>
+<ul class="q-list">
+<li>What is the number format? Options: 5-digit (00000–99999 = 100K possible, plenty for lifetime), 6-digit (a million possible, probably overkill), or something with a prefix/suffix (e.g., "OC-58312"). A prefix distinguishes club numbers from variant numbers at a glance.</li>
+<li>How are "cool" numbers defined and reserved? Is there a master list decided upfront, or does Shea reserve them ad hoc as they come to mind? Some obvious ones: 00001, 99999, 42069, 31337, 80085, 12345, 00000. But the definition of "cool" is subjective and evolving.</li>
+<li>When a cool number is auctioned, what does the buyer get? Just the number (assigned to their existing or new membership)? Or is the auction for non-members too — buy a number and you're in the club without doing the challenge? The latter undermines the challenge requirement. The former means you need to be a member first, then bid on a vanity number upgrade.</li>
+</ul>
+
+<h4>The Public Record</h4>
+<ul class="q-list">
+<li>Should the member's handle be published alongside their number and action count? If so, is it opt-in or opt-out? The application form should ask, but the default matters. Opt-in means most records will be number-only. Opt-out means most will include handles.</li>
+<li>Where is the public record published? A page on loop2.computer? A section in the simulator? A separate standalone HTML file? All of the above?</li>
+<li>Should the public record include a "member since" version number (e.g., "joined during v.312") in addition to the date? This creates a sense of era — early members joined when the machine was younger.</li>
+</ul>
+
+<h4>Operations</h4>
+<ul class="q-list">
+<li>What happens when a code is INVALID due to likely transcription error? The operator spent $16 and wrote the code by hand. A single wrong character makes it invalid. Options: reach out to the email address on the application and ask them to re-verify (labor-intensive but kind), reject and refund the two-dollar bills (expensive postage to mail bills back), reject with a note explaining they can re-do the challenge (cheapest but feels harsh). Or: provide a mechanism on the application form for the operator to include their email for exactly this case.</li>
+<li>Should the application form include the operator's email address as a required field? It's needed for the newsletter, and it's useful for resolving transcription errors. But some operators may not want to share email — can someone join the club without joining the newsletter?</li>
+<li>P.O. box or home address? A P.O. box costs money (roughly $150–300/year) but provides a clean separation. Home address is free but means strangers know where you live. Given the two-dollar-bill crowd is self-selected for commitment, the risk is low, but it's still a consideration.</li>
+<li>What email platform for the newsletter? It needs to handle unsubscribes (CAN-SPAM compliance). Mailchimp free tier covers up to 500 contacts. Buttondown is simpler and more personal. Or just BCC from a personal email account for the first year and migrate later if needed.</li>
+</ul>
+
+<h4>Variant Registry</h4>
+<ul class="q-list">
+<li>Must variant registry applicants also be Operators Club members? Logically it makes sense (you should be able to operate the machine you're modifying), but it doubles the mail barrier.</li>
+<li>What constitutes a valid variant submission? A written description? A working implementation? A set of tenet departures? This is a separate design question but it affects the application form.</li>
+<li>Do variant registry members also get the newsletter, or is that club-only?</li>
+</ul>
+
+<h4>Scope and Timing</h4>
+<ul class="q-list">
+<li>When does the club launch relative to the simulator? At the same time as the Hacker News launch? After a settling period? The challenge needs to be stable and tested before applications are accepted.</li>
+<li>Should the challenge be in the simulator from day one (visible to everyone at launch) or added in a later version (as a post-launch event)? Adding it later gives you a reason to re-announce and generates a second wave of attention.</li>
+<li>The verification tool and the challenge code both need to be written. Should the verification tool be included in the Scripts Box implementation plan, or is it a separate deliverable?</li>
+</ul>
+</div>
+
+<hr>
+<p style="font-size:14px;color:var(--fg-dim);margin-bottom:48px;">This document is the design record for the Operators Club. It should be reviewed and updated as questions are resolved and decisions are made. The challenge selection is the critical path item — everything else follows from it.</p>
+</main></div>
+<div class="page-footer"><span>Loop 2.1 · loop2.computer</span><span>The Operators Club — Design Document</span><span>March 2026</span></div>
+<script>
+function setSkin(id){document.body.className=id==='og'?'':'skin-'+id;try{localStorage.setItem('loop2-oc-skin',id);}catch(e){}document.querySelectorAll('.skin-btn').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')==="setSkin('"+id+"')"));}
+document.addEventListener('DOMContentLoaded',()=>{let s='og';try{s=localStorage.getItem('loop2-oc-skin')||'og';}catch(e){}setSkin(s);const ch=document.querySelectorAll('.chapter,.section[id]');const tl=document.querySelectorAll('.toc-list a');const ob=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){const id=e.target.id;tl.forEach(l=>l.classList.remove('active'));const a=document.querySelector('.toc-list a[href="#'+id+'"]');if(a)a.classList.add('active');}});},{threshold:0.1,rootMargin:'-80px 0px -60% 0px'});ch.forEach(c=>ob.observe(c));});
+</script>
+</body></html>
